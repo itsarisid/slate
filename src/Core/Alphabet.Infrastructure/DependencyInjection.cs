@@ -1,4 +1,6 @@
 using System.Text;
+using System.Security.Claims;
+using Alphabet.Application.Common.Authentication;
 using Alphabet.Application.Common.Interfaces;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
@@ -18,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Alphabet.Infrastructure;
@@ -41,6 +44,7 @@ public static class DependencyInjection
         services.Configure<SmsSettings>(configuration.GetSection(SmsSettings.SectionName));
         services.Configure<CommunicationSettings>(configuration.GetSection(CommunicationSettings.SectionName));
         services.Configure<FrontendUrlsSettings>(configuration.GetSection(FrontendUrlsSettings.SectionName));
+        services.Configure<CookieAuthenticationSettings>(configuration.GetSection(CookieAuthenticationSettings.SectionName));
 
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>() ?? new DatabaseSettings();
 
@@ -49,7 +53,15 @@ public static class DependencyInjection
             var provider = databaseSettings.Provider.Trim().ToLowerInvariant();
             if (provider == "postgresql" || provider == "postgres")
             {
-                options.UseNpgsql(databaseSettings.ConnectionString);
+                options.UseNpgsql(
+                    databaseSettings.ConnectionString,
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorCodesToAdd: null);
+                    });
             }
             else if (provider == "inmemory")
             {
@@ -57,7 +69,15 @@ public static class DependencyInjection
             }
             else
             {
-                options.UseSqlServer(databaseSettings.ConnectionString);
+                options.UseSqlServer(
+                    databaseSettings.ConnectionString,
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null);
+                    });
             }
         });
 
@@ -120,9 +140,10 @@ public static class DependencyInjection
         }
 
         var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>() ?? new JwtSettings();
+        var cookieSettings = configuration.GetSection(CookieAuthenticationSettings.SectionName).Get<CookieAuthenticationSettings>() ?? new CookieAuthenticationSettings();
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(AuthenticationConstants.BearerScheme)
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -134,7 +155,24 @@ public static class DependencyInjection
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = signingKey,
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    RoleClaimType = ClaimTypes.Role,
                     ClockSkew = TimeSpan.FromMinutes(1)
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (string.IsNullOrWhiteSpace(context.Token) &&
+                            context.Request.Cookies.TryGetValue(cookieSettings.AccessTokenCookieName, out var accessToken) &&
+                            !string.IsNullOrWhiteSpace(accessToken))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

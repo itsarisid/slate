@@ -2,6 +2,7 @@ using Alphabet.Application.Features.Identity.Commands;
 using Alphabet.Application.Features.Identity.Commands.Mfa;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Features.Identity.Queries;
+using Alphabet.Modules.IdentityModule.Api.Models;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using MediatR;
@@ -53,12 +54,20 @@ public static class IdentityModuleEndpoints
                 : TypedResults.Ok();
         });
 
-        group.MapPost("/login", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (LoginCommand command, ISender sender, CancellationToken ct) =>
+        group.MapPost("/login", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (LoginRequest request, HttpContext httpContext, ISender sender, CancellationToken ct) =>
         {
-            var result = await sender.Send(command, ct);
-            return result.IsFailure || result.Value is null
-                ? TypedResults.BadRequest(new ProblemDetails { Title = "Login failed", Detail = result.Error })
-                : TypedResults.Ok(result.Value);
+            var result = await sender.Send(new LoginCommand(request.Email, request.Password), ct);
+            if (result.IsFailure || result.Value is null)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Login failed", Detail = result.Error });
+            }
+
+            if (request.UseCookies)
+            {
+                IdentityCookieWriter.WriteAuthCookies(httpContext, result.Value);
+            }
+
+            return TypedResults.Ok(result.Value);
         });
 
         group.MapPost("/forgot-password", async Task<Ok> (ForgotPasswordCommand command, ISender sender, CancellationToken ct) =>
@@ -75,20 +84,40 @@ public static class IdentityModuleEndpoints
                 : TypedResults.Ok();
         });
 
-        group.MapPost("/refresh-token", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (RefreshTokenCommand command, ISender sender, CancellationToken ct) =>
+        group.MapPost("/refresh-token", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (RefreshTokenRequest request, HttpContext httpContext, ISender sender, CancellationToken ct) =>
         {
-            var result = await sender.Send(command, ct);
-            return result.IsFailure || result.Value is null
-                ? TypedResults.BadRequest(new ProblemDetails { Title = "Refresh token failed", Detail = result.Error })
-                : TypedResults.Ok(result.Value);
+            var refreshToken = string.IsNullOrWhiteSpace(request.RefreshToken)
+                ? IdentityCookieWriter.GetRefreshTokenFromCookie(httpContext)
+                : request.RefreshToken;
+
+            var result = await sender.Send(new RefreshTokenCommand(refreshToken ?? string.Empty), ct);
+            if (result.IsFailure || result.Value is null)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Refresh token failed", Detail = result.Error });
+            }
+
+            if (request.UseCookies || string.IsNullOrWhiteSpace(request.RefreshToken))
+            {
+                IdentityCookieWriter.WriteAuthCookies(httpContext, result.Value);
+            }
+
+            return TypedResults.Ok(result.Value);
         });
 
-        group.MapPost("/logout", async Task<Results<Ok, BadRequest<ProblemDetails>>> (LogoutCommand command, ISender sender, CancellationToken ct) =>
+        group.MapPost("/logout", async Task<Results<Ok, BadRequest<ProblemDetails>>> (LogoutRequest request, HttpContext httpContext, ISender sender, CancellationToken ct) =>
         {
-            var result = await sender.Send(command, ct);
-            return result.IsFailure
-                ? TypedResults.BadRequest(new ProblemDetails { Title = "Logout failed", Detail = result.Error })
-                : TypedResults.Ok();
+            var refreshToken = string.IsNullOrWhiteSpace(request.RefreshToken)
+                ? IdentityCookieWriter.GetRefreshTokenFromCookie(httpContext)
+                : request.RefreshToken;
+
+            var result = await sender.Send(new LogoutCommand(refreshToken ?? string.Empty), ct);
+            if (result.IsFailure)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Logout failed", Detail = result.Error });
+            }
+
+            IdentityCookieWriter.ClearAuthCookies(httpContext);
+            return TypedResults.Ok();
         }).RequireAuthorization();
 
         group.MapPost("/change-password", async Task<Results<Ok, BadRequest<ProblemDetails>>> (ChangePasswordCommand command, ISender sender, CancellationToken ct) =>
@@ -131,13 +160,35 @@ public static class IdentityModuleEndpoints
                 : TypedResults.Ok();
         }).RequireAuthorization();
 
-        group.MapPost("/mfa/login", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (MfaLoginCommand command, ISender sender, CancellationToken ct) =>
+        group.MapPost("/mfa/login", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (MfaLoginRequest request, HttpContext httpContext, ISender sender, CancellationToken ct) =>
         {
-            var result = await sender.Send(command, ct);
-            return result.IsFailure || result.Value is null
-                ? TypedResults.BadRequest(new ProblemDetails { Title = "MFA login failed", Detail = result.Error })
-                : TypedResults.Ok(result.Value);
+            var result = await sender.Send(new MfaLoginCommand(request.MfaToken, request.VerificationCode), ct);
+            if (result.IsFailure || result.Value is null)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "MFA login failed", Detail = result.Error });
+            }
+
+            if (request.UseCookies)
+            {
+                IdentityCookieWriter.WriteAuthCookies(httpContext, result.Value);
+            }
+
+            return TypedResults.Ok(result.Value);
         });
+
+        group.MapGet("/me", async Task<Results<Ok<CurrentUserDto>, BadRequest<ProblemDetails>>> (ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new GetCurrentUserQuery(), ct);
+            return result.IsFailure || result.Value is null
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved", Detail = result.Error })
+                : TypedResults.Ok(result.Value);
+        })
+        .RequireAuthorization()
+        .Produces<CurrentUserDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("GetCurrentUser")
+        .WithSummary("Gets the currently authenticated user.")
+        .WithDescription("Returns the current authenticated user identity, authentication type, and resolved role claims for the active bearer token or auth cookie.");
 
         group.MapGet("/mfa/recovery-codes", async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (ISender sender, CancellationToken ct) =>
         {

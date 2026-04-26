@@ -9,6 +9,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\Features\**\*.cs" />
+    <Compile Remove="Domain\Entities\**\*.cs" />
+    <Compile Remove="Domain\Enums\**\*.cs" />
+    <Compile Remove="Domain\Interfaces\**\*.cs" />
+    <Compile Remove="Infrastructure\Identity\**\*.cs" />
+    <Compile Remove="Infrastructure\Services\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

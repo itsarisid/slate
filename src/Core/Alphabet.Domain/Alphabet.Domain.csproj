@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\Modules\ProductModule\Domain\Entities\*.cs" />
+    <Compile Include="..\..\Modules\ProductModule\Domain\Enums\*.cs" />
+    <Compile Include="..\..\Modules\IdentityModule\Domain\Entities\*.cs" />
+    <Compile Include="..\..\Modules\IdentityModule\Domain\Enums\*.cs" />
+    <Compile Include="..\..\Modules\IdentityModule\Domain\Interfaces\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>

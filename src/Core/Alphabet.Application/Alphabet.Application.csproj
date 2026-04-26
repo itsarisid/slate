@@ -9,6 +9,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\Modules\ProductModule\Application\Features\Products\**\*.cs" />
+    <Compile Include="..\..\Modules\IdentityModule\Application\Features\Identity\**\*.cs" />
+    <Compile Include="..\..\Modules\CommunicationModule\Application\Features\Communication\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />

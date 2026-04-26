@@ -7,6 +7,7 @@ using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Domain.Entities;
 using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,7 @@ namespace Alphabet.Infrastructure.Services;
 public sealed class TokenService(
     AppDbContext dbContext,
     ICurrentUserService currentUserService,
+    UserManager<ApplicationUser> userManager,
     IOptions<JwtSettings> options)
     : ITokenService
 {
@@ -26,7 +28,7 @@ public sealed class TokenService(
 
     public async Task<AuthResponseDto> CreateAuthResponseAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
-        var accessToken = CreateJwtToken(
+        var accessToken = await CreateJwtTokenAsync(
             user,
             DateTimeOffset.UtcNow.AddMinutes(_settings.AccessTokenExpiryMinutes),
             null);
@@ -54,11 +56,10 @@ public sealed class TokenService(
 
     public Task<string> CreateMfaTokenAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        return Task.FromResult(CreateJwtToken(
+        return CreateJwtTokenAsync(
             user,
             DateTimeOffset.UtcNow.AddMinutes(_settings.MfaTokenExpiryMinutes),
-            [new Claim("token_use", "mfa")]));
+            [new Claim("token_use", "mfa")]);
     }
 
     public Task<Guid?> GetUserIdFromMfaTokenAsync(string mfaToken, CancellationToken cancellationToken)
@@ -97,7 +98,10 @@ public sealed class TokenService(
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private string CreateJwtToken(ApplicationUser user, DateTimeOffset expiresAt, IEnumerable<Claim>? additionalClaims)
+    private async Task<string> CreateJwtTokenAsync(
+        ApplicationUser user,
+        DateTimeOffset expiresAt,
+        IEnumerable<Claim>? additionalClaims)
     {
         var claims = new List<Claim>
         {
@@ -106,6 +110,8 @@ public sealed class TokenService(
             new(ClaimTypes.Name, user.UserName ?? user.Email ?? user.Id.ToString())
         };
 
+        var roles = await userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         claims.AddRange(additionalClaims ?? []);
 
         var token = new JwtSecurityToken(

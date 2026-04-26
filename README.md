@@ -88,6 +88,13 @@ dotnet ef database update \
 4. Communicate across modules using domain events, integration events, or a message bus abstraction.
 5. Register the module from the gateway or composition root only.
 
+Every module in this repository now follows the same visible folder shape as `OrderModule`, even when some business logic still lives in shared Core projects during the current transition:
+
+- `Api`
+- `Application`
+- `Domain`
+- `Infrastructure`
+
 ## Communication module
 
 The solution includes a dedicated communication module for alerts, notifications, and outbound user messaging.

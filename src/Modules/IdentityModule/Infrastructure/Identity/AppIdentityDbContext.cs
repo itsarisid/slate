@@ -9,7 +9,7 @@ namespace Alphabet.Infrastructure.Identity;
 /// <summary>
 /// Provides the Identity-enabled database context foundation.
 /// </summary>
-public class AppIdentityDbContext(DbContextOptions options)
+public abstract class AppIdentityDbContext(DbContextOptions options)
     : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options), IUnitOfWork
 {
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();

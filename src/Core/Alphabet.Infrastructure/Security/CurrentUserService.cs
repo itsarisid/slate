@@ -20,6 +20,10 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
         httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(claim => claim.Value).ToArray()
         ?? [];
 
+    public bool IsAuthenticated => httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false;
+
+    public string? AuthenticationType => httpContextAccessor.HttpContext?.User.Identity?.AuthenticationType;
+
     public string? IpAddress => httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 
     public string? UserAgent => httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString();

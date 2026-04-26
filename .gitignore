@@ -4,3 +4,17 @@
 
 /.vs
 /.dotnet
+
+# Build outputs
+**/bin/
+**/obj/
+
+# Logs
+**/logs/
+*.log
+
+# Test artifacts
+**/TestResults/
+*.trx
+*.coverage
+*.coveragexml

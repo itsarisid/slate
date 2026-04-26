@@ -10,6 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\Features\**\*.cs" />
+    <Compile Remove="Domain\Entities\**\*.cs" />
+    <Compile Remove="Domain\Enums\**\*.cs" />
+    <Compile Remove="Infrastructure\Persistence\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

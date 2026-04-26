@@ -11,6 +11,10 @@ public interface ICurrentUserService
 
     IReadOnlyCollection<string> Roles { get; }
 
+    bool IsAuthenticated { get; }
+
+    string? AuthenticationType { get; }
+
     string? IpAddress { get; }
 
     string? UserAgent { get; }

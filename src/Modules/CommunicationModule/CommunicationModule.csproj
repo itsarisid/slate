@@ -9,6 +9,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\Features\**\*.cs" />
+    <Compile Remove="Infrastructure\Options\**\*.cs" />
+    <Compile Remove="Infrastructure\Services\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
