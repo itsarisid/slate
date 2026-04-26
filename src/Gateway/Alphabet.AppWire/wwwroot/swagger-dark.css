@@ -1,0 +1,158 @@
+:root {
+    --swagger-bg: #0b1220;
+    --swagger-surface: #111827;
+    --swagger-surface-alt: #1f2937;
+    --swagger-border: #334155;
+    --swagger-text: #e5eefb;
+    --swagger-text-muted: #9fb0c7;
+    --swagger-accent: #38bdf8;
+    --swagger-green: #22c55e;
+    --swagger-red: #f87171;
+    --swagger-orange: #fb923c;
+    --swagger-blue: #60a5fa;
+}
+
+html,
+body,
+.swagger-ui {
+    background: linear-gradient(180deg, #08101d 0%, #0f172a 100%) !important;
+    color: var(--swagger-text) !important;
+}
+
+.swagger-ui .topbar,
+.swagger-ui .scheme-container,
+.swagger-ui .information-container,
+.swagger-ui .opblock .opblock-summary,
+.swagger-ui .opblock-body,
+.swagger-ui .model-box,
+.swagger-ui .dialog-ux .modal-ux,
+.swagger-ui .response-col_status,
+.swagger-ui table tbody tr td,
+.swagger-ui .responses-inner,
+.swagger-ui .tab li button.tablinks,
+.swagger-ui .auth-container {
+    background: var(--swagger-surface) !important;
+    color: var(--swagger-text) !important;
+}
+
+.swagger-ui .topbar {
+    border-bottom: 1px solid var(--swagger-border);
+}
+
+.swagger-ui .topbar-wrapper .link,
+.swagger-ui .topbar-wrapper .download-url-wrapper label,
+.swagger-ui .info .title,
+.swagger-ui .info p,
+.swagger-ui .info li,
+.swagger-ui .opblock-tag,
+.swagger-ui .opblock-summary-path,
+.swagger-ui .opblock-summary-description,
+.swagger-ui label,
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .response-col_links,
+.swagger-ui .responses-header td,
+.swagger-ui .responses-header th,
+.swagger-ui .model-title,
+.swagger-ui .prop-type,
+.swagger-ui .prop-format,
+.swagger-ui .tab li button.tablinks,
+.swagger-ui .btn,
+.swagger-ui section.models h4,
+.swagger-ui section.models h5,
+.swagger-ui .model,
+.swagger-ui .markdown p,
+.swagger-ui .markdown code,
+.swagger-ui .renderedMarkdown p,
+.swagger-ui .renderedMarkdown code,
+.swagger-ui a,
+.swagger-ui span,
+.swagger-ui div {
+    color: var(--swagger-text);
+}
+
+.swagger-ui .opblock-tag {
+    background: rgba(56, 189, 248, 0.08) !important;
+    border: 1px solid rgba(56, 189, 248, 0.18) !important;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+}
+
+.swagger-ui .opblock {
+    background: var(--swagger-surface-alt) !important;
+    border: 1px solid var(--swagger-border) !important;
+    box-shadow: none !important;
+}
+
+.swagger-ui .opblock.opblock-post {
+    border-color: rgba(34, 197, 94, 0.45) !important;
+}
+
+.swagger-ui .opblock.opblock-get {
+    border-color: rgba(96, 165, 250, 0.45) !important;
+}
+
+.swagger-ui .opblock.opblock-delete {
+    border-color: rgba(248, 113, 113, 0.45) !important;
+}
+
+.swagger-ui .opblock.opblock-put,
+.swagger-ui .opblock.opblock-patch {
+    border-color: rgba(251, 146, 60, 0.45) !important;
+}
+
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+    background: var(--swagger-green) !important;
+}
+
+.swagger-ui .opblock.opblock-get .opblock-summary-method {
+    background: var(--swagger-blue) !important;
+}
+
+.swagger-ui .opblock.opblock-delete .opblock-summary-method {
+    background: var(--swagger-red) !important;
+}
+
+.swagger-ui .opblock.opblock-put .opblock-summary-method,
+.swagger-ui .opblock.opblock-patch .opblock-summary-method {
+    background: var(--swagger-orange) !important;
+}
+
+.swagger-ui input[type=text],
+.swagger-ui input[type=password],
+.swagger-ui input[type=search],
+.swagger-ui textarea,
+.swagger-ui select {
+    background: #0f172a !important;
+    border: 1px solid var(--swagger-border) !important;
+    color: var(--swagger-text) !important;
+}
+
+.swagger-ui .btn.execute {
+    background: var(--swagger-accent) !important;
+    border-color: var(--swagger-accent) !important;
+    color: #08101d !important;
+}
+
+.swagger-ui .btn.authorize,
+.swagger-ui .btn.cancel,
+.swagger-ui .authorization__btn {
+    background: transparent !important;
+    border: 1px solid var(--swagger-border) !important;
+    color: var(--swagger-text) !important;
+}
+
+.swagger-ui .responses-table tbody tr,
+.swagger-ui table.model tbody tr td,
+.swagger-ui .parameter__in,
+.swagger-ui .response-col_description__inner {
+    background: transparent !important;
+}
+
+.swagger-ui .highlight-code,
+.swagger-ui pre,
+.swagger-ui .microlight {
+    background: #020817 !important;
+    color: #dbeafe !important;
+}

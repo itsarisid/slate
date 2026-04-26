@@ -1,0 +1,42 @@
+2026-04-22 08:47:03.878 +03:00 [INF] Incoming GET / from ::1
+2026-04-22 08:47:05.285 +03:00 [INF] Completed GET / with 404
+2026-04-22 08:47:05.293 +03:00 [INF] HTTP GET / responded 404 in 1417.0562 ms
+2026-04-22 08:48:38.796 +03:00 [INF] Incoming GET /swagger/index.html from ::1
+2026-04-22 08:48:39.244 +03:00 [INF] Completed GET /swagger/index.html with 304
+2026-04-22 08:48:39.248 +03:00 [INF] HTTP GET /swagger/index.html responded 304 in 452.1798 ms
+2026-04-22 08:48:39.643 +03:00 [INF] Incoming GET /swagger/swagger-ui.css from ::1
+2026-04-22 08:48:39.643 +03:00 [INF] Incoming GET /swagger/index.css from ::1
+2026-04-22 08:48:39.643 +03:00 [INF] Incoming GET /swagger/swagger-ui-bundle.js from ::1
+2026-04-22 08:48:39.693 +03:00 [INF] Incoming GET /swagger/swagger-ui-standalone-preset.js from ::1
+2026-04-22 08:48:39.693 +03:00 [INF] Incoming GET /swagger/index.js from ::1
+2026-04-22 08:48:39.795 +03:00 [INF] Completed GET /swagger/index.js with 304
+2026-04-22 08:48:39.798 +03:00 [INF] HTTP GET /swagger/index.js responded 304 in 105.0681 ms
+2026-04-22 08:48:40.177 +03:00 [INF] Completed GET /swagger/swagger-ui-standalone-preset.js with 304
+2026-04-22 08:48:40.177 +03:00 [INF] Completed GET /swagger/swagger-ui.css with 304
+2026-04-22 08:48:40.177 +03:00 [INF] Completed GET /swagger/index.css with 304
+2026-04-22 08:48:40.180 +03:00 [INF] HTTP GET /swagger/swagger-ui-standalone-preset.js responded 304 in 487.4144 ms
+2026-04-22 08:48:40.182 +03:00 [INF] HTTP GET /swagger/swagger-ui.css responded 304 in 539.5030 ms
+2026-04-22 08:48:40.184 +03:00 [INF] HTTP GET /swagger/index.css responded 304 in 541.1294 ms
+2026-04-22 08:48:40.751 +03:00 [INF] Completed GET /swagger/swagger-ui-bundle.js with 304
+2026-04-22 08:48:40.753 +03:00 [INF] HTTP GET /swagger/swagger-ui-bundle.js responded 304 in 1110.4287 ms
+2026-04-22 08:48:44.640 +03:00 [INF] Incoming GET /swagger/v1/swagger.json from ::1
+2026-04-22 08:48:44.834 +03:00 [INF] Completed GET /swagger/v1/swagger.json with 200
+2026-04-22 08:48:44.837 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 196.8807 ms
+2026-04-22 08:53:17.964 +03:00 [INF] Incoming GET /api/v1/products/3cc82977-7999-457e-a844-351139751521 from ::1
+2026-04-22 08:53:18.233 +03:00 [WRN] You do not have a valid license key for the Lucky Penny software MediatR. This is allowed for development and testing scenarios. If you are running in production you are required to have a licensed version. Please visit https://luckypennysoftware.com to obtain a valid license.
+2026-04-22 08:53:18.262 +03:00 [INF] Handling request GetProductByIdQuery with payload {"Id":"3cc82977-7999-457e-a844-351139751521","$type":"GetProductByIdQuery"}
+2026-04-22 08:53:18.417 +03:00 [INF] Completed request GetProductByIdQuery
+2026-04-22 08:53:18.667 +03:00 [INF] Completed GET /api/v1/products/3cc82977-7999-457e-a844-351139751521 with 404
+2026-04-22 08:53:18.674 +03:00 [INF] HTTP GET /api/v1/products/3cc82977-7999-457e-a844-351139751521 responded 404 in 710.1906 ms
+2026-04-22 08:54:07.838 +03:00 [INF] Incoming POST /api/v1/auth/register from ::1
+2026-04-22 08:54:10.243 +03:00 [INF] Handling request RegisterCommand with payload {"Email":"khanalex301@gmail.com","Password":"Sprinkle@8322","ConfirmPassword":"Sprinkle@8322","FirstName":"Sajid","LastName":"Khan","$type":"RegisterCommand"}
+2026-04-22 08:54:10.827 +03:00 [INF] Sending HTML email to khanalex301@gmail.com with subject Confirm your email
+2026-04-22 08:54:10.837 +03:00 [INF] Sending HTML email to khanalex301@gmail.com with subject Welcome to Alphabet
+2026-04-22 08:54:10.960 +03:00 [INF] Completed request RegisterCommand
+2026-04-22 08:54:11.211 +03:00 [INF] Completed POST /api/v1/auth/register with 201
+2026-04-22 08:54:11.219 +03:00 [INF] HTTP POST /api/v1/auth/register responded 201 in 3381.3903 ms
+2026-04-22 08:58:20.109 +03:00 [INF] Incoming POST /api/v1/auth/login from ::1
+2026-04-22 08:58:20.579 +03:00 [INF] Handling request LoginCommand with payload {"Email":"khanalex301@gmail.com","Password":"Sprinkle@8322","$type":"LoginCommand"}
+2026-04-22 08:58:21.067 +03:00 [INF] Completed request LoginCommand
+2026-04-22 08:58:21.070 +03:00 [INF] Completed POST /api/v1/auth/login with 400
+2026-04-22 08:58:21.073 +03:00 [INF] HTTP POST /api/v1/auth/login responded 400 in 963.8831 ms

@@ -1,0 +1,13 @@
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\bin\Debug\net10.0\Alphabet.Contracts.deps.json
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\bin\Debug\net10.0\Alphabet.Contracts.dll
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\bin\Debug\net10.0\Alphabet.Contracts.pdb
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\bin\Debug\net10.0\Alphabet.Contracts.xml
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.AssemblyInfoInputs.cache
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.AssemblyInfo.cs
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.dll
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\refint\Alphabet.Contracts.dll
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.xml
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\Alphabet.Contracts.pdb
+C:\Users\moinc\OneDrive\Documents\New project\src\Core\Alphabet.Contracts\obj\Debug\net10.0\ref\Alphabet.Contracts.dll

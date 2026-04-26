@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Alphabet.Modules.OrderModule</name>
+    </assembly>
+    <members>
+        <member name="T:Alphabet.Modules.OrderModule.Api.OrderModuleEndpoints">
+            <summary>
+            Exposes endpoint registration for the sample order module.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Modules.OrderModule.Application.PlaceOrderCommand">
+            <summary>
+            Demonstrates a self-contained command within a module.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Modules.OrderModule.Application.PlaceOrderCommand.#ctor(System.Guid,System.Decimal)">
+            <summary>
+            Demonstrates a self-contained command within a module.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Modules.OrderModule.Domain.Order">
+            <summary>
+            Represents a lightweight example bounded context aggregate.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Modules.OrderModule.Infrastructure.OrderRepository">
+            <summary>
+            Represents the order persistence adapter boundary for the sample module.
+            </summary>
+        </member>
+    </members>
+</doc>

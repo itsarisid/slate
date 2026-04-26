@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Alphabet.AppWire</name>
+    </assembly>
+    <members>
+        <member name="T:Alphabet.AppWire.Configuration.SwaggerSetup">
+            <summary>
+            Configures Swagger generation.
+            </summary>
+        </member>
+        <member name="T:Alphabet.AppWire.Middleware.GlobalExceptionMiddleware">
+            <summary>
+            Converts unhandled exceptions into RFC 7807 problem details responses.
+            </summary>
+        </member>
+        <member name="M:Alphabet.AppWire.Middleware.GlobalExceptionMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{Alphabet.AppWire.Middleware.GlobalExceptionMiddleware})">
+            <summary>
+            Converts unhandled exceptions into RFC 7807 problem details responses.
+            </summary>
+        </member>
+        <member name="M:Alphabet.AppWire.Middleware.GlobalExceptionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Executes the middleware pipeline.
+            </summary>
+        </member>
+        <member name="T:Alphabet.AppWire.Middleware.RequestLoggingMiddleware">
+            <summary>
+            Logs request and response information for security tracing.
+            </summary>
+        </member>
+        <member name="M:Alphabet.AppWire.Middleware.RequestLoggingMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{Alphabet.AppWire.Middleware.RequestLoggingMiddleware})">
+            <summary>
+            Logs request and response information for security tracing.
+            </summary>
+        </member>
+    </members>
+</doc>

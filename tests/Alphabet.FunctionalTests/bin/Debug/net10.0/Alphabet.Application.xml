@@ -1,0 +1,368 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Alphabet.Application</name>
+    </assembly>
+    <members>
+        <member name="T:Alphabet.Application.Common.Behaviors.LoggingBehavior`2">
+            <summary>
+            Logs request execution boundaries.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Common.Behaviors.LoggingBehavior`2.#ctor(Microsoft.Extensions.Logging.ILogger{Alphabet.Application.Common.Behaviors.LoggingBehavior{`0,`1}})">
+            <summary>
+            Logs request execution boundaries.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Common.Behaviors.LoggingBehavior`2.Handle(`0,MediatR.RequestHandlerDelegate{`1},System.Threading.CancellationToken)">
+            <summary>
+            Logs the request before and after execution.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Behaviors.ValidationBehavior`2">
+            <summary>
+            Executes FluentValidation validators before the request handler.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Common.Behaviors.ValidationBehavior`2.#ctor(System.Collections.Generic.IEnumerable{FluentValidation.IValidator{`0}})">
+            <summary>
+            Executes FluentValidation validators before the request handler.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Common.Behaviors.ValidationBehavior`2.Handle(`0,MediatR.RequestHandlerDelegate{`1},System.Threading.CancellationToken)">
+            <summary>
+            Handles the request validation pipeline.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Exceptions.ValidationException">
+            <summary>
+            Represents a validation exception raised by the application layer.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Common.Exceptions.ValidationException.#ctor(System.Collections.Generic.IDictionary{System.String,System.String[]})">
+            <summary>
+            Represents a validation exception raised by the application layer.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.IBackgroundJobService">
+            <summary>
+            Enqueues or schedules background jobs.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.ICacheService">
+            <summary>
+            Provides distributed or in-memory caching behavior.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.ICurrentUserService">
+            <summary>
+            Provides access to the current authenticated user context.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.IEmailService">
+            <summary>
+            Sends email messages through an external provider.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.IIdentityService">
+            <summary>
+            Provides authentication and identity workflows for application handlers.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.IJwtTokenService">
+            <summary>
+            Generates JWT access tokens.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.ISmsService">
+            <summary>
+            Sends SMS messages through an external provider.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.ITokenService">
+            <summary>
+            Creates and validates access, refresh, and MFA tokens.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Common.Interfaces.ITwoFactorService">
+            <summary>
+            Encapsulates MFA setup and verification logic.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.DependencyInjection">
+            <summary>
+            Registers application services.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Adds application-layer services.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.ChangePasswordCommand">
+            <summary>
+            Changes the password for the current user.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.ChangePasswordCommand.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Changes the password for the current user.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.ConfirmEmailCommand">
+            <summary>
+            Confirms a user email address.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.ConfirmEmailCommand.#ctor(System.Guid,System.String)">
+            <summary>
+            Confirms a user email address.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.ForgotPasswordCommand">
+            <summary>
+            Triggers the forgot-password workflow.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.ForgotPasswordCommand.#ctor(System.String)">
+            <summary>
+            Triggers the forgot-password workflow.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.LoginCommand">
+            <summary>
+            Authenticates a user with email and password.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.LoginCommand.#ctor(System.String,System.String)">
+            <summary>
+            Authenticates a user with email and password.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.LogoutCommand">
+            <summary>
+            Logs a user out by revoking a refresh token.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.LogoutCommand.#ctor(System.String)">
+            <summary>
+            Logs a user out by revoking a refresh token.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.Mfa.EnableAuthenticatorCommand">
+            <summary>
+            Generates authenticator app setup information.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.Mfa.EnableOtpCommand">
+            <summary>
+            Sends an OTP challenge for email or SMS MFA.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.Mfa.EnableOtpCommand.#ctor(Alphabet.Domain.Enums.TwoFactorMethod,System.String)">
+            <summary>
+            Sends an OTP challenge for email or SMS MFA.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.Mfa.MfaLoginCommand">
+            <summary>
+            Completes an MFA login using a short-lived MFA token and verification code.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.Mfa.MfaLoginCommand.#ctor(System.String,System.String)">
+            <summary>
+            Completes an MFA login using a short-lived MFA token and verification code.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.Mfa.VerifyAuthenticatorCommand">
+            <summary>
+            Verifies an authenticator app code and enables MFA.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.Mfa.VerifyAuthenticatorCommand.#ctor(System.String)">
+            <summary>
+            Verifies an authenticator app code and enables MFA.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.Mfa.VerifyOtpCommand">
+            <summary>
+            Verifies an OTP challenge and enables OTP MFA.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.Mfa.VerifyOtpCommand.#ctor(System.String,System.String)">
+            <summary>
+            Verifies an OTP challenge and enables OTP MFA.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.RefreshTokenCommand">
+            <summary>
+            Rotates an existing refresh token.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.RefreshTokenCommand.#ctor(System.String)">
+            <summary>
+            Rotates an existing refresh token.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.RegenerateRecoveryCodesCommand">
+            <summary>
+            Regenerates MFA recovery codes for the authenticated user.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.RegisterCommand">
+            <summary>
+            Registers a new user account.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.RegisterCommand.#ctor(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Registers a new user account.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.ResetPasswordCommand">
+            <summary>
+            Resets a user password with a reset token.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.ResetPasswordCommand.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Resets a user password with a reset token.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Commands.UnlockUserCommand">
+            <summary>
+            Unlocks a user account.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Commands.UnlockUserCommand.#ctor(System.Guid)">
+            <summary>
+            Unlocks a user account.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Dtos.AuthenticatorSetupDto">
+            <summary>
+            Represents authenticator application setup data.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Dtos.AuthenticatorSetupDto.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Represents authenticator application setup data.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Dtos.AuthResponseDto">
+            <summary>
+            Represents the response payload for authentication operations.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Dtos.AuthResponseDto.#ctor(System.String,System.String,System.Int32,System.String,System.Boolean,System.String,System.String)">
+            <summary>
+            Represents the response payload for authentication operations.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Dtos.RecoveryCodesDto">
+            <summary>
+            Represents recovery codes issued for MFA backup.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Dtos.RecoveryCodesDto.#ctor(System.Collections.Generic.IReadOnlyCollection{System.String})">
+            <summary>
+            Represents recovery codes issued for MFA backup.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Dtos.UserDto">
+            <summary>
+            Represents a user projection returned by identity endpoints.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Identity.Dtos.UserDto.#ctor(System.Guid,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Represents a user projection returned by identity endpoints.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Queries.GetRecoveryCodesQuery">
+            <summary>
+            Gets current recovery codes for the authenticated user.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Identity.Queries.GetUsersQuery">
+            <summary>
+            Returns a list of registered users for administration.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommand">
+            <summary>
+            Creates a new product.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommand.#ctor(System.String,System.String,System.Decimal,System.String)">
+            <summary>
+            Creates a new product.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommandHandler">
+            <summary>
+            Handles product creation requests.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommandHandler.#ctor(Alphabet.Domain.Interfaces.IRepository{Alphabet.Domain.Entities.Product},Alphabet.Domain.Interfaces.IUnitOfWork)">
+            <summary>
+            Handles product creation requests.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommandHandler.Handle(Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommand,System.Threading.CancellationToken)">
+            <summary>
+            Handles the create product command.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Products.Commands.CreateProduct.CreateProductCommandValidator">
+            <summary>
+            Validates create product commands.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Products.ProductResponseDto">
+            <summary>
+            Represents product data returned to API callers.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.ProductResponseDto.#ctor(System.Guid,System.String,System.String,System.Decimal,System.String,System.String,System.DateTimeOffset)">
+            <summary>
+            Represents product data returned to API callers.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Products.Queries.GetProductById.GetProductByIdQuery">
+            <summary>
+            Gets a product by identifier.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.Queries.GetProductById.GetProductByIdQuery.#ctor(System.Guid)">
+            <summary>
+            Gets a product by identifier.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Features.Products.Queries.GetProductById.GetProductByIdQueryHandler">
+            <summary>
+            Handles product-by-id queries.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.Queries.GetProductById.GetProductByIdQueryHandler.#ctor(Alphabet.Domain.Interfaces.IRepository{Alphabet.Domain.Entities.Product})">
+            <summary>
+            Handles product-by-id queries.
+            </summary>
+        </member>
+        <member name="M:Alphabet.Application.Features.Products.Queries.GetProductById.GetProductByIdQueryHandler.Handle(Alphabet.Application.Features.Products.Queries.GetProductById.GetProductByIdQuery,System.Threading.CancellationToken)">
+            <summary>
+            Handles the get-product-by-id query.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Results.Result">
+            <summary>
+            Represents the outcome of an operation.
+            </summary>
+        </member>
+        <member name="T:Alphabet.Application.Results.Result`1">
+            <summary>
+            Represents the outcome of an operation that returns a value.
+            </summary>
+        </member>
+    </members>
+</doc>

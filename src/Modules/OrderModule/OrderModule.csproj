@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Alphabet.Modules.OrderModule</AssemblyName>
+    <RootNamespace>Alphabet.Modules.OrderModule</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Alphabet.Application\Alphabet.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Alphabet.Domain\Alphabet.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.1.0" />
+  </ItemGroup>
+</Project>

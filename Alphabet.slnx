@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/Alphabet.Application/Alphabet.Application.csproj" />
+    <Project Path="src/Core/Alphabet.Contracts/Alphabet.Contracts.csproj" />
+    <Project Path="src/Core/Alphabet.Domain/Alphabet.Domain.csproj" />
+    <Project Path="src/Core/Alphabet.Infrastructure/Alphabet.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/CommunicationModule/CommunicationModule.csproj" />
+    <Project Path="src/Modules/IdentityModule/IdentityModule.csproj" />
+    <Project Path="src/Modules/OrderModule/OrderModule.csproj" />
+    <Project Path="src/Modules/ProductModule/ProductModule.csproj" />
+  </Folder>
+  <Folder Name="/src/Gateway/">
+    <Project Path="src/Gateway/Alphabet.AppWire/Alphabet.AppWire.csproj" />
+  </Folder>
+  <Folder Name="/src/Libraries/">
+    <Project Path="src/Libraries/Alphabet.Utility/Alphabet.Utility.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Alphabet.FunctionalTests/Alphabet.FunctionalTests.csproj" />
+    <Project Path="tests/Alphabet.IntegrationTests/Alphabet.IntegrationTests.csproj" />
+    <Project Path="tests/Alphabet.UnitTests/Alphabet.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,18 @@
+namespace Alphabet.Domain.Entities;
+
+/// <summary>
+/// Represents a base entity with auditing metadata.
+/// </summary>
+public abstract class BaseEntity
+{
+    public Guid Id { get; protected set; } = Guid.NewGuid();
+
+    public DateTimeOffset CreatedAt { get; protected set; } = DateTimeOffset.UtcNow;
+
+    public DateTimeOffset UpdatedAt { get; protected set; } = DateTimeOffset.UtcNow;
+
+    protected void Touch()
+    {
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+}

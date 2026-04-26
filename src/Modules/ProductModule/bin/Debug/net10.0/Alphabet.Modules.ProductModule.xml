@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Alphabet.Modules.ProductModule</name>
+    </assembly>
+    <members>
+        <member name="T:Alphabet.Modules.ProductModule.Api.ProductModuleEndpoints">
+            <summary>
+            Maps product endpoints for the product module.
+            </summary>
+        </member>
+    </members>
+</doc>
