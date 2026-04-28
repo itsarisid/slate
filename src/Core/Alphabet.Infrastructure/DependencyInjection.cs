@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -105,7 +106,12 @@ public static class DependencyInjection
         services.AddMemoryCache();
         services.AddDistributedMemoryCache();
 
-        services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+        // Use AddIdentityCore instead of AddIdentity to avoid overriding
+        // the default authentication scheme. AddIdentity internally calls
+        // AddAuthentication and sets the default to Identity.Application
+        // (cookie-based), which causes JWT Bearer tokens to be ignored and
+        // all protected endpoints to return 401.
+        services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = true;
                 options.Lockout.AllowedForNewUsers = true;
@@ -117,6 +123,8 @@ public static class DependencyInjection
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
             })
+            .AddRoles<IdentityRole<Guid>>()
+            .AddSignInManager()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
@@ -143,9 +151,16 @@ public static class DependencyInjection
         var cookieSettings = configuration.GetSection(CookieAuthenticationSettings.SectionName).Get<CookieAuthenticationSettings>() ?? new CookieAuthenticationSettings();
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
 
-        services.AddAuthentication(AuthenticationConstants.BearerScheme)
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = AuthenticationConstants.BearerScheme;
+            options.DefaultChallengeScheme = AuthenticationConstants.BearerScheme;
+            options.DefaultScheme = AuthenticationConstants.BearerScheme;
+        })
             .AddJwtBearer(options =>
             {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -164,12 +179,73 @@ public static class DependencyInjection
                 {
                     OnMessageReceived = context =>
                     {
+                        var authorizationHeader = context.Request.Headers.Authorization.ToString();
+                        if (!string.IsNullOrWhiteSpace(authorizationHeader))
+                        {
+                            var normalizedHeader = authorizationHeader.Trim().Trim('"', '\'');
+                            if (normalizedHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                            {
+                                normalizedHeader = normalizedHeader["Bearer ".Length..].Trim().Trim('"', '\'');
+                            }
+
+                            if (normalizedHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                            {
+                                normalizedHeader = normalizedHeader["Bearer ".Length..].Trim().Trim('"', '\'');
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(normalizedHeader))
+                            {
+                                context.Token = normalizedHeader;
+                            }
+                        }
+
                         if (string.IsNullOrWhiteSpace(context.Token) &&
                             context.Request.Cookies.TryGetValue(cookieSettings.AccessTokenCookieName, out var accessToken) &&
                             !string.IsNullOrWhiteSpace(accessToken))
                         {
-                            context.Token = accessToken;
+                            context.Token = accessToken.Trim().Trim('"', '\'');
                         }
+
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices
+                            .GetRequiredService<ILoggerFactory>()
+                            .CreateLogger("Alphabet.Authentication");
+
+                        logger.LogInformation(
+                            "JWT token validated successfully for {Path}. UserId={UserId}",
+                            context.HttpContext.Request.Path,
+                            context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices
+                            .GetRequiredService<ILoggerFactory>()
+                            .CreateLogger("Alphabet.Authentication");
+
+                        logger.LogWarning(
+                            context.Exception,
+                            "JWT authentication failed for {Path}: {Message}",
+                            context.HttpContext.Request.Path,
+                            context.Exception.Message);
+
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices
+                            .GetRequiredService<ILoggerFactory>()
+                            .CreateLogger("Alphabet.Authentication");
+
+                        logger.LogWarning(
+                            "JWT challenge triggered for {Path}. Error={Error}, Description={Description}",
+                            context.HttpContext.Request.Path,
+                            context.Error,
+                            context.ErrorDescription);
 
                         return Task.CompletedTask;
                     }

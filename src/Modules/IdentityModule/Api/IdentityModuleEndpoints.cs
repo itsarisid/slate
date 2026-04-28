@@ -212,8 +212,43 @@ public static class IdentityModuleEndpoints
         var group = endpoints.MapGroup("api/v{version:apiVersion}/admin")
             .WithApiVersionSet(versionSet)
             .HasApiVersion(new ApiVersion(1, 0))
-            .WithTags("Identity Module")
+            .WithTags("Admin")
             .RequireAuthorization("AdminOnly");
+
+        // ── User CRUD ─────────────────────────────────────────────────
+
+        group.MapPost("/users", async Task<Results<Created<UserDto>, BadRequest<ProblemDetails>>> (AdminCreateUserRequest request, ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new AdminCreateUserCommand(
+                request.Email, request.Password, request.FirstName, request.LastName, request.Role), ct);
+            return result.IsFailure || result.Value is null
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Create user failed", Detail = result.Error })
+                : TypedResults.Created($"/api/v1/admin/users/{result.Value.UserId}", result.Value);
+        });
+
+        group.MapGet("/users", async Task<Ok<IReadOnlyList<UserDto>>> (ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new GetUsersQuery(), ct);
+            return TypedResults.Ok(result);
+        });
+
+        group.MapGet("/users/{userId:guid}", async Task<Results<Ok<AdminUserDetailDto>, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new GetUserByIdQuery(userId), ct);
+            return result.IsFailure || result.Value is null
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "User not found", Detail = result.Error })
+                : TypedResults.Ok(result.Value);
+        });
+
+        // ── Lock / Unlock ─────────────────────────────────────────────
+
+        group.MapPost("/users/{userId:guid}/lock", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, AdminLockUserRequest? request, ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new AdminLockUserCommand(userId, request?.DurationMinutes ?? 0), ct);
+            return result.IsFailure
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Lock user failed", Detail = result.Error })
+                : TypedResults.Ok();
+        });
 
         group.MapPost("/users/{userId:guid}/unlock", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
         {
@@ -223,9 +258,39 @@ public static class IdentityModuleEndpoints
                 : TypedResults.Ok();
         });
 
-        group.MapGet("/users", async Task<Ok<IReadOnlyList<UserDto>>> (ISender sender, CancellationToken ct) =>
+        // ── Password management ───────────────────────────────────────
+
+        group.MapPost("/users/{userId:guid}/reset-password", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, AdminResetPasswordRequest request, ISender sender, CancellationToken ct) =>
         {
-            var result = await sender.Send(new GetUsersQuery(), ct);
+            var result = await sender.Send(new AdminResetPasswordCommand(userId, request.NewPassword), ct);
+            return result.IsFailure
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Reset password failed", Detail = result.Error })
+                : TypedResults.Ok();
+        });
+
+        group.MapPost("/users/{userId:guid}/send-reset-link", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new AdminSendResetLinkCommand(userId), ct);
+            return result.IsFailure
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Send reset link failed", Detail = result.Error })
+                : TypedResults.Ok();
+        });
+
+        // ── Session management ────────────────────────────────────────
+
+        group.MapPost("/users/{userId:guid}/force-logout", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new AdminForceLogoutCommand(userId), ct);
+            return result.IsFailure
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Force logout failed", Detail = result.Error })
+                : TypedResults.Ok();
+        });
+
+        // ── Audit logs ────────────────────────────────────────────────
+
+        group.MapGet("/users/{userId:guid}/audit-logs", async Task<Ok<IReadOnlyList<AuditLogDto>>> (Guid userId, int? take, int? skip, ISender sender, CancellationToken ct) =>
+        {
+            var result = await sender.Send(new GetUserAuditLogsQuery(userId, take ?? 50, skip ?? 0), ct);
             return TypedResults.Ok(result);
         });
     }

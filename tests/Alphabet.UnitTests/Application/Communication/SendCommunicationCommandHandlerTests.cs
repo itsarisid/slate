@@ -2,6 +2,7 @@ using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Communication.Commands.SendCommunication;
 using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace Alphabet.UnitTests.Application.Communication;
 

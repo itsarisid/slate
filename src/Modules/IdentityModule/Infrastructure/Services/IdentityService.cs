@@ -378,6 +378,158 @@ public sealed class IdentityService(
         return users.Select(x => new UserDto(x.Id, x.Email ?? string.Empty, x.FirstName, x.LastName, x.EmailConfirmed)).ToArray();
     }
 
+    // ── Admin management ──────────────────────────────────────────────
+
+    public async Task<Result<UserDto>> AdminCreateUserAsync(
+        string email,
+        string password,
+        string firstName,
+        string lastName,
+        string role,
+        CancellationToken cancellationToken)
+    {
+        if (await userManager.FindByEmailAsync(email) is not null)
+        {
+            return Result<UserDto>.Failure("Email is already registered.");
+        }
+
+        var user = new ApplicationUser
+        {
+            Email = email,
+            UserName = email,
+            FirstName = firstName,
+            LastName = lastName,
+            EmailConfirmed = true,
+            LockoutEnabled = true
+        };
+
+        var created = await userManager.CreateAsync(user, password);
+        if (!created.Succeeded)
+        {
+            return Result<UserDto>.Failure(string.Join("; ", created.Errors.Select(x => x.Description)));
+        }
+
+        var validRole = string.IsNullOrWhiteSpace(role) ? "User" : role;
+        await userManager.AddToRoleAsync(user, validRole);
+        await WriteAuditAsync(user.Id, "AdminCreateUser", true, $"User created by admin with role '{validRole}'.", cancellationToken);
+
+        return new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, user.EmailConfirmed);
+    }
+
+    public async Task<Result> LockUserAsync(Guid userId, int durationMinutes, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result.Failure("User was not found.");
+        }
+
+        var lockoutEnd = durationMinutes > 0
+            ? DateTimeOffset.UtcNow.AddMinutes(durationMinutes)
+            : DateTimeOffset.MaxValue;
+
+        await userManager.SetLockoutEndDateAsync(user, lockoutEnd);
+        var durationText = durationMinutes > 0 ? $"{durationMinutes} minutes" : "indefinitely";
+        await WriteAuditAsync(user.Id, "LockUser", true, $"User locked by admin for {durationText}.", cancellationToken);
+        return Result.Success();
+    }
+
+    public async Task<Result> AdminResetPasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result.Failure("User was not found.");
+        }
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+        {
+            return Result.Failure(string.Join("; ", result.Errors.Select(x => x.Description)));
+        }
+
+        await tokenService.RevokeAllRefreshTokensAsync(user.Id, currentUserService.IpAddress, cancellationToken);
+        await WriteAuditAsync(user.Id, "AdminResetPassword", true, "Password reset by admin.", cancellationToken);
+        return Result.Success();
+    }
+
+    public async Task<Result> AdminSendResetLinkAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result.Failure("User was not found.");
+        }
+
+        if (string.IsNullOrWhiteSpace(user.Email))
+        {
+            return Result.Failure("User does not have an email address.");
+        }
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var resetUrl = $"{_frontendUrls.ResetPassword}?email={UrlEncoder.Default.Encode(user.Email)}&token={UrlEncoder.Default.Encode(token)}";
+        await emailService.SendTemplateAsync(user.Email, "Reset your password", EmailTemplates.PasswordReset(user.FirstName, resetUrl), cancellationToken);
+        await WriteAuditAsync(user.Id, "AdminSendResetLink", true, "Password reset link sent by admin.", cancellationToken);
+        return Result.Success();
+    }
+
+    public async Task<Result> AdminForceLogoutAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result.Failure("User was not found.");
+        }
+
+        await tokenService.RevokeAllRefreshTokensAsync(user.Id, currentUserService.IpAddress, cancellationToken);
+
+        // Update security stamp to invalidate existing access tokens
+        await userManager.UpdateSecurityStampAsync(user);
+
+        await WriteAuditAsync(user.Id, "AdminForceLogout", true, "User force-logged out by admin.", cancellationToken);
+        return Result.Success();
+    }
+
+    public async Task<Result<AdminUserDetailDto>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result<AdminUserDetailDto>.Failure("User was not found.");
+        }
+
+        var roles = await userManager.GetRolesAsync(user);
+        var isLockedOut = await userManager.IsLockedOutAsync(user);
+
+        return new AdminUserDetailDto(
+            user.Id,
+            user.Email ?? string.Empty,
+            user.FirstName,
+            user.LastName,
+            user.EmailConfirmed,
+            isLockedOut,
+            user.LockoutEnd,
+            user.IsTwoFactorEnabled,
+            user.LastLoginAt,
+            user.CreatedAt,
+            roles.ToArray());
+    }
+
+    public async Task<IReadOnlyList<AuditLogDto>> GetUserAuditLogsAsync(Guid userId, int take, int skip, CancellationToken cancellationToken)
+    {
+        var logs = await auditLogRepository.GetByUserIdAsync(userId, take, skip, cancellationToken);
+        return logs.Select(x => new AuditLogDto(
+            x.Id,
+            x.UserId,
+            x.Action,
+            x.Success,
+            x.Message,
+            x.IpAddress,
+            x.UserAgent,
+            x.Timestamp)).ToArray();
+    }
+
     private async Task WriteAuditAsync(Guid? userId, string action, bool success, string message, CancellationToken cancellationToken)
     {
         await auditLogRepository.AddAsync(
