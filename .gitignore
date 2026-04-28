@@ -20,18 +20,31 @@
 *.coveragexml
 
 # Absoulte Build outputs
-/src/Gateway/Alphabet.AppWire/bin
-/src/Gateway/Alphabet.AppWire/obj
-/src/Core/Alphabet.Application/bin
-/src/Core/Alphabet.Application/obj
-/src/Core/Alphabet.Domain/bin
-/src/Core/Alphabet.Domain/obj
-/src/Core/Alphabet.Infrastructure/bin
-/src/Core/Alphabet.Infrastructure/obj
-/src/Modules/Alphabet.CommunicationModule.Api/bin
-/src/Modules/Alphabet.CommunicationModule.Api/obj
-/src/Modules/Alphabet.IdentityModule.Api/bin
-/src/Modules/Alphabet.IdentityModule.Api/obj
-/src/Modules/Alphabet.ProductModule.Api/bin
-/src/Modules/Alphabet.ProductModule.Api/obj
+./src/Gateway/Alphabet.AppWire/bin/
+./src/Gateway/Alphabet.AppWire/obj/
+./src/Core/Alphabet.Application/bin/
+./src/Core/Alphabet.Application/obj/
+./src/Core/Alphabet.Contracts/bin/
+./src/Core/Alphabet.Contracts/obj/
+./src/Core/Alphabet.Domain/bin/
+./src/Core/Alphabet.Domain/obj/
+./src/Core/Alphabet.Infrastructure/bin/
+./src/Core/Alphabet.Infrastructure/obj/
+./src/Modules/CommunicationModule/bin/
+./src/Modules/CommunicationModule/obj/
+./src/Modules/IdentityModule/bin/
+./src/Modules/IdentityModule/obj/
+./src/Modules/ProductModule/bin/
+./src/Modules/ProductModule/obj/
+./src/Modules/OrderModule/bin/
+./src/Modules/OrderModule/obj/
+./src/Libraries/Alphabet.Utility/bin/
+./src/Libraries/Alphabet.Utility/obj/
+./tests/Alphabet.FunctionalTests/bin/
+./tests/Alphabet.FunctionalTests/obj/
+./tests/Alphabet.UnitTests/bin/
+./tests/Alphabet.UnitTests/obj/
+./tests/Alphabet.IntegrationTests/bin/
+./tests/Alphabet.IntegrationTests/obj/
+
 
