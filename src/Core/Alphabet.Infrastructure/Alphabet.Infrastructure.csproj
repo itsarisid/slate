@@ -18,6 +18,12 @@
     <Compile Include="..\..\Modules\IdentityModule\Infrastructure\Services\*.cs" />
     <Compile Include="..\..\Modules\CommunicationModule\Infrastructure\Options\*.cs" />
     <Compile Include="..\..\Modules\CommunicationModule\Infrastructure\Services\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Options\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Persistence\Configurations\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Repositories\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Scheduler\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Scheduler\JobHandlers\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Scheduler\ExampleJobs\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +43,8 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.6" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.14" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.14" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />

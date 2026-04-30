@@ -18,6 +18,7 @@ Alphabet/
 |   |-- Modules/IdentityModule
 |   |-- Modules/OrderModule
 |   |-- Modules/ProductModule
+|   |-- Modules/SchedulerModule
 |   |-- Gateway/Alphabet.AppWire
 |   `-- Libraries/Alphabet.Utility
 |-- tests/
@@ -135,6 +136,16 @@ Endpoints:
 - `GET /api/v1/communications/configuration`
 
 All public methods and communication endpoints include XML comments plus Swagger summaries and descriptions so consumers can understand what each method and route does without reading the internal implementation.
+
+## Scheduler module
+
+The solution also includes a Hangfire-first scheduler module under [src/Modules/SchedulerModule](/C:/Users/moinc/OneDrive/Documents/New%20project/src/Modules/SchedulerModule) for dynamic job creation, rescheduling, monitoring, retries, and execution history.
+
+- API base path: `/api/v1/scheduler`
+- Admin operations: `/api/v1/scheduler/admin/*`
+- Dashboard: `/hangfire`
+
+Operational guidance and job examples live in [README-SCHEDULER.md](/C:/Users/moinc/OneDrive/Documents/New%20project/README-SCHEDULER.md).
 
 ## How to switch database providers
 

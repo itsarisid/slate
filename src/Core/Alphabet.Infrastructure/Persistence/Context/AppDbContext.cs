@@ -15,6 +15,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : AppId
 
     public DbSet<Auth> AuthRecords => Set<Auth>();
 
+    public DbSet<Job> SchedulerJobs => Set<Job>();
+
+    public DbSet<JobExecution> SchedulerJobExecutions => Set<JobExecution>();
+
+    public DbSet<JobHistory> SchedulerJobHistory => Set<JobHistory>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -12,6 +12,7 @@
     <Compile Include="..\..\Modules\ProductModule\Application\Features\Products\**\*.cs" />
     <Compile Include="..\..\Modules\IdentityModule\Application\Features\Identity\**\*.cs" />
     <Compile Include="..\..\Modules\CommunicationModule\Application\Features\Communication\**\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Application\Features\Scheduler\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,11 +4,15 @@ using Alphabet.Application;
 using Alphabet.Infrastructure;
 using Alphabet.Infrastructure.Identity;
 using Alphabet.Infrastructure.Logging;
+using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Persistence.Context;
+using Alphabet.Infrastructure.Scheduler;
 using Alphabet.Modules.CommunicationModule.Api;
 using Alphabet.Modules.IdentityModule.Api;
 using Alphabet.Modules.ProductModule.Api;
+using Alphabet.Modules.SchedulerModule.Api;
 using Asp.Versioning;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -81,6 +85,19 @@ app.MapHealthChecks("/health");
 app.MapCommunicationModule();
 app.MapProductModule();
 app.MapIdentityModule();
+app.MapSchedulerModule();
+
+var schedulerSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SchedulerSettings>>().Value;
+if (schedulerSettings.Provider.Equals("Hangfire", StringComparison.OrdinalIgnoreCase) &&
+    schedulerSettings.Hangfire.DashboardEnabled)
+{
+    app.UseHangfireDashboard(
+        schedulerSettings.Hangfire.DashboardPath,
+        new DashboardOptions
+        {
+            Authorization = [new HangfireDashboardAuthorizationFilter()]
+        });
+}
 
 if (app.Environment.IsDevelopment())
 {

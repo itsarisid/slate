@@ -10,6 +10,10 @@
     <Compile Include="..\..\Modules\IdentityModule\Domain\Entities\*.cs" />
     <Compile Include="..\..\Modules\IdentityModule\Domain\Enums\*.cs" />
     <Compile Include="..\..\Modules\IdentityModule\Domain\Interfaces\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Domain\Entities\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Domain\Enums\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Domain\Interfaces\*.cs" />
+    <Compile Include="..\..\Modules\SchedulerModule\Domain\Models\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,6 +19,9 @@ namespace Alphabet.Modules.IdentityModule.Api;
 /// </summary>
 public static class IdentityModuleEndpoints
 {
+    /// <summary>
+    /// Registers the identity module endpoints.
+    /// </summary>
     public static IEndpointRouteBuilder MapIdentityModule(this IEndpointRouteBuilder endpoints)
     {
         var versionSet = endpoints.NewApiVersionSet()
@@ -215,22 +218,46 @@ public static class IdentityModuleEndpoints
             .WithTags("Admin")
             .RequireAuthorization("AdminOnly");
 
-        // ── User CRUD ─────────────────────────────────────────────────
-
         group.MapPost("/users", async Task<Results<Created<UserDto>, BadRequest<ProblemDetails>>> (AdminCreateUserRequest request, ISender sender, CancellationToken ct) =>
         {
             var result = await sender.Send(new AdminCreateUserCommand(
-                request.Email, request.Password, request.FirstName, request.LastName, request.Role), ct);
+                request.Email,
+                request.Password,
+                request.FirstName,
+                request.LastName,
+                request.Role), ct);
+
             return result.IsFailure || result.Value is null
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "Create user failed", Detail = result.Error })
                 : TypedResults.Created($"/api/v1/admin/users/{result.Value.UserId}", result.Value);
-        });
+        })
+        .Accepts<AdminCreateUserRequest>("application/json")
+        .Produces<UserDto>(StatusCodes.Status201Created)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminCreateUser")
+        .WithSummary("Creates a new user account.")
+        .WithDescription("""
+            Creates a user directly from the administration area without requiring self-registration. This is useful for provisioning back-office, support, or managed accounts.
+
+            Example request:
+            {
+              "email": "operator@alphabet.local",
+              "password": "TempPassword123!",
+              "firstName": "Amina",
+              "lastName": "Rahman",
+              "role": "Support"
+            }
+            """);
 
         group.MapGet("/users", async Task<Ok<IReadOnlyList<UserDto>>> (ISender sender, CancellationToken ct) =>
         {
             var result = await sender.Send(new GetUsersQuery(), ct);
             return TypedResults.Ok(result);
-        });
+        })
+        .Produces<IReadOnlyList<UserDto>>(StatusCodes.Status200OK)
+        .WithName("AdminGetUsers")
+        .WithSummary("Lists all users.")
+        .WithDescription("Returns the users that administrators can search, review, and manage.");
 
         group.MapGet("/users/{userId:guid}", async Task<Results<Ok<AdminUserDetailDto>, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
         {
@@ -238,9 +265,12 @@ public static class IdentityModuleEndpoints
             return result.IsFailure || result.Value is null
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "User not found", Detail = result.Error })
                 : TypedResults.Ok(result.Value);
-        });
-
-        // ── Lock / Unlock ─────────────────────────────────────────────
+        })
+        .Produces<AdminUserDetailDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminGetUserById")
+        .WithSummary("Gets detailed information for a single user.")
+        .WithDescription("Returns account status, role assignments, lockout details, two-factor status, and audit-friendly timestamps for the selected user.");
 
         group.MapPost("/users/{userId:guid}/lock", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, AdminLockUserRequest? request, ISender sender, CancellationToken ct) =>
         {
@@ -248,7 +278,20 @@ public static class IdentityModuleEndpoints
             return result.IsFailure
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "Lock user failed", Detail = result.Error })
                 : TypedResults.Ok();
-        });
+        })
+        .Accepts<AdminLockUserRequest>("application/json")
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminLockUser")
+        .WithSummary("Locks a user account.")
+        .WithDescription("""
+            Locks the specified user either for a fixed duration or indefinitely when durationMinutes is 0.
+
+            Example request:
+            {
+              "durationMinutes": 0
+            }
+            """);
 
         group.MapPost("/users/{userId:guid}/unlock", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
         {
@@ -256,9 +299,12 @@ public static class IdentityModuleEndpoints
             return result.IsFailure
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "Unlock user failed", Detail = result.Error })
                 : TypedResults.Ok();
-        });
-
-        // ── Password management ───────────────────────────────────────
+        })
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminUnlockUser")
+        .WithSummary("Unlocks a previously locked account.")
+        .WithDescription("Clears the user's lockout state so they can sign in again.");
 
         group.MapPost("/users/{userId:guid}/reset-password", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, AdminResetPasswordRequest request, ISender sender, CancellationToken ct) =>
         {
@@ -266,7 +312,20 @@ public static class IdentityModuleEndpoints
             return result.IsFailure
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "Reset password failed", Detail = result.Error })
                 : TypedResults.Ok();
-        });
+        })
+        .Accepts<AdminResetPasswordRequest>("application/json")
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminResetPassword")
+        .WithSummary("Resets a user's password without the old password.")
+        .WithDescription("""
+            Generates an internal reset token and replaces the user's password immediately. This is intended for administrator-led recovery and support scenarios.
+
+            Example request:
+            {
+              "newPassword": "NewStrongPassword123!"
+            }
+            """);
 
         group.MapPost("/users/{userId:guid}/send-reset-link", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
         {
@@ -274,9 +333,12 @@ public static class IdentityModuleEndpoints
             return result.IsFailure
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "Send reset link failed", Detail = result.Error })
                 : TypedResults.Ok();
-        });
-
-        // ── Session management ────────────────────────────────────────
+        })
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminSendResetLink")
+        .WithSummary("Sends a password reset link to the user.")
+        .WithDescription("Creates a password reset token and emails a reset link to the user's registered address using the configured communication provider.");
 
         group.MapPost("/users/{userId:guid}/force-logout", async Task<Results<Ok, BadRequest<ProblemDetails>>> (Guid userId, ISender sender, CancellationToken ct) =>
         {
@@ -284,14 +346,39 @@ public static class IdentityModuleEndpoints
             return result.IsFailure
                 ? TypedResults.BadRequest(new ProblemDetails { Title = "Force logout failed", Detail = result.Error })
                 : TypedResults.Ok();
-        });
+        })
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithName("AdminForceLogout")
+        .WithSummary("Forces a user to sign out everywhere.")
+        .WithDescription("Revokes refresh tokens and updates the user's security stamp so existing sessions become invalid.");
 
-        // ── Audit logs ────────────────────────────────────────────────
-
-        group.MapGet("/users/{userId:guid}/audit-logs", async Task<Ok<IReadOnlyList<AuditLogDto>>> (Guid userId, int? take, int? skip, ISender sender, CancellationToken ct) =>
+        group.MapGet("/users/{userId:guid}/audit-logs", async Task<Ok<IReadOnlyList<AuditLogDto>>> (
+            Guid userId,
+            [FromQuery] string? take,
+            [FromQuery] string? skip,
+            ISender sender,
+            CancellationToken ct) =>
         {
-            var result = await sender.Send(new GetUserAuditLogsQuery(userId, take ?? 50, skip ?? 0), ct);
+            var resolvedTake = ParseOrDefault(take, 50);
+            var resolvedSkip = ParseOrDefault(skip, 0);
+            var result = await sender.Send(new GetUserAuditLogsQuery(userId, resolvedTake, resolvedSkip), ct);
             return TypedResults.Ok(result);
-        });
+        })
+        .Produces<IReadOnlyList<AuditLogDto>>(StatusCodes.Status200OK)
+        .WithName("AdminGetUserAuditLogs")
+        .WithSummary("Gets the user's activity and audit history.")
+        .WithDescription("""
+            Returns security and administrative activity for the selected user, including sign-in attempts, password actions, and account-management operations.
+
+            Query parameters:
+            - take: Number of records to return. Defaults to 50.
+            - skip: Number of records to skip before returning results. Defaults to 0.
+            """);
+    }
+
+    private static int ParseOrDefault(string? rawValue, int defaultValue)
+    {
+        return int.TryParse(rawValue, out var parsedValue) ? parsedValue : defaultValue;
     }
 }

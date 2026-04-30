@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Alphabet.Modules.SchedulerModule</AssemblyName>
+    <RootNamespace>Alphabet.Modules.SchedulerModule</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Alphabet.Application\Alphabet.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Application\Features\**\*.cs" />
+    <Compile Remove="Domain\Entities\**\*.cs" />
+    <Compile Remove="Domain\Enums\**\*.cs" />
+    <Compile Remove="Domain\Interfaces\**\*.cs" />
+    <Compile Remove="Domain\Models\**\*.cs" />
+    <Compile Remove="Infrastructure\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
+  </ItemGroup>
+</Project>

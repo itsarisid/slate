@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\Modules\CommunicationModule\CommunicationModule.csproj" />
     <ProjectReference Include="..\..\Modules\ProductModule\ProductModule.csproj" />
     <ProjectReference Include="..\..\Modules\IdentityModule\IdentityModule.csproj" />
+    <ProjectReference Include="..\..\Modules\SchedulerModule\SchedulerModule.csproj" />
   </ItemGroup>
 
   <ItemGroup>

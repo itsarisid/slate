@@ -25,6 +25,7 @@ public sealed class SwaggerSetup : IConfigureOptions<SwaggerGenOptions>
             {
                 var path when path.Contains("/communications") => ["Communication Module"],
                 var path when path.Contains("/products") => ["Product Module"],
+                var path when path.Contains("/scheduler") => ["Scheduler Module"],
                 var path when path.Contains("/auth") || path.Contains("/admin") => ["Identity Module"],
                 _ => ["Alphabet API"]
             };

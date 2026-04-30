@@ -2,6 +2,7 @@ using System.Text;
 using System.Security.Claims;
 using Alphabet.Application.Common.Authentication;
 using Alphabet.Application.Common.Interfaces;
+using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Infrastructure.BackgroundJobs;
@@ -12,8 +13,13 @@ using Alphabet.Infrastructure.Identity;
 using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Persistence.Context;
 using Alphabet.Infrastructure.Persistence.Repositories;
+using Alphabet.Infrastructure.Repositories;
+using Alphabet.Infrastructure.Scheduler;
+using Alphabet.Infrastructure.Scheduler.JobHandlers;
 using Alphabet.Infrastructure.Security;
 using Alphabet.Infrastructure.Services;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +52,7 @@ public static class DependencyInjection
         services.Configure<CommunicationSettings>(configuration.GetSection(CommunicationSettings.SectionName));
         services.Configure<FrontendUrlsSettings>(configuration.GetSection(FrontendUrlsSettings.SectionName));
         services.Configure<CookieAuthenticationSettings>(configuration.GetSection(CookieAuthenticationSettings.SectionName));
+        services.Configure<SchedulerSettings>(configuration.GetSection(SchedulerSettings.SectionName));
 
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>() ?? new DatabaseSettings();
 
@@ -86,6 +93,8 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IJobRepository, JobRepository>();
+        services.AddScoped<IJobExecutionRepository, JobExecutionRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -100,11 +109,57 @@ public static class DependencyInjection
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IBackgroundJobService, InProcessBackgroundJobService>();
+        services.AddScoped<IJobExecutionService, JobExecutionService>();
+        services.AddScoped<HttpCallJobHandler>();
+        services.AddScoped<StoredProcedureJobHandler>();
+        services.AddScoped<CodeExecutionJobHandler>();
+        services.AddScoped<FileOperationJobHandler>();
+        services.AddScoped<JobExecutor>();
+        services.AddScoped<ICronExpressionValidator, CronExpressionValidator>();
+        services.AddScoped<Alphabet.Infrastructure.Scheduler.ExampleJobs.SampleJob>();
+        services.AddScoped<Alphabet.Infrastructure.Scheduler.ExampleJobs.ReportGenerationJob>();
+        services.AddScoped<Alphabet.Infrastructure.Scheduler.ExampleJobs.CleanupJob>();
+        services.AddHttpClient("Alphabet.Scheduler.Http");
 
         var cacheSettings = configuration.GetSection(CacheSettings.SectionName).Get<CacheSettings>() ?? new CacheSettings();
         var lockoutSettings = configuration.GetSection(LockoutSettings.SectionName).Get<LockoutSettings>() ?? new LockoutSettings();
+        var schedulerSettings = configuration.GetSection(SchedulerSettings.SectionName).Get<SchedulerSettings>() ?? new SchedulerSettings();
         services.AddMemoryCache();
         services.AddDistributedMemoryCache();
+
+        var hangfireConnectionString = configuration.GetConnectionString(schedulerSettings.Hangfire.ConnectionStringName ?? "HangfireConnection")
+            ?? databaseSettings.ConnectionString;
+
+        services.AddHangfire(config =>
+        {
+            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(
+                    hangfireConnectionString,
+                    new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.FromSeconds(15),
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    });
+        });
+
+        services.AddHangfireServer(options =>
+        {
+            options.WorkerCount = schedulerSettings.Hangfire.WorkerCount;
+            options.Queues = schedulerSettings.Hangfire.Queues;
+        });
+
+        services.AddScoped<ISchedulerService>(sp =>
+        {
+            var settings = sp.GetRequiredService<IOptions<SchedulerSettings>>().Value;
+            return settings.Provider.Equals("Quartz", StringComparison.OrdinalIgnoreCase)
+                ? new QuartzSchedulerService()
+                : ActivatorUtilities.CreateInstance<HangfireSchedulerService>(sp);
+        });
 
         // Use AddIdentityCore instead of AddIdentity to avoid overriding
         // the default authentication scheme. AddIdentity internally calls
@@ -254,7 +309,9 @@ public static class DependencyInjection
 
         services.AddAuthorizationBuilder()
             .AddPolicy("CatalogWrite", policy => policy.RequireRole("Admin", "CatalogManager"))
-            .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+            .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"))
+            .AddPolicy("SchedulerViewer", policy => policy.RequireRole("Admin", "Viewer"))
+            .AddPolicy("SchedulerOperator", policy => policy.RequireRole("Admin", "User"));
 
         return services;
     }

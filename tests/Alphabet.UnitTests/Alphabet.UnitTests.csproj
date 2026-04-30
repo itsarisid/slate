@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core\Alphabet.Application\Alphabet.Application.csproj" />
     <ProjectReference Include="..\..\src\Core\Alphabet.Domain\Alphabet.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Core\Alphabet.Infrastructure\Alphabet.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
