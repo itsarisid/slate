@@ -56,7 +56,8 @@ public static class ProductModuleEndpoints
             .Produces<ProductResponseDto>(StatusCodes.Status201Created)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .WithName("CreateProduct")
-            .WithSummary("Creates a new product.");
+            .WithSummary("Creates a new product.")
+            .WithDescription("Creates a catalog product, persists it, and returns the created product representation. This endpoint requires the CatalogWrite policy.");
 
         group.MapGet(
                 "/{id:guid}",
@@ -82,7 +83,8 @@ public static class ProductModuleEndpoints
             .Produces<ProductResponseDto>(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
             .WithName("GetProductById")
-            .WithSummary("Gets a product by identifier.");
+            .WithSummary("Gets a product by identifier.")
+            .WithDescription("Returns the product details for the specified product id when the product exists.");
 
         return endpoints;
     }

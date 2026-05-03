@@ -36,8 +36,8 @@ public static class CommunicationModuleEndpoints
         group.MapPost(
                 "/send",
                 async Task<Results<Ok<CommunicationBatchResponseDto>, BadRequest<ProblemDetails>>> (
-                    SendCommunicationCommand command,
-                    ISender sender,
+                    [FromBody] SendCommunicationCommand command,
+                    [FromServices] ISender sender,
                     CancellationToken cancellationToken) =>
                 {
                     var result = await sender.Send(command, cancellationToken);
@@ -63,7 +63,7 @@ public static class CommunicationModuleEndpoints
         group.MapGet(
                 "/configuration",
                 async Task<Results<Ok<CommunicationConfigurationDto>, BadRequest<ProblemDetails>>> (
-                    ISender sender,
+                    [FromServices] ISender sender,
                     CancellationToken cancellationToken) =>
                 {
                     var result = await sender.Send(new GetCommunicationConfigurationQuery(), cancellationToken);
