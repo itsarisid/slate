@@ -5,7 +5,6 @@ using Alphabet.Infrastructure;
 using Alphabet.Infrastructure.Identity;
 using Alphabet.Infrastructure.Logging;
 using Alphabet.Infrastructure.Options;
-using Alphabet.Infrastructure.Persistence.Context;
 using Alphabet.Infrastructure.Scheduler;
 using Alphabet.Modules.CommunicationModule.Api;
 using Alphabet.Modules.IdentityModule.Api;
@@ -13,8 +12,8 @@ using Alphabet.Modules.ProductModule.Api;
 using Alphabet.Modules.SchedulerModule.Api;
 using Asp.Versioning;
 using Hangfire;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
+using AspNetCore.Swagger.Themes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,26 +101,16 @@ if (schedulerSettings.Provider.Equals("Hangfire", StringComparison.OrdinalIgnore
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
+
+    // Apply a theme
+    //app.UseSwaggerUI(Theme.Dark);
+
+    // Enable runtime theme switcher!
+    app.UseSwaggerUI(Theme.Dark, c =>
     {
-        options.InjectStylesheet("/swagger-dark.css");
-        options.DocumentTitle = "Alphabet API Docs";
+        c.EnableThemeSwitcher();
+        c.DocumentTitle = "Alphabet API Docs";
     });
 }
 
 app.Run();
-
-//public partial class Program;
-
-//static async Task ApplyDatabaseMigrationsAsync(WebApplication app)
-//{
-//    await using var scope = app.Services.CreateAsyncScope();
-//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-//    if (!dbContext.Database.IsRelational())
-//    {
-//        return;
-//    }
-
-//    await dbContext.Database.MigrateAsync();
-//}

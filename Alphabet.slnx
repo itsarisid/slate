@@ -17,6 +17,7 @@
     <Project Path="src/Gateway/Alphabet.AppWire/Alphabet.AppWire.csproj" />
   </Folder>
   <Folder Name="/src/Libraries/">
+    <Project Path="src/Libraries/Alphabet.SearchEngine/Alphabet.SearchEngine.csproj" Id="ccc2d62f-b5c9-496b-9c79-cc1bf0940479" />
     <Project Path="src/Libraries/Alphabet.Utility/Alphabet.Utility.csproj" />
   </Folder>
   <Folder Name="/tests/">
