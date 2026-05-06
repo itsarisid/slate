@@ -11,7 +11,6 @@ namespace Alphabet.Application.Features.Scheduler.Queries;
 public sealed record GetDashboardStatsQuery : IRequest<DashboardStatsDto>;
 
 public sealed class GetDashboardStatsQueryHandler(
-    IJobRepository jobRepository,
     IJobExecutionRepository executionRepository,
     ISchedulerService schedulerService) : IRequestHandler<GetDashboardStatsQuery, DashboardStatsDto>
 {

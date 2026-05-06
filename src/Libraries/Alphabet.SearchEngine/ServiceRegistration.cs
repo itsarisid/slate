@@ -35,7 +35,7 @@ public static class ServiceRegistration
     /// </remarks>
     /// <example>
     /// <code>
-    /// services.AddSearchEngineServices<Product>(new ProductIndexConfiguration());
+    /// services.AddSearchEngineServices&lt;Product&gt;(new ProductIndexConfiguration());
     /// </code>
     /// </example>
     public static IServiceCollection AddSearchEngineServices<T>(this IServiceCollection serviceCollection,

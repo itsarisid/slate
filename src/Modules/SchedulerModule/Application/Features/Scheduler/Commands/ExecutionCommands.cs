@@ -20,7 +20,6 @@ public sealed class CancelExecutionCommandHandler(IJobExecutionService jobExecut
 }
 
 public sealed class RetryExecutionCommandHandler(
-    IJobExecutionService jobExecutionService,
     IJobExecutionRepository jobExecutionRepository,
     IJobRepository jobRepository,
     ISchedulerService schedulerService)

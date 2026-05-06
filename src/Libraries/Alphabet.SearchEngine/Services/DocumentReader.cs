@@ -224,10 +224,10 @@ internal sealed class DocumentReader<T> : IDocumentReader<T> where T : IDocument
 
             result.Facets = facetResults;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log facet retrieval errors in production
-            // Consider adding logging here: _logger.LogError(ex, "Failed to retrieve facet results");
+            // Consider adding logging here: _logger.LogError(exception, "Failed to retrieve facet results");
             result.Facets = Enumerable.Empty<FacetFilter>();
         }
     }
