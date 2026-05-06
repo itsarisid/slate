@@ -1,6 +1,7 @@
 using Alphabet.Application.Features.Scheduler.Commands;
 using Alphabet.Application.Features.Scheduler.Dtos;
 using Alphabet.Application.Features.Scheduler.Queries;
+using Alphabet.Domain.Enums;
 using Alphabet.Modules.SchedulerModule.Api.Models;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
@@ -78,7 +79,7 @@ public static class SchedulerModuleEndpoints
         group.MapGet("/jobs", async Task<Ok<PagedResponseDto<JobDto>>> (
             [FromQuery] int? pageNumber,
             [FromQuery] int? pageSize,
-            [FromQuery] Domain.Enums.JobType? jobType,
+            [FromQuery] JobType? jobType,
             [FromQuery] string? status,
             [FromQuery] string? tag,
             [FromQuery] string? search,
@@ -233,7 +234,7 @@ public static class SchedulerModuleEndpoints
             Guid jobId,
             [FromQuery] int? pageNumber,
             [FromQuery] int? pageSize,
-            [FromQuery] Domain.Enums.ExecutionStatus? status,
+            [FromQuery] ExecutionStatus? status,
             [FromQuery] DateTimeOffset? fromDate,
             [FromQuery] DateTimeOffset? toDate,
             [FromServices] ISender sender,

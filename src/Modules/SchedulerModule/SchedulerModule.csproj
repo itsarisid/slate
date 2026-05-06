@@ -14,7 +14,10 @@
     <Compile Remove="Domain\Enums\**\*.cs" />
     <Compile Remove="Domain\Interfaces\**\*.cs" />
     <Compile Remove="Domain\Models\**\*.cs" />
-    <Compile Remove="Infrastructure\**\*.cs" />
+    <Compile Remove="Infrastructure\Options\**\*.cs" />
+    <Compile Remove="Infrastructure\Persistence\**\*.cs" />
+    <Compile Remove="Infrastructure\Repositories\**\*.cs" />
+    <Compile Remove="Infrastructure\Scheduler\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
