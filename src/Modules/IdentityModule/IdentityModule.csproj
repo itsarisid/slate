@@ -13,6 +13,7 @@
     <Compile Remove="Domain\Entities\**\*.cs" />
     <Compile Remove="Domain\Enums\**\*.cs" />
     <Compile Remove="Domain\Interfaces\**\*.cs" />
+    <Compile Remove="Infrastructure\Options\**\*.cs" />
     <Compile Remove="Infrastructure\Identity\**\*.cs" />
     <Compile Remove="Infrastructure\Services\**\*.cs" />
   </ItemGroup>

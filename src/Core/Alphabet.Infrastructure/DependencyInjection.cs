@@ -2,10 +2,13 @@ using System.Text;
 using System.Security.Claims;
 using Alphabet.Application.Common.Authentication;
 using Alphabet.Application.Common.Interfaces;
+using Alphabet.Application.Common.Interfaces.Privilege;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
+using Alphabet.Domain.Interfaces.Privilege;
 using Alphabet.Infrastructure.BackgroundJobs;
+using Alphabet.Infrastructure.Data.Seeders;
 using Alphabet.Infrastructure.Caching;
 using Alphabet.Infrastructure.External.Email;
 using Alphabet.Infrastructure.Health;
@@ -14,6 +17,7 @@ using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Persistence.Context;
 using Alphabet.Infrastructure.Persistence.Repositories;
 using Alphabet.Infrastructure.Repositories;
+using Alphabet.Infrastructure.Repositories.Privilege;
 using Alphabet.Infrastructure.Scheduler;
 using Alphabet.Infrastructure.Scheduler.JobHandlers;
 using Alphabet.Infrastructure.Security;
@@ -52,6 +56,8 @@ public static class DependencyInjection
         services.Configure<CommunicationSettings>(configuration.GetSection(CommunicationSettings.SectionName));
         services.Configure<FrontendUrlsSettings>(configuration.GetSection(FrontendUrlsSettings.SectionName));
         services.Configure<CookieAuthenticationSettings>(configuration.GetSection(CookieAuthenticationSettings.SectionName));
+        services.Configure<PrivilegeSettings>(configuration.GetSection(PrivilegeSettings.SectionName));
+        services.Configure<PrivilegeAuthorizationSettings>(configuration.GetSection(PrivilegeAuthorizationSettings.SectionName));
         services.Configure<SchedulerSettings>(configuration.GetSection(SchedulerSettings.SectionName));
 
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>() ?? new DatabaseSettings();
@@ -93,6 +99,8 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IPrivilegeRepository, PrivilegeRepository>();
+        services.AddScoped<IPrivilegeAuditRepository, PrivilegeAuditRepository>();
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IJobExecutionRepository, JobExecutionRepository>();
 
@@ -108,6 +116,9 @@ public static class DependencyInjection
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<PrivilegeCacheRepository>();
+        services.AddScoped<IPrivilegeService, PrivilegeService>();
+        services.AddScoped<IPrivilegeEvaluationService, PrivilegeService>();
         services.AddScoped<IBackgroundJobService, InProcessBackgroundJobService>();
         services.AddScoped<IJobExecutionService, JobExecutionService>();
         services.AddScoped<HttpCallJobHandler>();
@@ -310,8 +321,12 @@ public static class DependencyInjection
         services.AddAuthorizationBuilder()
             .AddPolicy("CatalogWrite", policy => policy.RequireRole("Admin", "CatalogManager"))
             .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"))
+            .AddPolicy("PrivilegeManagers", policy => policy.RequireRole("Admin", "PrivilegeManager"))
             .AddPolicy("SchedulerViewer", policy => policy.RequireRole("Admin", "Viewer"))
             .AddPolicy("SchedulerOperator", policy => policy.RequireRole("Admin", "User"));
+
+        services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationPolicyProvider, PrivilegePolicyProvider>();
+        services.AddScoped<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
         return services;
     }

@@ -2,12 +2,14 @@ using Alphabet.AppWire.Configuration;
 using Alphabet.AppWire.Middleware;
 using Alphabet.Application;
 using Alphabet.Infrastructure;
+using Alphabet.Infrastructure.Data.Seeders;
 using Alphabet.Infrastructure.Identity;
 using Alphabet.Infrastructure.Logging;
 using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Scheduler;
 using Alphabet.Modules.CommunicationModule.Api;
 using Alphabet.Modules.IdentityModule.Api;
+using Alphabet.Modules.PrivilegeModule.Api;
 using Alphabet.Modules.ProductModule.Api;
 using Alphabet.Modules.SchedulerModule.Api;
 using Asp.Versioning;
@@ -57,6 +59,7 @@ var app = builder.Build();
 
 //await ApplyDatabaseMigrationsAsync(app);
 await IdentitySetup.SeedAsync(app.Services);
+await DefaultPrivilegesSeeder.SeedAsync(app.Services);
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestLoggingMiddleware>();
@@ -84,6 +87,7 @@ app.MapHealthChecks("/health");
 app.MapCommunicationModule();
 app.MapProductModule();
 app.MapIdentityModule();
+app.MapPrivilegeModule();
 app.MapSchedulerModule();
 
 var schedulerSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SchedulerSettings>>().Value;

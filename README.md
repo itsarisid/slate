@@ -3,6 +3,7 @@
 Alphabet is a production-oriented .NET 10 Web API solution template built with Clean Architecture, vertical slicing, CQRS, MediatR, FluentValidation, EF Core, JWT authentication, Swagger, health checks, and cache abstractions that can switch between memory and Redis.
 
 Authentication and MFA guidance lives in `README-AUTH.md`.
+Privilege-based access control guidance lives in `README-PRIVILEGE.md`.
 
 ## Solution structure
 
@@ -17,6 +18,7 @@ Alphabet/
 |   |-- Modules/CommunicationModule
 |   |-- Modules/IdentityModule
 |   |-- Modules/OrderModule
+|   |-- Modules/PrivilegeModule
 |   |-- Modules/ProductModule
 |   |-- Modules/SchedulerModule
 |   |-- Gateway/Alphabet.AppWire
@@ -75,8 +77,8 @@ dotnet ef database update \
 
 1. Add or update the aggregate root and value objects in `src/Core/Alphabet.Domain`.
 2. Add repository abstractions or specifications only when the existing generic repository is not enough.
-3. Add a vertical slice under `src/Core/Alphabet.Application/Features/<FeatureName>` with commands, queries, handlers, validators, and DTOs.
-4. Implement persistence or external adapters inside `src/Core/Alphabet.Infrastructure`.
+3. Add a vertical slice under the related module when the feature belongs to a single bounded context, for example `src/Modules/<ModuleName>/Application/Features/<FeatureName>`.
+4. Keep only shared, reusable infrastructure in `src/Core/Alphabet.Infrastructure`, and place feature-owned infrastructure beside the module in `src/Modules/<ModuleName>/Infrastructure`.
 5. Register only the new adapters in `Alphabet.Infrastructure/DependencyInjection.cs`.
 6. Expose endpoints in the module's `Api` folder under `src/Modules/<ModuleName>/Api`.
 7. Add unit tests for handlers and validators, then add integration tests for persistence and API behavior.
@@ -89,20 +91,31 @@ dotnet ef database update \
 4. Communicate across modules using domain events, integration events, or a message bus abstraction.
 5. Register the module from the gateway or composition root only.
 
-Every module in this repository now follows the same visible folder shape as `OrderModule`, even when some business logic still lives in shared Core projects during the current transition:
+Every module in this repository now follows the same visible folder shape as `OrderModule`:
 
 - `Api`
 - `Application`
 - `Domain`
 - `Infrastructure`
 
+Shared infrastructure that is reused by multiple modules stays in `src/Core/Alphabet.Infrastructure`, such as:
+
+- caching
+- generic persistence and `AppDbContext`
+- health checks
+- logging
+- current-user access
+- generic background jobs
+
+Feature-owned infrastructure lives inside the module folders and is compiled into the core infrastructure assembly through linked source includes. That keeps ownership close to the feature without duplicating runtime registrations.
+
 ## Communication module
 
 The solution includes a dedicated communication module for alerts, notifications, and outbound user messaging.
 
 - Module project: `src/Modules/CommunicationModule`
-- Application feature slices: `src/Core/Alphabet.Application/Features/Communication`
-- Transport implementations: `src/Core/Alphabet.Infrastructure/Services`
+- Application feature slices: `src/Modules/CommunicationModule/Application/Features/Communication`
+- Transport implementations: `src/Modules/CommunicationModule/Infrastructure/Services`
 
 Supported channels:
 
@@ -136,6 +149,27 @@ Endpoints:
 - `GET /api/v1/communications/configuration`
 
 All public methods and communication endpoints include XML comments plus Swagger summaries and descriptions so consumers can understand what each method and route does without reading the internal implementation.
+
+## Privilege module
+
+The solution includes a dedicated privilege-based access control module under `src/Modules/PrivilegeModule`.
+
+- API base paths:
+  - `POST /api/v1/privileges`
+  - `GET /api/v1/privileges`
+  - `POST /api/v1/roles/{roleId}/privileges`
+  - `POST /api/v1/users/{userId}/privileges`
+  - `GET /api/v1/auth/check-privilege/{privilegeName}`
+  - `POST /api/v1/users/me/privilege-requests`
+- documentation: `README-PRIVILEGE.md`
+
+This module works alongside ASP.NET Core Identity roles and supports:
+
+- privilege catalog management
+- role and direct-user privilege assignments
+- composite policies
+- self-service privilege requests
+- audit logging and analytics
 
 ## Scheduler module
 
