@@ -29,7 +29,7 @@ public sealed class PrivilegeConfiguration :
     {
         var stringCollectionConverter = new ValueConverter<IReadOnlyCollection<string>, string>(
             value => JsonSerializer.Serialize(value, JsonOptions),
-            value => JsonSerializer.Deserialize<List<string>>(value, JsonOptions) ?? new List<string>());
+            value => (IReadOnlyCollection<string>)(JsonSerializer.Deserialize<HashSet<string>>(value, JsonOptions) ?? new HashSet<string>()));
 
         var dictionaryConverter = new ValueConverter<IDictionary<string, string?>, string>(
             value => JsonSerializer.Serialize(value, JsonOptions),
@@ -87,7 +87,7 @@ public sealed class PrivilegeConfiguration :
     {
         var stringCollectionConverter = new ValueConverter<IReadOnlyCollection<string>, string>(
             value => JsonSerializer.Serialize(value, JsonOptions),
-            value => JsonSerializer.Deserialize<List<string>>(value, JsonOptions) ?? new List<string>());
+            value => (IReadOnlyCollection<string>)(JsonSerializer.Deserialize<HashSet<string>>(value, JsonOptions) ?? new HashSet<string>()));
 
         builder.ToTable("PrivilegePolicies");
         builder.HasKey(x => x.Id);
