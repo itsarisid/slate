@@ -20,15 +20,15 @@ public sealed class SwaggerSetup : IConfigureOptions<SwaggerGenOptions>
 
         options.TagActionsBy(apiDescription =>
         {
-            var relativePath = apiDescription.RelativePath?.ToLowerInvariant() ?? string.Empty;
-            return relativePath switch
+            // Respect the WithTags() metadata set on minimal API endpoint groups.
+            if (apiDescription.ActionDescriptor.EndpointMetadata
+                    .OfType<Microsoft.AspNetCore.Http.Metadata.ITagsMetadata>()
+                    .FirstOrDefault() is { } tagsMetadata && tagsMetadata.Tags.Count > 0)
             {
-                var path when path.Contains("/communications") => ["Communication Module"],
-                var path when path.Contains("/products") => ["Product Module"],
-                var path when path.Contains("/scheduler") => ["Scheduler Module"],
-                var path when path.Contains("/auth") || path.Contains("/admin") => ["Identity Module"],
-                _ => ["Alphabet API"]
-            };
+                return tagsMetadata.Tags.ToList();
+            }
+
+            return ["Alphabet API"];
         });
 
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
