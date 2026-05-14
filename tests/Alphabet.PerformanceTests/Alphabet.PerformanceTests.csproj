@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Alphabet.PerformanceTests</AssemblyName>
+    <RootNamespace>Alphabet.PerformanceTests</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Core\Alphabet.Application\Alphabet.Application.csproj" />
+    <ProjectReference Include="..\..\src\Core\Alphabet.Domain\Alphabet.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Core\Alphabet.Infrastructure\Alphabet.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+  </ItemGroup>
+</Project>

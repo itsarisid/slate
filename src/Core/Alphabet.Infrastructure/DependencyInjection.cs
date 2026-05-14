@@ -2,10 +2,12 @@ using System.Text;
 using System.Security.Claims;
 using Alphabet.Application.Common.Authentication;
 using Alphabet.Application.Common.Interfaces;
+using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Common.Interfaces.Privilege;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
+using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.Interfaces.Privilege;
 using Alphabet.Infrastructure.BackgroundJobs;
 using Alphabet.Infrastructure.Data.Seeders;
@@ -59,6 +61,10 @@ public static class DependencyInjection
         services.Configure<PrivilegeSettings>(configuration.GetSection(PrivilegeSettings.SectionName));
         services.Configure<PrivilegeAuthorizationSettings>(configuration.GetSection(PrivilegeAuthorizationSettings.SectionName));
         services.Configure<SchedulerSettings>(configuration.GetSection(SchedulerSettings.SectionName));
+        services.Configure<ProductivitySettings>(configuration.GetSection(ProductivitySettings.SectionName));
+        services.Configure<ProductivityNotificationSettings>(configuration.GetSection(ProductivityNotificationSettings.SectionName));
+        services.Configure<ProductivityFileStorageSettings>(configuration.GetSection(ProductivityFileStorageSettings.SectionName));
+        services.Configure<RecurrenceSettings>(configuration.GetSection(RecurrenceSettings.SectionName));
 
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>() ?? new DatabaseSettings();
 
@@ -103,6 +109,10 @@ public static class DependencyInjection
         services.AddScoped<IPrivilegeAuditRepository, PrivilegeAuditRepository>();
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IJobExecutionRepository, JobExecutionRepository>();
+        services.AddScoped<ITodoRepository, TodoRepository>();
+        services.AddScoped<INoteRepository, NoteRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -121,6 +131,17 @@ public static class DependencyInjection
         services.AddScoped<IPrivilegeEvaluationService, PrivilegeService>();
         services.AddScoped<IBackgroundJobService, InProcessBackgroundJobService>();
         services.AddScoped<IJobExecutionService, JobExecutionService>();
+        services.AddScoped<IReminderService, ReminderSchedulerService>();
+        services.AddScoped<Alphabet.Application.Common.Interfaces.Productivity.INotificationService, Alphabet.Infrastructure.Services.NotificationService>();
+        services.AddScoped<IFileStorageService, FileStorageService>();
+        services.AddScoped<ICalendarExportService, CalendarExportService>();
+        services.AddScoped<IProductivityReadService, ProductivityReadService>();
+        services.AddScoped<NoteSearchService>();
+        services.AddScoped<ReminderTriggerJob>();
+        services.AddScoped<RecurringTaskGeneratorJob>();
+        services.AddScoped<TrashCleanupJob>();
+        services.AddScoped<ProductivityReportJob>();
+        services.AddScoped<CalendarSyncJob>();
         services.AddScoped<HttpCallJobHandler>();
         services.AddScoped<StoredProcedureJobHandler>();
         services.AddScoped<CodeExecutionJobHandler>();
@@ -131,6 +152,7 @@ public static class DependencyInjection
         services.AddScoped<Alphabet.Infrastructure.Scheduler.ExampleJobs.ReportGenerationJob>();
         services.AddScoped<Alphabet.Infrastructure.Scheduler.ExampleJobs.CleanupJob>();
         services.AddHttpClient("Alphabet.Scheduler.Http");
+        services.AddHttpClient("Alphabet.Productivity.Notifications");
 
         var cacheSettings = configuration.GetSection(CacheSettings.SectionName).Get<CacheSettings>() ?? new CacheSettings();
         var lockoutSettings = configuration.GetSection(LockoutSettings.SectionName).Get<LockoutSettings>() ?? new LockoutSettings();

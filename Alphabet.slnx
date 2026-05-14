@@ -12,6 +12,7 @@
     <Project Path="src/Modules/OrderModule/OrderModule.csproj" />
     <Project Path="src/Modules/PrivilegeModule/PrivilegeModule.csproj" />
     <Project Path="src/Modules/ProductModule/ProductModule.csproj" />
+    <Project Path="src/Modules/ProductivityModule/ProductivityModule.csproj" />
     <Project Path="src/Modules/SchedulerModule/SchedulerModule.csproj" />
   </Folder>
   <Folder Name="/src/Gateway/">
@@ -24,6 +25,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Alphabet.FunctionalTests/Alphabet.FunctionalTests.csproj" />
     <Project Path="tests/Alphabet.IntegrationTests/Alphabet.IntegrationTests.csproj" />
+    <Project Path="tests/Alphabet.PerformanceTests/Alphabet.PerformanceTests.csproj" />
     <Project Path="tests/Alphabet.UnitTests/Alphabet.UnitTests.csproj" />
   </Folder>
 </Solution>

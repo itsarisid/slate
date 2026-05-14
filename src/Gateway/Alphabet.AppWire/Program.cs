@@ -7,9 +7,11 @@ using Alphabet.Infrastructure.Identity;
 using Alphabet.Infrastructure.Logging;
 using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Scheduler;
+using Alphabet.Infrastructure.Services;
 using Alphabet.Modules.CommunicationModule.Api;
 using Alphabet.Modules.IdentityModule.Api;
 using Alphabet.Modules.PrivilegeModule.Api;
+using Alphabet.Modules.ProductivityModule.Api;
 using Alphabet.Modules.ProductModule.Api;
 using Alphabet.Modules.SchedulerModule.Api;
 using Asp.Versioning;
@@ -43,6 +45,7 @@ builder.Services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureOptions<SwaggerSetup>();
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
@@ -60,6 +63,7 @@ var app = builder.Build();
 //await ApplyDatabaseMigrationsAsync(app);
 await IdentitySetup.SeedAsync(app.Services);
 await DefaultPrivilegesSeeder.SeedAsync(app.Services);
+ProductivityBackgroundJobSetup.Configure(app.Services);
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestLoggingMiddleware>();
@@ -89,6 +93,7 @@ app.MapProductModule();
 app.MapIdentityModule();
 app.MapPrivilegeModule();
 app.MapSchedulerModule();
+app.MapProductivityModule();
 
 var schedulerSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SchedulerSettings>>().Value;
 if (schedulerSettings.Provider.Equals("Hangfire", StringComparison.OrdinalIgnoreCase) &&

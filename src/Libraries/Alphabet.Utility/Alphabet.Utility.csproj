@@ -3,4 +3,7 @@
     <AssemblyName>Alphabet.Utility</AssemblyName>
     <RootNamespace>Alphabet.Utility</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 </Project>

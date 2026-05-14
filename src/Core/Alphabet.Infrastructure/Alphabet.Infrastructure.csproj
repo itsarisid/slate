@@ -60,6 +60,21 @@
     <Compile Include="..\..\Modules\SchedulerModule\Infrastructure\Scheduler\**\*.cs">
       <Link>Modules\SchedulerModule\Infrastructure\Scheduler\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\BackgroundJobs\*.cs">
+      <Link>Modules\ProductivityModule\Infrastructure\BackgroundJobs\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Options\*.cs">
+      <Link>Modules\ProductivityModule\Infrastructure\Options\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Persistence\Configurations\*.cs">
+      <Link>Modules\ProductivityModule\Infrastructure\Persistence\Configurations\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Repositories\*.cs">
+      <Link>Modules\ProductivityModule\Infrastructure\Repositories\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Services\*.cs">
+      <Link>Modules\ProductivityModule\Infrastructure\Services\%(Filename)%(Extension)</Link>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

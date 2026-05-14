@@ -17,6 +17,12 @@
     <Compile Include="..\..\Modules\SchedulerModule\Domain\Enums\*.cs" />
     <Compile Include="..\..\Modules\SchedulerModule\Domain\Interfaces\*.cs" />
     <Compile Include="..\..\Modules\SchedulerModule\Domain\Models\*.cs" />
+    <Compile Include="..\..\Modules\ProductivityModule\Domain\Entities\Productivity\*.cs" />
+    <Compile Include="..\..\Modules\ProductivityModule\Domain\Enums\*.cs" />
+    <Compile Include="..\..\Modules\ProductivityModule\Domain\Events\*.cs" />
+    <Compile Include="..\..\Modules\ProductivityModule\Domain\Interfaces\Productivity\*.cs" />
+    <Compile Include="..\..\Modules\ProductivityModule\Domain\Models\*.cs" />
+    <Compile Include="..\..\Modules\ProductivityModule\Domain\ValueObjects\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

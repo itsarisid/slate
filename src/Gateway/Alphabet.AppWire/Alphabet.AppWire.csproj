@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Modules\IdentityModule\IdentityModule.csproj" />
     <ProjectReference Include="..\..\Modules\PrivilegeModule\PrivilegeModule.csproj" />
     <ProjectReference Include="..\..\Modules\SchedulerModule\SchedulerModule.csproj" />
+    <ProjectReference Include="..\..\Modules\ProductivityModule\ProductivityModule.csproj" />
   </ItemGroup>
 
   <ItemGroup>

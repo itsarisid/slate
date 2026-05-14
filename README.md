@@ -4,6 +4,7 @@ Alphabet is a production-oriented .NET 10 Web API solution template built with C
 
 Authentication and MFA guidance lives in `README-AUTH.md`.
 Privilege-based access control guidance lives in `README-PRIVILEGE.md`.
+Productivity module guidance lives in `README-PRODUCTIVITY.md`.
 
 ## Solution structure
 
@@ -19,6 +20,7 @@ Alphabet/
 |   |-- Modules/IdentityModule
 |   |-- Modules/OrderModule
 |   |-- Modules/PrivilegeModule
+|   |-- Modules/ProductivityModule
 |   |-- Modules/ProductModule
 |   |-- Modules/SchedulerModule
 |   |-- Gateway/Alphabet.AppWire
@@ -180,6 +182,33 @@ The solution also includes a Hangfire-first scheduler module under [src/Modules/
 - Dashboard: `/hangfire`
 
 Operational guidance and job examples live in [README-SCHEDULER.md](/C:/Users/moinc/OneDrive/Documents/New%20project/README-SCHEDULER.md).
+
+## Productivity module
+
+The solution includes a dedicated productivity module under [src/Modules/ProductivityModule](/C:/Users/moinc/OneDrive/Documents/New%20project/src/Modules/ProductivityModule) for collaborative work management and personal organization.
+
+- API base paths:
+  - `/api/v1/todos`
+  - `/api/v1/reminders`
+  - `/api/v1/notes`
+  - `/api/v1/tasks`
+  - `/api/v1/events`
+  - `/api/v1/search`
+  - `/api/v1/dashboard/today`
+  - `/api/v1/reports/productivity`
+- SignalR hub:
+  - `/hubs/productivity`
+- documentation:
+  - `README-PRODUCTIVITY.md`
+
+The module currently includes:
+
+- todos with filtering, reminders, and task conversion
+- reminders with Hangfire-backed scheduling
+- notes with sharing, export, and version history
+- task boards, time tracking, and dependency graphs
+- calendar views, availability checks, and iCal export
+- global search, dashboards, smart lists, templates, and reports
 
 ## How to switch database providers
 
