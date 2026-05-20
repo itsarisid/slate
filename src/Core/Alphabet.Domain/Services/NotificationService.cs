@@ -7,6 +7,9 @@ namespace Alphabet.Domain.Services;
 /// </summary>
 public sealed class NotificationService
 {
+    /// <summary>
+    /// Create welcome message.
+    /// </summary>
     public Message CreateWelcomeMessage(string firstName)
     {
         return new Message("Welcome", $"Hello {firstName}, your account is ready.");

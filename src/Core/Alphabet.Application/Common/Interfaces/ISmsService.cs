@@ -5,5 +5,8 @@ namespace Alphabet.Application.Common.Interfaces;
 /// </summary>
 public interface ISmsService
 {
+    /// <summary>
+    /// Send async.
+    /// </summary>
     Task SendAsync(string to, string body, CancellationToken cancellationToken);
 }

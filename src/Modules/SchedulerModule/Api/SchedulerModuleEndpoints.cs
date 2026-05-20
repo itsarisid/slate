@@ -33,6 +33,9 @@ public static class SchedulerModuleEndpoints
         MapAdmin(endpoints, versionSet);
         return endpoints;
     }
+    /// <summary>
+    /// Map jobs.
+    /// </summary>
 
     private static void MapJobs(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -387,6 +390,9 @@ public static class SchedulerModuleEndpoints
         .WithSummary("Gets execution timeline data.")
         .WithDescription("Returns time-bucketed execution counts for success, failure, and running states to power monitoring charts.");
     }
+    /// <summary>
+    /// Map admin.
+    /// </summary>
 
     private static void MapAdmin(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {

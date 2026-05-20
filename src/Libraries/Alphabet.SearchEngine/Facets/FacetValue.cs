@@ -1,5 +1,8 @@
-﻿
+
 namespace Alphabet.SearchEngine.Facets;
+/// <summary>
+/// Facet value.
+/// </summary>
 
 public class FacetValue
 {

@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Scheduler;
 public sealed class CronExpressionValidator : ICronExpressionValidator
 {
     private static readonly Regex PartRegex = new("^[0-9*/,\\-]+$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    /// <summary>
+    /// Is valid.
+    /// </summary>
 
     public bool IsValid(string? expression)
     {

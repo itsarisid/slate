@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
 using MediatR;
@@ -9,10 +8,16 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Regenerates MFA recovery codes for the authenticated user.
 /// </summary>
 public sealed record RegenerateRecoveryCodesCommand : IRequest<Result<RecoveryCodesDto>>;
+/// <summary>
+/// Regenerate recovery codes command handler.
+/// </summary>
 
 public sealed class RegenerateRecoveryCodesCommandHandler(IIdentityService identityService, ICurrentUserService currentUserService)
     : IRequestHandler<RegenerateRecoveryCodesCommand, Result<RecoveryCodesDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<RecoveryCodesDto>> Handle(RegenerateRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
         return currentUserService.UserId is { } userId

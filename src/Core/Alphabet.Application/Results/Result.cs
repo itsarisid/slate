@@ -16,8 +16,14 @@ public class Result
     public bool IsFailure => !IsSuccess;
 
     public string? Error { get; }
+    /// <summary>
+    /// Success.
+    /// </summary>
 
     public static Result Success() => new(true, null);
+    /// <summary>
+    /// Failure.
+    /// </summary>
 
     public static Result Failure(string error) => new(false, error);
 
@@ -36,8 +42,14 @@ public sealed class Result<T> : Result
     }
 
     public T? Value { get; }
+    /// <summary>
+    /// Success.
+    /// </summary>
 
     public static Result<T> Success(T value) => new(true, value, null);
+    /// <summary>
+    /// Failure.
+    /// </summary>
 
     public new static Result<T> Failure(string error) => new(false, default, error);
 

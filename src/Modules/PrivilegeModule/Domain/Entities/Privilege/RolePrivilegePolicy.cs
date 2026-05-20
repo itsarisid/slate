@@ -14,6 +14,9 @@ public sealed class RolePrivilegePolicy : BaseEntity
     public string GrantedBy { get; private set; } = "system";
 
     public DateTimeOffset? ExpiresAt { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static RolePrivilegePolicy Create(Guid roleId, Guid policyId, string grantedBy, DateTimeOffset? expiresAt)
     {

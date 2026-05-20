@@ -10,10 +10,19 @@ public sealed class PrivilegePolicyProvider(IOptions<AuthorizationOptions> optio
     : IAuthorizationPolicyProvider
 {
     private readonly DefaultAuthorizationPolicyProvider _fallbackProvider = new(options);
+    /// <summary>
+    /// Get default policy async.
+    /// </summary>
 
     public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => _fallbackProvider.GetDefaultPolicyAsync();
+    /// <summary>
+    /// Get fallback policy async.
+    /// </summary>
 
     public Task<AuthorizationPolicy?> GetFallbackPolicyAsync() => _fallbackProvider.GetFallbackPolicyAsync();
+    /// <summary>
+    /// Get policy async.
+    /// </summary>
 
     public Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {

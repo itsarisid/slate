@@ -1,7 +1,5 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.ValueObjects;
@@ -24,6 +22,9 @@ public sealed record CreateTodoCommand(
     bool IsRecurring,
     RecurrencePattern? RecurrencePattern,
     Guid? AssignedTo) : IRequest<Result<TodoDto>>;
+/// <summary>
+/// Create todo command validator.
+/// </summary>
 
 public sealed class CreateTodoCommandValidator : AbstractValidator<CreateTodoCommand>
 {
@@ -33,6 +34,9 @@ public sealed class CreateTodoCommandValidator : AbstractValidator<CreateTodoCom
         RuleFor(x => x.Description).MaximumLength(4000);
     }
 }
+/// <summary>
+/// Create todo command handler.
+/// </summary>
 
 public sealed class CreateTodoCommandHandler(
     ITodoRepository todoRepository,
@@ -41,6 +45,9 @@ public sealed class CreateTodoCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateTodoCommand, Result<TodoDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<TodoDto>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

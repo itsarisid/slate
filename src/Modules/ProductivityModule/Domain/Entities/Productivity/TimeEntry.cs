@@ -29,6 +29,9 @@ public sealed class TimeEntry : BaseEntity
         EndTime = endTime.ToUniversalTime();
         Description = description.Trim();
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static TimeEntry Create(Guid productivityTaskId, Guid userId, DateTimeOffset startTime, DateTimeOffset endTime, string description)
         => new(productivityTaskId, userId, startTime, endTime, description);

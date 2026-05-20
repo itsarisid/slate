@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
 using FluentValidation;
@@ -15,6 +14,9 @@ public sealed record AdminCreateUserCommand(
     string FirstName,
     string LastName,
     string Role = "User") : IRequest<Result<UserDto>>;
+/// <summary>
+/// Admin create user command validator.
+/// </summary>
 
 public sealed class AdminCreateUserCommandValidator : AbstractValidator<AdminCreateUserCommand>
 {
@@ -33,10 +35,16 @@ public sealed class AdminCreateUserCommandValidator : AbstractValidator<AdminCre
         RuleFor(x => x.Role).NotEmpty().MaximumLength(50);
     }
 }
+/// <summary>
+/// Admin create user command handler.
+/// </summary>
 
 public sealed class AdminCreateUserCommandHandler(IIdentityService identityService)
     : IRequestHandler<AdminCreateUserCommand, Result<UserDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<UserDto>> Handle(AdminCreateUserCommand request, CancellationToken cancellationToken)
     {
         return identityService.AdminCreateUserAsync(

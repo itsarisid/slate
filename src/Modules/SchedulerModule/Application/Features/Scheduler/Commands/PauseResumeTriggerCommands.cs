@@ -1,8 +1,6 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using MediatR;
@@ -14,6 +12,9 @@ public sealed record PauseJobCommand(Guid JobId) : IRequest<Result>;
 public sealed record ResumeJobCommand(Guid JobId) : IRequest<Result>;
 
 public sealed record TriggerJobCommand(Guid JobId) : IRequest<Result<Guid>>;
+/// <summary>
+/// Pause job command handler.
+/// </summary>
 
 public sealed class PauseJobCommandHandler(
     IJobRepository jobRepository,
@@ -22,6 +23,9 @@ public sealed class PauseJobCommandHandler(
     ISchedulerService schedulerService,
     ICurrentUserService currentUserService) : IRequestHandler<PauseJobCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(PauseJobCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);
@@ -39,6 +43,9 @@ public sealed class PauseJobCommandHandler(
         return Result.Success();
     }
 }
+/// <summary>
+/// Resume job command handler.
+/// </summary>
 
 public sealed class ResumeJobCommandHandler(
     IJobRepository jobRepository,
@@ -47,6 +54,9 @@ public sealed class ResumeJobCommandHandler(
     ISchedulerService schedulerService,
     ICurrentUserService currentUserService) : IRequestHandler<ResumeJobCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(ResumeJobCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);
@@ -65,6 +75,9 @@ public sealed class ResumeJobCommandHandler(
         return Result.Success();
     }
 }
+/// <summary>
+/// Trigger job command handler.
+/// </summary>
 
 public sealed class TriggerJobCommandHandler(
     IJobRepository jobRepository,
@@ -73,6 +86,9 @@ public sealed class TriggerJobCommandHandler(
     ISchedulerService schedulerService,
     ICurrentUserService currentUserService) : IRequestHandler<TriggerJobCommand, Result<Guid>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<Guid>> Handle(TriggerJobCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);

@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
 using FluentValidation;
 using MediatR;
@@ -10,6 +9,9 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Pass 0 for indefinite lockout.
 /// </summary>
 public sealed record AdminLockUserCommand(Guid UserId, int DurationMinutes = 0) : IRequest<Result>;
+/// <summary>
+/// Admin lock user command validator.
+/// </summary>
 
 public sealed class AdminLockUserCommandValidator : AbstractValidator<AdminLockUserCommand>
 {
@@ -19,10 +21,16 @@ public sealed class AdminLockUserCommandValidator : AbstractValidator<AdminLockU
         RuleFor(x => x.DurationMinutes).GreaterThanOrEqualTo(0);
     }
 }
+/// <summary>
+/// Admin lock user command handler.
+/// </summary>
 
 public sealed class AdminLockUserCommandHandler(IIdentityService identityService)
     : IRequestHandler<AdminLockUserCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(AdminLockUserCommand request, CancellationToken cancellationToken)
-        => identityService.LockUserAsync(request.UserId, request.DurationMinutes, cancellationToken);
+    => identityService.LockUserAsync(request.UserId, request.DurationMinutes, cancellationToken);
 }

@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Identity;
 /// </summary>                                                                                      
 public static class IdentitySetup
 {
+    /// <summary>
+    /// Seed async.
+    /// </summary>
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();

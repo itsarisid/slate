@@ -3,9 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Alphabet.Infrastructure.Persistence.Configurations;
+/// <summary>
+/// Note configuration.
+/// </summary>
 
 public sealed class NoteConfiguration : IEntityTypeConfiguration<Note>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Note> builder)
     {
         builder.ToTable("ProductivityNotes");
@@ -20,9 +26,15 @@ public sealed class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.Property(x => x.VersionHistoryJson).HasColumnType("nvarchar(max)");
     }
 }
+/// <summary>
+/// Notebook configuration.
+/// </summary>
 
 public sealed class NotebookConfiguration : IEntityTypeConfiguration<Notebook>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Notebook> builder)
     {
         builder.ToTable("ProductivityNotebooks");

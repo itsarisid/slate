@@ -8,6 +8,9 @@ namespace Alphabet.Infrastructure.Logging;
 /// </summary>
 public static class SerilogSetup
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public static void Configure(LoggerConfiguration loggerConfiguration, IConfiguration configuration)
     {
         loggerConfiguration

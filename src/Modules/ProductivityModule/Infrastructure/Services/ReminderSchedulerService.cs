@@ -12,6 +12,9 @@ public sealed class ReminderSchedulerService(
     IBackgroundJobClient backgroundJobClient,
     ILogger<ReminderSchedulerService> logger) : IReminderService
 {
+    /// <summary>
+    /// Schedule async.
+    /// </summary>
     public Task ScheduleAsync(Reminder reminder, CancellationToken cancellationToken)
     {
         var delay = reminder.ReminderTime.UtcDateTime - DateTime.UtcNow;
@@ -24,8 +27,14 @@ public sealed class ReminderSchedulerService(
         logger.LogInformation("Scheduled reminder {ReminderId} to run in {Delay}.", reminder.Id, delay);
         return Task.CompletedTask;
     }
+    /// <summary>
+    /// Reschedule async.
+    /// </summary>
 
     public Task RescheduleAsync(Reminder reminder, CancellationToken cancellationToken) => ScheduleAsync(reminder, cancellationToken);
+    /// <summary>
+    /// Cancel async.
+    /// </summary>
 
     public Task CancelAsync(Guid reminderId, CancellationToken cancellationToken)
     {

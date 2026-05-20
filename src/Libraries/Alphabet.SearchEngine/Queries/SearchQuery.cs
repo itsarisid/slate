@@ -1,5 +1,8 @@
-﻿
+
 namespace Alphabet.SearchEngine.Queries;
+/// <summary>
+/// Search query.
+/// </summary>
 
 public abstract class SearchQuery
 {

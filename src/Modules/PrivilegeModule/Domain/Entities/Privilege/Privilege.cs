@@ -79,6 +79,9 @@ public sealed class Privilege : BaseEntity
     public string CreatedBy { get; private set; } = "system";
 
     public string? UpdatedBy { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Privilege Create(
         string name,

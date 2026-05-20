@@ -15,6 +15,9 @@ public abstract class AppIdentityDbContext(DbContextOptions options)
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    /// <summary>
+    /// On model creating.
+    /// </summary>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

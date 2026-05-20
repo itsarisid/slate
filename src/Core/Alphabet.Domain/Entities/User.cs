@@ -27,11 +27,17 @@ public sealed class User : BaseEntity
     public Email Email { get; private set; } = Email.Create("unknown@example.com");
 
     public IReadOnlyCollection<string> Roles => _roles.AsReadOnly();
+    /// <summary>
+    /// Register.
+    /// </summary>
 
     public static User Register(string firstName, string lastName, Email email)
     {
         return new User(firstName, lastName, email);
     }
+    /// <summary>
+    /// Grant role.
+    /// </summary>
 
     public void GrantRole(string role)
     {

@@ -15,7 +15,6 @@ using Alphabet.Application.Features.Productivity.Tasks.Queries;
 using Alphabet.Application.Features.Productivity.Templates.Commands;
 using Alphabet.Application.Features.Productivity.Todos.Commands;
 using Alphabet.Application.Features.Productivity.Todos.Queries;
-using Alphabet.Application.Results;
 using Alphabet.Modules.ProductivityModule.Api.Hubs;
 using Alphabet.Modules.ProductivityModule.Api.Models;
 using Asp.Versioning;
@@ -23,7 +22,6 @@ using Asp.Versioning.Builder;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -55,6 +53,9 @@ public static class ProductivityModuleEndpoints
         endpoints.MapHub<ProductivityHub>("/hubs/productivity").RequireAuthorization();
         return endpoints;
     }
+    /// <summary>
+    /// Map todos.
+    /// </summary>
 
     private static void MapTodos(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -218,6 +219,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Creates a reminder from a todo.")
         .WithDescription("Creates a linked reminder record for the selected todo.");
     }
+    /// <summary>
+    /// Map reminders.
+    /// </summary>
 
     private static void MapReminders(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -307,6 +311,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Triggers a reminder immediately for testing.")
         .WithDescription("Marks the reminder as triggered and dispatches its notification channels immediately.");
     }
+    /// <summary>
+    /// Map notes.
+    /// </summary>
 
     private static void MapNotes(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -450,6 +457,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Exports a note.")
         .WithDescription("Exports note content in a simple file form. Markdown is returned by default, while HTML/PDF/DOCX requests use a text fallback in this module baseline.");
     }
+    /// <summary>
+    /// Map tasks.
+    /// </summary>
 
     private static void MapTasks(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -539,6 +549,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Gets task dependencies.")
         .WithDescription("Returns the current task dependency graph as a flat list of dependency ids.");
     }
+    /// <summary>
+    /// Map events.
+    /// </summary>
 
     private static void MapEvents(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -653,6 +666,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Suggests meeting times.")
         .WithDescription("Suggests likely meeting times based on the requested date range and desired meeting duration.");
     }
+    /// <summary>
+    /// Map cross entity.
+    /// </summary>
 
     private static void MapCrossEntity(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -750,6 +766,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Creates a smart list.")
         .WithDescription("Saves reusable filter criteria for a specific productivity entity type.");
     }
+    /// <summary>
+    /// Map reports.
+    /// </summary>
 
     private static void MapReports(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -777,6 +796,9 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Gets a productivity report.")
         .WithDescription("Returns completion, category, and activity metrics for the requested reporting window.");
     }
+    /// <summary>
+    /// Map templates.
+    /// </summary>
 
     private static void MapTemplates(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -819,9 +841,15 @@ public static class ProductivityModuleEndpoints
         .WithSummary("Instantiates a template.")
         .WithDescription("Returns the saved serialized template payload so clients can prefill creation forms.");
     }
+    /// <summary>
+    /// Create problem.
+    /// </summary>
 
     private static ProblemDetails CreateProblem(string title, string? detail)
         => new() { Title = title, Detail = detail };
+    /// <summary>
+    /// Todo query parameters.
+    /// </summary>
 
     private sealed class TodoQueryParameters
     {

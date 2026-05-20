@@ -1,5 +1,8 @@
-﻿
+
 namespace Alphabet.SearchEngine.Facets;
+/// <summary>
+/// Facet filter.
+/// </summary>
 
 public class FacetFilter
 {

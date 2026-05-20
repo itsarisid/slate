@@ -31,9 +31,15 @@ public sealed class Comment : BaseEntity
         Content = content.Trim();
         ParentCommentId = parentCommentId;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Comment Create(string entityType, Guid entityId, Guid authorUserId, string content, Guid? parentCommentId = null)
         => new(entityType, entityId, authorUserId, content, parentCommentId);
+    /// <summary>
+    /// Edit.
+    /// </summary>
 
     public void Edit(string content)
     {

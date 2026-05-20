@@ -2,7 +2,6 @@ using Alphabet.Application.Features.Communication;
 using Alphabet.Application.Features.Communication.Commands.SendCommunication;
 using Alphabet.Application.Features.Communication.Queries.GetCommunicationConfiguration;
 using Asp.Versioning;
-using Asp.Versioning.Builder;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

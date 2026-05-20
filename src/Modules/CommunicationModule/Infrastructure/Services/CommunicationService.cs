@@ -81,6 +81,9 @@ public sealed class CommunicationService(
             NormalizeChannel(_settings.DefaultChannel),
             _settings.EnableDetailedLogging);
     }
+    /// <summary>
+    /// Send email async.
+    /// </summary>
 
     private async Task<CommunicationDispatchResult> SendEmailAsync(
         CommunicationDispatchRequest request,
@@ -102,6 +105,9 @@ public sealed class CommunicationService(
 
         return Success("Email", $"Email queued for {request.EmailAddress}.");
     }
+    /// <summary>
+    /// Send sms async.
+    /// </summary>
 
     private async Task<CommunicationDispatchResult> SendSmsAsync(
         CommunicationDispatchRequest request,
@@ -115,6 +121,9 @@ public sealed class CommunicationService(
         await smsService.SendAsync(request.PhoneNumber, request.Body, cancellationToken);
         return Success("Sms", $"SMS queued for {request.PhoneNumber}.");
     }
+    /// <summary>
+    /// Send push async.
+    /// </summary>
 
     private async Task<CommunicationDispatchResult> SendPushAsync(
         CommunicationDispatchRequest request,
@@ -128,6 +137,9 @@ public sealed class CommunicationService(
         await pushNotificationService.SendAsync(request.PushToken, request.Subject, request.Body, cancellationToken);
         return Success("Push", "Push notification queued.");
     }
+    /// <summary>
+    /// Send in app async.
+    /// </summary>
 
     private async Task<CommunicationDispatchResult> SendInAppAsync(
         CommunicationDispatchRequest request,
@@ -141,6 +153,9 @@ public sealed class CommunicationService(
         await inAppNotificationService.SendAsync(request.UserId, request.Subject, request.Body, cancellationToken);
         return Success("InApp", $"In-app notification queued for user {request.UserId}.");
     }
+    /// <summary>
+    /// Send webhook async.
+    /// </summary>
 
     private async Task<CommunicationDispatchResult> SendWebhookAsync(
         CommunicationDispatchRequest request,
@@ -154,11 +169,17 @@ public sealed class CommunicationService(
         await webhookNotificationService.SendAsync(request.WebhookUrl, request.Subject, request.Body, cancellationToken);
         return Success("Webhook", $"Webhook notification queued for {request.WebhookUrl}.");
     }
+    /// <summary>
+    /// Get enabled channels.
+    /// </summary>
 
     private HashSet<string> GetEnabledChannels()
     {
         return NormalizeRequestedChannels(_settings.EnabledChannels);
     }
+    /// <summary>
+    /// Normalize requested channels.
+    /// </summary>
 
     private static HashSet<string> NormalizeRequestedChannels(IEnumerable<string> channels)
     {
@@ -174,6 +195,9 @@ public sealed class CommunicationService(
 
         return normalizedChannels;
     }
+    /// <summary>
+    /// Normalize channel.
+    /// </summary>
 
     private static string NormalizeChannel(string channel)
     {
@@ -187,11 +211,17 @@ public sealed class CommunicationService(
             _ => channel.Trim()
         };
     }
+    /// <summary>
+    /// Success.
+    /// </summary>
 
     private static CommunicationDispatchResult Success(string channel, string message)
     {
         return new CommunicationDispatchResult(channel, true, message, DateTimeOffset.UtcNow);
     }
+    /// <summary>
+    /// Missing address.
+    /// </summary>
 
     private static CommunicationDispatchResult MissingAddress(string channel, string fieldName)
     {

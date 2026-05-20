@@ -5,5 +5,8 @@ namespace Alphabet.Application.Common.Interfaces;
 /// </summary>
 public interface IBackgroundJobService
 {
+    /// <summary>
+    /// Enqueue async.
+    /// </summary>
     Task EnqueueAsync(string jobName, Func<CancellationToken, Task> workItem, CancellationToken cancellationToken);
 }

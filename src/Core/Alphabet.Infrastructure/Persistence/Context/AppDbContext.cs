@@ -69,6 +69,9 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : AppId
     public DbSet<TimeEntry> ProductivityTimeEntries => Set<TimeEntry>();
 
     public DbSet<TaskDependency> ProductivityTaskDependencies => Set<TaskDependency>();
+    /// <summary>
+    /// On model creating.
+    /// </summary>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

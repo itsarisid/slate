@@ -12,26 +12,41 @@ namespace Alphabet.Infrastructure.Persistence.Repositories;
 public class Repository<T>(AppDbContext dbContext) : IRepository<T> where T : BaseEntity
 {
     protected readonly AppDbContext DbContext = dbContext;
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await DbContext.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
     }
+    /// <summary>
+    /// Add async.
+    /// </summary>
 
     public async Task AddAsync(T entity, CancellationToken cancellationToken)
     {
         await DbContext.Set<T>().AddAsync(entity, cancellationToken);
     }
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(T entity)
     {
         DbContext.Set<T>().Update(entity);
     }
+    /// <summary>
+    /// Remove.
+    /// </summary>
 
     public void Remove(T entity)
     {
         DbContext.Set<T>().Remove(entity);
     }
+    /// <summary>
+    /// Find async.
+    /// </summary>
 
     public async Task<IReadOnlyList<T>> FindAsync(ISpecification<T> specification, CancellationToken cancellationToken)
     {

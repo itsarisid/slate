@@ -14,6 +14,9 @@ namespace Alphabet.Infrastructure.Scheduler.JobHandlers;
 /// </summary>
 public sealed class StoredProcedureJobHandler(IOptions<DatabaseSettings> databaseSettings) : IJobHandler
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public async Task<string> ExecuteAsync(Job job, JsonElement parameters, CancellationToken cancellationToken)
     {
         var config = JsonSerializer.Deserialize<JobConfigurationDto>(job.JobConfiguration)

@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Scheduler;
 /// </summary>
 public sealed class JobExecutionService(IJobExecutionRepository executionRepository, IUnitOfWork unitOfWork) : IJobExecutionService
 {
+    /// <summary>
+    /// Create pending execution async.
+    /// </summary>
     public async Task<JobExecution> CreatePendingExecutionAsync(Guid jobId, Guid? triggeredBy, Guid? retryParentId, CancellationToken cancellationToken)
     {
         var execution = JobExecution.Create(jobId, triggeredBy, retryParentId);
@@ -16,6 +19,9 @@ public sealed class JobExecutionService(IJobExecutionRepository executionReposit
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return execution;
     }
+    /// <summary>
+    /// Create and start execution async.
+    /// </summary>
 
     public async Task<JobExecution> CreateAndStartExecutionAsync(Guid jobId, Guid? triggeredBy, Guid? retryParentId, CancellationToken cancellationToken)
     {
@@ -25,9 +31,15 @@ public sealed class JobExecutionService(IJobExecutionRepository executionReposit
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return execution;
     }
+    /// <summary>
+    /// Get execution async.
+    /// </summary>
 
     public Task<JobExecution?> GetExecutionAsync(Guid executionId, CancellationToken cancellationToken)
         => executionRepository.GetByIdAsync(executionId, cancellationToken);
+    /// <summary>
+    /// Mark success async.
+    /// </summary>
 
     public async Task MarkSuccessAsync(Guid executionId, string? output, CancellationToken cancellationToken)
     {
@@ -41,6 +53,9 @@ public sealed class JobExecutionService(IJobExecutionRepository executionReposit
         executionRepository.Update(execution);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
+    /// <summary>
+    /// Mark failure async.
+    /// </summary>
 
     public async Task MarkFailureAsync(Guid executionId, string? output, string? errorMessage, int retryCount, CancellationToken cancellationToken)
     {
@@ -54,6 +69,9 @@ public sealed class JobExecutionService(IJobExecutionRepository executionReposit
         executionRepository.Update(execution);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
+    /// <summary>
+    /// Mark timeout async.
+    /// </summary>
 
     public async Task MarkTimeoutAsync(Guid executionId, string? output, string? errorMessage, int retryCount, CancellationToken cancellationToken)
     {
@@ -67,6 +85,9 @@ public sealed class JobExecutionService(IJobExecutionRepository executionReposit
         executionRepository.Update(execution);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
+    /// <summary>
+    /// Cancel async.
+    /// </summary>
 
     public async Task<bool> CancelAsync(Guid executionId, CancellationToken cancellationToken)
     {
@@ -81,6 +102,9 @@ public sealed class JobExecutionService(IJobExecutionRepository executionReposit
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return true;
     }
+    /// <summary>
+    /// Has successful execution async.
+    /// </summary>
 
     public Task<bool> HasSuccessfulExecutionAsync(Guid jobId, CancellationToken cancellationToken)
         => executionRepository.HasSuccessfulExecutionAsync(jobId, cancellationToken);

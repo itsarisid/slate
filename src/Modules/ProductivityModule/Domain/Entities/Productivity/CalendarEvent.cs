@@ -75,6 +75,9 @@ public sealed class CalendarEvent : BaseEntity
         ConferenceLink = string.IsNullOrWhiteSpace(conferenceLink) ? null : conferenceLink.Trim();
         ResponsesJson = ProductivityJson.Serialize<IReadOnlyCollection<CalendarEventResponse>>(Array.Empty<CalendarEventResponse>());
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static CalendarEvent Create(
         Guid ownerUserId,
@@ -98,6 +101,9 @@ public sealed class CalendarEvent : BaseEntity
     public IReadOnlyList<int> ReminderMinutesBefore => ProductivityJson.DeserializeList<int>(ReminderMinutesJson);
 
     public IReadOnlyList<CalendarEventResponse> Responses => ProductivityJson.DeserializeList<CalendarEventResponse>(ResponsesJson);
+    /// <summary>
+    /// Respond.
+    /// </summary>
 
     public void Respond(string email, string response)
     {

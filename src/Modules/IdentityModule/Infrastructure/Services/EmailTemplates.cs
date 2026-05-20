@@ -1,9 +1,15 @@
 namespace Alphabet.Infrastructure.Services;
+/// <summary>
+/// Email templates.
+/// </summary>
 
 internal static class EmailTemplates
 {
+    /// <summary>
+    /// Confirmation.
+    /// </summary>
     public static string Confirmation(string firstName, string confirmationUrl) =>
-        $"""
+    $"""
         <html><body style="font-family:Arial,sans-serif;color:#1f2937;">
         <h2>Confirm your email</h2>
         <p>Hello {firstName},</p>
@@ -11,6 +17,9 @@ internal static class EmailTemplates
         <p><a href="{confirmationUrl}">Confirm Email</a></p>
         </body></html>
         """;
+    /// <summary>
+    /// Password reset.
+    /// </summary>
 
     public static string PasswordReset(string firstName, string resetUrl) =>
         $"""
@@ -21,8 +30,14 @@ internal static class EmailTemplates
         <p><a href="{resetUrl}">Reset Password</a></p>
         </body></html>
         """;
+    /// <summary>
+    /// Otp.
+    /// </summary>
 
     public static string Otp(string code) => $"Your OTP code is: {code}. Valid for 5 minutes.";
+    /// <summary>
+    /// Lockout.
+    /// </summary>
 
     public static string Lockout(string firstName, DateTimeOffset lockoutEnd) =>
         $"""
@@ -32,6 +47,9 @@ internal static class EmailTemplates
         <p>Your account has been locked until {lockoutEnd:u} after repeated failed sign-in attempts.</p>
         </body></html>
         """;
+    /// <summary>
+    /// Welcome.
+    /// </summary>
 
     public static string Welcome(string firstName) =>
         $"""

@@ -1,4 +1,3 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces.Productivity;
@@ -21,10 +20,16 @@ public sealed record UpdateTodoCommand(
     int? ReminderMinutesBefore,
     bool IsRecurring,
     RecurrencePattern? RecurrencePattern) : IRequest<Result<TodoDto>>;
+/// <summary>
+/// Update todo command handler.
+/// </summary>
 
 public sealed class UpdateTodoCommandHandler(ITodoRepository todoRepository)
     : IRequestHandler<UpdateTodoCommand, Result<TodoDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<TodoDto>> Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
     {
         var todo = await todoRepository.GetByIdAsync(request.TodoId, cancellationToken);

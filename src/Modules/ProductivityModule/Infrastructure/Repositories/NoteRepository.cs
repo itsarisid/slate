@@ -11,11 +11,20 @@ namespace Alphabet.Infrastructure.Repositories;
 /// </summary>
 public sealed class NoteRepository(AppDbContext dbContext) : INoteRepository
 {
+    /// <summary>
+    /// Add async.
+    /// </summary>
     public async Task AddAsync(Note note, CancellationToken cancellationToken)
-        => await dbContext.Set<Note>().AddAsync(note, cancellationToken);
+    => await dbContext.Set<Note>().AddAsync(note, cancellationToken);
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
 
     public async Task<Note?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         => await dbContext.Set<Note>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    /// <summary>
+    /// Search async.
+    /// </summary>
 
     public async Task<ProductivityPagedResult<Note>> SearchAsync(NoteQueryFilter filter, CancellationToken cancellationToken)
     {
@@ -65,6 +74,9 @@ public sealed class NoteRepository(AppDbContext dbContext) : INoteRepository
 
         return new ProductivityPagedResult<Note>(items, filter.Page, filter.PageSize, totalCount);
     }
+    /// <summary>
+    /// Get recent async.
+    /// </summary>
 
     public async Task<IReadOnlyList<Note>> GetRecentAsync(Guid ownerUserId, int take, CancellationToken cancellationToken)
     {
@@ -75,6 +87,9 @@ public sealed class NoteRepository(AppDbContext dbContext) : INoteRepository
             .Take(take)
             .ToArrayAsync(cancellationToken);
     }
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(Note note) => dbContext.Set<Note>().Update(note);
 }

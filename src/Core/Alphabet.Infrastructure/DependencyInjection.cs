@@ -10,7 +10,6 @@ using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.Interfaces.Privilege;
 using Alphabet.Infrastructure.BackgroundJobs;
-using Alphabet.Infrastructure.Data.Seeders;
 using Alphabet.Infrastructure.Caching;
 using Alphabet.Infrastructure.External.Email;
 using Alphabet.Infrastructure.Health;

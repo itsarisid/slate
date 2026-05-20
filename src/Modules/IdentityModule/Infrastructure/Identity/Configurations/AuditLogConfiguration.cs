@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Identity.Configurations;
 /// </summary>
 public sealed class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<AuditLog> builder)
     {
         builder.ToTable("AuditLogs");

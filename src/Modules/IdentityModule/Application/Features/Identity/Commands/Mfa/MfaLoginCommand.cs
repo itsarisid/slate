@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
 using FluentValidation;
@@ -10,6 +9,9 @@ namespace Alphabet.Application.Features.Identity.Commands.Mfa;
 /// Completes an MFA login using a short-lived MFA token and verification code.
 /// </summary>
 public sealed record MfaLoginCommand(string MfaToken, string VerificationCode) : IRequest<Result<AuthResponseDto>>;
+/// <summary>
+/// Mfa login command validator.
+/// </summary>
 
 public sealed class MfaLoginCommandValidator : AbstractValidator<MfaLoginCommand>
 {
@@ -19,10 +21,16 @@ public sealed class MfaLoginCommandValidator : AbstractValidator<MfaLoginCommand
         RuleFor(x => x.VerificationCode).NotEmpty().MinimumLength(6);
     }
 }
+/// <summary>
+/// Mfa login command handler.
+/// </summary>
 
 public sealed class MfaLoginCommandHandler(IIdentityService identityService)
     : IRequestHandler<MfaLoginCommand, Result<AuthResponseDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<AuthResponseDto>> Handle(MfaLoginCommand request, CancellationToken cancellationToken)
-        => identityService.CompleteMfaLoginAsync(request.MfaToken, request.VerificationCode, cancellationToken);
+    => identityService.CompleteMfaLoginAsync(request.MfaToken, request.VerificationCode, cancellationToken);
 }

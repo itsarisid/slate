@@ -1,9 +1,7 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Application.Features.Scheduler.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using FluentValidation;
@@ -29,6 +27,9 @@ public sealed record UpdateJobCommand(
     string? Timezone,
     bool? IsEnabled,
     IReadOnlyList<string>? Tags) : IRequest<Result<JobDto>>;
+/// <summary>
+/// Update job command validator.
+/// </summary>
 
 public sealed class UpdateJobCommandValidator : AbstractValidator<UpdateJobCommand>
 {
@@ -47,6 +48,9 @@ public sealed class UpdateJobCommandValidator : AbstractValidator<UpdateJobComma
             .WithMessage("Interval seconds must be in whole-minute increments.");
     }
 }
+/// <summary>
+/// Update job command handler.
+/// </summary>
 
 public sealed class UpdateJobCommandHandler(
     IJobRepository jobRepository,
@@ -56,6 +60,9 @@ public sealed class UpdateJobCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<UpdateJobCommand, Result<JobDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<JobDto>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);

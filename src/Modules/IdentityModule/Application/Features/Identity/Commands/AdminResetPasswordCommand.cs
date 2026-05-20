@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
 using FluentValidation;
 using MediatR;
@@ -9,6 +8,9 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Admin resets a user's password without requiring the old password.
 /// </summary>
 public sealed record AdminResetPasswordCommand(Guid UserId, string NewPassword) : IRequest<Result>;
+/// <summary>
+/// Admin reset password command validator.
+/// </summary>
 
 public sealed class AdminResetPasswordCommandValidator : AbstractValidator<AdminResetPasswordCommand>
 {
@@ -24,10 +26,16 @@ public sealed class AdminResetPasswordCommandValidator : AbstractValidator<Admin
             .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain a special character.");
     }
 }
+/// <summary>
+/// Admin reset password command handler.
+/// </summary>
 
 public sealed class AdminResetPasswordCommandHandler(IIdentityService identityService)
     : IRequestHandler<AdminResetPasswordCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(AdminResetPasswordCommand request, CancellationToken cancellationToken)
-        => identityService.AdminResetPasswordAsync(request.UserId, request.NewPassword, cancellationToken);
+    => identityService.AdminResetPasswordAsync(request.UserId, request.NewPassword, cancellationToken);
 }

@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Alphabet.Domain.Entities.Privilege;
-using Alphabet.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -24,6 +23,9 @@ public sealed class PrivilegeConfiguration :
     IEntityTypeConfiguration<PrivilegeCondition>
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<Privilege> builder)
     {
@@ -54,6 +56,9 @@ public sealed class PrivilegeConfiguration :
             .HasConversion(dictionaryConverter)
             .HasColumnName("AttributesJson");
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<PrivilegeCategory> builder)
     {
@@ -63,6 +68,9 @@ public sealed class PrivilegeConfiguration :
         builder.HasIndex(x => x.Name).IsUnique();
         builder.Property(x => x.Description).HasMaxLength(1000);
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<RolePrivilege> builder)
     {
@@ -71,6 +79,9 @@ public sealed class PrivilegeConfiguration :
         builder.HasIndex(x => new { x.RoleId, x.PrivilegeId }).IsUnique();
         builder.Property(x => x.GrantedBy).HasMaxLength(256).IsRequired();
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<UserPrivilege> builder)
     {
@@ -82,6 +93,9 @@ public sealed class PrivilegeConfiguration :
         builder.Property(x => x.RevokedBy).HasMaxLength(256);
         builder.Property(x => x.Reason).HasMaxLength(1000);
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<PrivilegePolicy> builder)
     {
@@ -99,6 +113,9 @@ public sealed class PrivilegeConfiguration :
             .HasConversion(stringCollectionConverter)
             .HasColumnName("PrivilegeNamesJson");
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<PrivilegeRequest> builder)
     {
@@ -109,6 +126,9 @@ public sealed class PrivilegeConfiguration :
         builder.Property(x => x.ApproverEmail).HasMaxLength(256);
         builder.Property(x => x.DecisionNotes).HasMaxLength(1000);
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<PrivilegeAuditLog> builder)
     {
@@ -126,6 +146,9 @@ public sealed class PrivilegeConfiguration :
             .HasConversion(dictionaryConverter)
             .HasColumnName("MetadataJson");
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<RolePrivilegePolicy> builder)
     {
@@ -134,6 +157,9 @@ public sealed class PrivilegeConfiguration :
         builder.HasIndex(x => new { x.RoleId, x.PolicyId }).IsUnique();
         builder.Property(x => x.GrantedBy).HasMaxLength(256).IsRequired();
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<UserPrivilegePolicy> builder)
     {
@@ -142,12 +168,18 @@ public sealed class PrivilegeConfiguration :
         builder.HasIndex(x => new { x.UserId, x.PolicyId }).IsUnique();
         builder.Property(x => x.GrantedBy).HasMaxLength(256).IsRequired();
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<PrivilegeDependency> builder)
     {
         builder.ToTable("PrivilegeDependencies");
         builder.HasKey(x => new { x.PrivilegeId, x.DependsOnPrivilegeId });
     }
+    /// <summary>
+    /// Configure.
+    /// </summary>
 
     public void Configure(EntityTypeBuilder<PrivilegeCondition> builder)
     {

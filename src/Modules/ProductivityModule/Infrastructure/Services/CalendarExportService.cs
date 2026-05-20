@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class CalendarExportService : ICalendarExportService
 {
+    /// <summary>
+    /// Export icalendar async.
+    /// </summary>
     public Task<string> ExportICalendarAsync(IReadOnlyCollection<CalendarEventDto> events, CancellationToken cancellationToken)
     {
         var builder = new StringBuilder();
@@ -35,6 +38,9 @@ public sealed class CalendarExportService : ICalendarExportService
         builder.AppendLine("END:VCALENDAR");
         return Task.FromResult(builder.ToString());
     }
+    /// <summary>
+    /// Escape.
+    /// </summary>
 
     private static string Escape(string value)
         => value.Replace("\\", "\\\\").Replace(",", "\\,").Replace(";", "\\;").Replace("\r", string.Empty).Replace("\n", "\\n");

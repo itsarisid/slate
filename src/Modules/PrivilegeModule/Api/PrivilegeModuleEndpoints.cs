@@ -1,6 +1,4 @@
 using System.Text;
-using System.Text.Json;
-using Alphabet.Application.Common.Security;
 using Alphabet.Application.Features.Privilege.Commands;
 using Alphabet.Application.Features.Privilege.Dtos;
 using Alphabet.Application.Features.Privilege.Queries;
@@ -39,6 +37,9 @@ public static class PrivilegeModuleEndpoints
         MapSelfService(endpoints, versionSet);
         return endpoints;
     }
+    /// <summary>
+    /// Map privilege management.
+    /// </summary>
 
     private static void MapPrivilegeManagement(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -216,6 +217,9 @@ public static class PrivilegeModuleEndpoints
         .WithSummary("Creates a composite privilege policy.")
         .WithDescription("Creates a reusable policy that groups multiple privileges together using either all-required or any-required evaluation semantics.");
     }
+    /// <summary>
+    /// Map role assignments.
+    /// </summary>
 
     private static void MapRoleAssignments(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -308,6 +312,9 @@ public static class PrivilegeModuleEndpoints
         .WithSummary("Assigns a privilege policy to a role.")
         .WithDescription("Associates a composite privilege policy with a role so the policy's privileges are evaluated through the role.");
     }
+    /// <summary>
+    /// Map user assignments.
+    /// </summary>
 
     private static void MapUserAssignments(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -398,6 +405,9 @@ public static class PrivilegeModuleEndpoints
         .WithSummary("Assigns a privilege policy directly to a user.")
         .WithDescription("Associates a composite policy with a specific user outside role membership.");
     }
+    /// <summary>
+    /// Map privilege evaluation.
+    /// </summary>
 
     private static void MapPrivilegeEvaluation(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -450,6 +460,9 @@ public static class PrivilegeModuleEndpoints
         .WithSummary("Checks multiple privileges for the current user.")
         .WithDescription("Evaluates multiple privilege names in a single request and returns a privilege-to-boolean map for the authenticated user.");
     }
+    /// <summary>
+    /// Map privilege administration.
+    /// </summary>
 
     private static void MapPrivilegeAdministration(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -553,6 +566,9 @@ public static class PrivilegeModuleEndpoints
         .WithSummary("Denies a self-service privilege request.")
         .WithDescription("Denies a pending user privilege request while preserving the request and decision details for audit.");
     }
+    /// <summary>
+    /// Map self service.
+    /// </summary>
 
     private static void MapSelfService(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -591,11 +607,17 @@ public static class PrivilegeModuleEndpoints
         .WithSummary("Gets the authenticated user's current privileges.")
         .WithDescription("Returns the authenticated user's current effective privileges after all role, user, and policy rules have been applied.");
     }
+    /// <summary>
+    /// Try resolve current user id.
+    /// </summary>
 
     private static bool TryResolveCurrentUserId(HttpContext httpContext, out Guid userId)
     {
         return Guid.TryParse(httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out userId);
     }
+    /// <summary>
+    /// Escape.
+    /// </summary>
 
     private static string Escape(string value)
     {

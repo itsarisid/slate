@@ -3,7 +3,6 @@ using Alphabet.Application.Features.Products.Commands.CreateProduct;
 using Alphabet.Application.Features.Products.Queries.GetProductById;
 using Alphabet.Contracts.Products;
 using Asp.Versioning;
-using Asp.Versioning.Builder;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +17,9 @@ namespace Alphabet.Modules.ProductModule.Api;
 /// </summary>
 public static class ProductModuleEndpoints
 {
+    /// <summary>
+    /// Map product module.
+    /// </summary>
     public static IEndpointRouteBuilder MapProductModule(this IEndpointRouteBuilder endpoints)
     {
         var versionSet = endpoints.NewApiVersionSet()

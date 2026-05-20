@@ -2,7 +2,6 @@ using System.Text.Json;
 using Alphabet.Application.Features.Scheduler.Dtos;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Alphabet.Infrastructure.Scheduler.JobHandlers;
 
@@ -11,6 +10,9 @@ namespace Alphabet.Infrastructure.Scheduler.JobHandlers;
 /// </summary>
 public sealed class CodeExecutionJobHandler(IServiceProvider serviceProvider) : IJobHandler
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public async Task<string> ExecuteAsync(Job job, JsonElement parameters, CancellationToken cancellationToken)
     {
         var config = JsonSerializer.Deserialize<JobConfigurationDto>(job.JobConfiguration)

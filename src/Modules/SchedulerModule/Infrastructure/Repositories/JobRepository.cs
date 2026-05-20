@@ -11,15 +11,30 @@ namespace Alphabet.Infrastructure.Repositories;
 /// </summary>
 public sealed class JobRepository(AppDbContext dbContext) : IJobRepository
 {
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
     public Task<Job?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-        => dbContext.Set<Job>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    => dbContext.Set<Job>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    /// <summary>
+    /// Add async.
+    /// </summary>
 
     public async Task AddAsync(Job job, CancellationToken cancellationToken)
         => await dbContext.Set<Job>().AddAsync(job, cancellationToken);
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(Job job) => dbContext.Set<Job>().Update(job);
+    /// <summary>
+    /// Remove.
+    /// </summary>
 
     public void Remove(Job job) => dbContext.Set<Job>().Remove(job);
+    /// <summary>
+    /// Get paged async.
+    /// </summary>
 
     public async Task<PagedResult<Job>> GetPagedAsync(JobQueryFilter filter, CancellationToken cancellationToken)
     {
@@ -75,9 +90,15 @@ public sealed class JobRepository(AppDbContext dbContext) : IJobRepository
 
         return new PagedResult<Job>(items, total, filter.PageNumber, filter.PageSize);
     }
+    /// <summary>
+    /// Get all async.
+    /// </summary>
 
     public Task<IReadOnlyList<Job>> GetAllAsync(CancellationToken cancellationToken)
         => dbContext.Set<Job>().OrderByDescending(x => x.CreatedAt).ToListAsync(cancellationToken).ContinueWith(t => (IReadOnlyList<Job>)t.Result, cancellationToken);
+    /// <summary>
+    /// Get failed jobs async.
+    /// </summary>
 
     public Task<IReadOnlyList<Job>> GetFailedJobsAsync(int threshold, CancellationToken cancellationToken)
         => dbContext.Set<Job>()
@@ -85,6 +106,9 @@ public sealed class JobRepository(AppDbContext dbContext) : IJobRepository
             .OrderByDescending(x => x.ConsecutiveFailures)
             .ToListAsync(cancellationToken)
             .ContinueWith(t => (IReadOnlyList<Job>)t.Result, cancellationToken);
+    /// <summary>
+    /// Get upcoming jobs async.
+    /// </summary>
 
     public Task<IReadOnlyList<Job>> GetUpcomingJobsAsync(int take, CancellationToken cancellationToken)
         => dbContext.Set<Job>()

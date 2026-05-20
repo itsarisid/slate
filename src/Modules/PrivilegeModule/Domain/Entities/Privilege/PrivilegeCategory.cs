@@ -31,6 +31,9 @@ public sealed class PrivilegeCategory : BaseEntity
     public Guid? ParentCategoryId { get; private set; }
 
     public int SortOrder { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static PrivilegeCategory Create(string name, string? description, Guid? parentCategoryId, int sortOrder)
     {

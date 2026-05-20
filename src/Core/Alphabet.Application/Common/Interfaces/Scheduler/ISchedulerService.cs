@@ -1,5 +1,4 @@
 using Alphabet.Application.Features.Scheduler.Dtos;
-using Alphabet.Domain.Entities;
 
 namespace Alphabet.Application.Common.Interfaces.Scheduler;
 

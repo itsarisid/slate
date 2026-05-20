@@ -12,13 +12,25 @@ namespace Alphabet.Infrastructure.Repositories;
 /// </summary>
 public sealed class JobExecutionRepository(AppDbContext dbContext) : IJobExecutionRepository
 {
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
     public Task<JobExecution?> GetByIdAsync(Guid executionId, CancellationToken cancellationToken)
-        => dbContext.Set<JobExecution>().FirstOrDefaultAsync(x => x.Id == executionId, cancellationToken);
+    => dbContext.Set<JobExecution>().FirstOrDefaultAsync(x => x.Id == executionId, cancellationToken);
+    /// <summary>
+    /// Add async.
+    /// </summary>
 
     public async Task AddAsync(JobExecution execution, CancellationToken cancellationToken)
         => await dbContext.Set<JobExecution>().AddAsync(execution, cancellationToken);
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(JobExecution execution) => dbContext.Set<JobExecution>().Update(execution);
+    /// <summary>
+    /// Get paged by job id async.
+    /// </summary>
 
     public async Task<PagedResult<JobExecution>> GetPagedByJobIdAsync(JobExecutionQueryFilter filter, CancellationToken cancellationToken)
     {
@@ -48,6 +60,9 @@ public sealed class JobExecutionRepository(AppDbContext dbContext) : IJobExecuti
 
         return new PagedResult<JobExecution>(items, total, filter.PageNumber, filter.PageSize);
     }
+    /// <summary>
+    /// Get dashboard stats async.
+    /// </summary>
 
     public async Task<DashboardStatsSnapshot> GetDashboardStatsAsync(DateTimeOffset fromDate, CancellationToken cancellationToken)
     {
@@ -76,6 +91,9 @@ public sealed class JobExecutionRepository(AppDbContext dbContext) : IJobExecuti
             Math.Round(successRate, 2),
             Math.Round(averageDurationMs / 1000d, 2));
     }
+    /// <summary>
+    /// Get timeline async.
+    /// </summary>
 
     public async Task<IReadOnlyList<TimelinePoint>> GetTimelineAsync(DateTimeOffset fromDate, CancellationToken cancellationToken)
     {
@@ -93,9 +111,15 @@ public sealed class JobExecutionRepository(AppDbContext dbContext) : IJobExecuti
                 group.Count(x => x.Status == ExecutionStatus.Running)))
             .ToArray();
     }
+    /// <summary>
+    /// Clear older than async.
+    /// </summary>
 
     public Task<int> ClearOlderThanAsync(DateTimeOffset cutoff, CancellationToken cancellationToken)
         => dbContext.Set<JobExecution>().Where(x => x.CreatedAt < cutoff).ExecuteDeleteAsync(cancellationToken);
+    /// <summary>
+    /// Has successful execution async.
+    /// </summary>
 
     public Task<bool> HasSuccessfulExecutionAsync(Guid jobId, CancellationToken cancellationToken)
         => dbContext.Set<JobExecution>().AnyAsync(x => x.JobId == jobId && x.Status == ExecutionStatus.Success, cancellationToken);

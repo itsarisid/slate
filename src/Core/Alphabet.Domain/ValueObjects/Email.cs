@@ -19,6 +19,9 @@ public sealed partial record Email
     {
         Value = value;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Email Create(string value)
     {
@@ -29,8 +32,14 @@ public sealed partial record Email
 
         return new Email(value.Trim().ToLowerInvariant());
     }
+    /// <summary>
+    /// To string.
+    /// </summary>
 
     public override string ToString() => Value;
+    /// <summary>
+    /// Email validation regex.
+    /// </summary>
 
     [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled)]
     private static partial Regex EmailValidationRegex();

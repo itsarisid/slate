@@ -1,4 +1,3 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Enums;
@@ -24,12 +23,18 @@ public sealed record GetTodosQuery(
     string? SortDirection,
     int Page,
     int PageSize) : IRequest<Result<PagedResponseDto<TodoDto>>>;
+/// <summary>
+/// Get todos query handler.
+/// </summary>
 
 public sealed class GetTodosQueryHandler(
     ITodoRepository todoRepository,
     ICurrentUserService currentUserService)
     : IRequestHandler<GetTodosQuery, Result<PagedResponseDto<TodoDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<PagedResponseDto<TodoDto>>> Handle(GetTodosQuery request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

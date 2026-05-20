@@ -14,10 +14,16 @@ public sealed record SuggestMeetingTimesCommand(
     DateTimeOffset Start,
     DateTimeOffset End,
     string? Timezone) : IRequest<Result<IReadOnlyList<MeetingSuggestionDto>>>;
+/// <summary>
+/// Suggest meeting times command handler.
+/// </summary>
 
 public sealed class SuggestMeetingTimesCommandHandler(IProductivityReadService readService)
     : IRequestHandler<SuggestMeetingTimesCommand, Result<IReadOnlyList<MeetingSuggestionDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<IReadOnlyList<MeetingSuggestionDto>>> Handle(SuggestMeetingTimesCommand request, CancellationToken cancellationToken)
     {
         var items = await readService.SuggestMeetingTimesAsync(request.Attendees, request.Start, request.End, request.DurationMinutes, request.Timezone, cancellationToken);

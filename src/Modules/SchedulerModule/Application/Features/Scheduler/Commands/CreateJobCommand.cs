@@ -1,9 +1,7 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Application.Features.Scheduler.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using FluentValidation;
@@ -29,6 +27,9 @@ public sealed record CreateJobCommand(
     bool IsEnabled,
     IReadOnlyList<string>? Tags,
     string? CreatedBy) : IRequest<Result<JobDto>>;
+/// <summary>
+/// Create job command validator.
+/// </summary>
 
 public sealed class CreateJobCommandValidator : AbstractValidator<CreateJobCommand>
 {
@@ -66,6 +67,9 @@ public sealed class CreateJobCommandValidator : AbstractValidator<CreateJobComma
             .When(x => x.JobType == JobType.FileOperation);
     }
 }
+/// <summary>
+/// Create job command handler.
+/// </summary>
 
 public sealed class CreateJobCommandHandler(
     IJobRepository jobRepository,
@@ -75,6 +79,9 @@ public sealed class CreateJobCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateJobCommand, Result<JobDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<JobDto>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
         var performedBy = request.CreatedBy ?? currentUserService.Email ?? "system@alphabet.local";

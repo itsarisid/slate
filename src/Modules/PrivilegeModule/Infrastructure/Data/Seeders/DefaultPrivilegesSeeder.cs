@@ -108,6 +108,9 @@ public static class DefaultPrivilegesSeeder
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Auditor", ["audit.view", "user.view"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Reporter", ["report.generate", "report.export"], logger);
     }
+    /// <summary>
+    /// Assign role privileges async.
+    /// </summary>
 
     private static async Task AssignRolePrivilegesAsync(
         IPrivilegeRepository repository,

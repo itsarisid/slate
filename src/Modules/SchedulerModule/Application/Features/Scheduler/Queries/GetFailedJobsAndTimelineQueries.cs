@@ -9,30 +9,48 @@ public sealed record GetFailedJobsQuery(int Threshold = 3) : IRequest<IReadOnlyL
 public sealed record GetExecutionTimelineQuery(int Hours = 24) : IRequest<IReadOnlyList<TimelinePointDto>>;
 
 public sealed record ExportJobConfigurationsQuery : IRequest<string>;
+/// <summary>
+/// Get failed jobs query handler.
+/// </summary>
 
 public sealed class GetFailedJobsQueryHandler(IJobRepository jobRepository)
     : IRequestHandler<GetFailedJobsQuery, IReadOnlyList<JobDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<IReadOnlyList<JobDto>> Handle(GetFailedJobsQuery request, CancellationToken cancellationToken)
     {
         var jobs = await jobRepository.GetFailedJobsAsync(request.Threshold, cancellationToken);
         return jobs.Select(job => job.ToDto(job.IsPaused ? "Paused" : job.IsEnabled ? "Active" : "Disabled")).ToArray();
     }
 }
+/// <summary>
+/// Get execution timeline query handler.
+/// </summary>
 
 public sealed class GetExecutionTimelineQueryHandler(IJobExecutionRepository executionRepository)
     : IRequestHandler<GetExecutionTimelineQuery, IReadOnlyList<TimelinePointDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<IReadOnlyList<TimelinePointDto>> Handle(GetExecutionTimelineQuery request, CancellationToken cancellationToken)
     {
         var points = await executionRepository.GetTimelineAsync(DateTimeOffset.UtcNow.AddHours(-request.Hours), cancellationToken);
         return points.Select(point => new TimelinePointDto(point.Bucket, point.SuccessCount, point.FailedCount, point.RunningCount)).ToArray();
     }
 }
+/// <summary>
+/// Export job configurations query handler.
+/// </summary>
 
 public sealed class ExportJobConfigurationsQueryHandler(IJobRepository jobRepository)
     : IRequestHandler<ExportJobConfigurationsQuery, string>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<string> Handle(ExportJobConfigurationsQuery request, CancellationToken cancellationToken)
     {
         var jobs = await jobRepository.GetAllAsync(cancellationToken);

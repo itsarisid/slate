@@ -1,7 +1,5 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using MediatR;
@@ -12,6 +10,9 @@ namespace Alphabet.Application.Features.Productivity.CrossEntity.Commands;
 /// Converts a todo into a task.
 /// </summary>
 public sealed record ConvertTodoToTaskCommand(Guid TodoId) : IRequest<Result<TaskDto>>;
+/// <summary>
+/// Convert todo to task command handler.
+/// </summary>
 
 public sealed class ConvertTodoToTaskCommandHandler(
     ITodoRepository todoRepository,
@@ -20,6 +21,9 @@ public sealed class ConvertTodoToTaskCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<ConvertTodoToTaskCommand, Result<TaskDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<TaskDto>> Handle(ConvertTodoToTaskCommand request, CancellationToken cancellationToken)
     {
         var todo = await todoRepository.GetByIdAsync(request.TodoId, cancellationToken);

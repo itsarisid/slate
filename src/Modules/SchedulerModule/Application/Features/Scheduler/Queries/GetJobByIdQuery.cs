@@ -10,10 +10,16 @@ namespace Alphabet.Application.Features.Scheduler.Queries;
 /// Returns a single job by identifier.
 /// </summary>
 public sealed record GetJobByIdQuery(Guid JobId) : IRequest<Result<JobDto>>;
+/// <summary>
+/// Get job by id query handler.
+/// </summary>
 
 public sealed class GetJobByIdQueryHandler(IJobRepository jobRepository, ISchedulerService schedulerService)
     : IRequestHandler<GetJobByIdQuery, Result<JobDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<JobDto>> Handle(GetJobByIdQuery request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);

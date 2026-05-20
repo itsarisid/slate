@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces;
@@ -14,6 +13,9 @@ public sealed record ResumeAllJobsCommand : IRequest<Result>;
 public sealed record ClearOldExecutionLogsCommand(int OlderThanDays) : IRequest<Result<int>>;
 
 public sealed record ImportJobConfigurationsCommand(string JsonPayload) : IRequest<Result<int>>;
+/// <summary>
+/// Pause all jobs command handler.
+/// </summary>
 
 public sealed class PauseAllJobsCommandHandler(
     IJobRepository jobRepository,
@@ -21,6 +23,9 @@ public sealed class PauseAllJobsCommandHandler(
     ISchedulerService schedulerService,
     ICurrentUserService currentUserService) : IRequestHandler<PauseAllJobsCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(PauseAllJobsCommand request, CancellationToken cancellationToken)
     {
         var jobs = await jobRepository.GetAllAsync(cancellationToken);
@@ -35,6 +40,9 @@ public sealed class PauseAllJobsCommandHandler(
         return Result.Success();
     }
 }
+/// <summary>
+/// Resume all jobs command handler.
+/// </summary>
 
 public sealed class ResumeAllJobsCommandHandler(
     IJobRepository jobRepository,
@@ -42,6 +50,9 @@ public sealed class ResumeAllJobsCommandHandler(
     ISchedulerService schedulerService,
     ICurrentUserService currentUserService) : IRequestHandler<ResumeAllJobsCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(ResumeAllJobsCommand request, CancellationToken cancellationToken)
     {
         var jobs = await jobRepository.GetAllAsync(cancellationToken);
@@ -57,10 +68,16 @@ public sealed class ResumeAllJobsCommandHandler(
         return Result.Success();
     }
 }
+/// <summary>
+/// Clear old execution logs command handler.
+/// </summary>
 
 public sealed class ClearOldExecutionLogsCommandHandler(IJobExecutionRepository executionRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<ClearOldExecutionLogsCommand, Result<int>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<int>> Handle(ClearOldExecutionLogsCommand request, CancellationToken cancellationToken)
     {
         var deleted = await executionRepository.ClearOlderThanAsync(DateTimeOffset.UtcNow.AddDays(-request.OlderThanDays), cancellationToken);
@@ -68,10 +85,16 @@ public sealed class ClearOldExecutionLogsCommandHandler(IJobExecutionRepository 
         return deleted;
     }
 }
+/// <summary>
+/// Import job configurations command handler.
+/// </summary>
 
 public sealed class ImportJobConfigurationsCommandHandler(ISender sender)
     : IRequestHandler<ImportJobConfigurationsCommand, Result<int>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<int>> Handle(ImportJobConfigurationsCommand request, CancellationToken cancellationToken)
     {
         var jobs = JsonSerializer.Deserialize<IReadOnlyList<CreateJobCommand>>(request.JsonPayload, new JsonSerializerOptions(JsonSerializerDefaults.Web));

@@ -1,8 +1,6 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using MediatR;
@@ -13,6 +11,9 @@ namespace Alphabet.Application.Features.Scheduler.Commands;
 /// Deletes a scheduler job.
 /// </summary>
 public sealed record DeleteJobCommand(Guid JobId, bool HardDelete = false) : IRequest<Result>;
+/// <summary>
+/// Delete job command handler.
+/// </summary>
 
 public sealed class DeleteJobCommandHandler(
     IJobRepository jobRepository,
@@ -22,6 +23,9 @@ public sealed class DeleteJobCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<DeleteJobCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);

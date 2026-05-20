@@ -108,6 +108,9 @@ public sealed class JobExecution : BaseEntity
         RetryCount = retryCount;
         Touch();
     }
+    /// <summary>
+    /// Truncate.
+    /// </summary>
 
     private static string? Truncate(string? value)
         => string.IsNullOrWhiteSpace(value) ? value : value.Length > 4000 ? value[..4000] : value;

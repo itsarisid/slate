@@ -33,6 +33,9 @@ public static class IdentityModuleEndpoints
         MapAdmin(endpoints, versionSet);
         return endpoints;
     }
+    /// <summary>
+    /// Map auth.
+    /// </summary>
 
     private static void MapAuth(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -351,6 +354,9 @@ public static class IdentityModuleEndpoints
         .WithSummary("Regenerates MFA recovery codes.")
         .WithDescription("Generates a fresh set of recovery codes and invalidates the previous set for the authenticated user.");
     }
+    /// <summary>
+    /// Map admin.
+    /// </summary>
 
     private static void MapAdmin(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -543,6 +549,9 @@ public static class IdentityModuleEndpoints
             - skip: Number of records to skip before returning results. Defaults to 0.
             """);
     }
+    /// <summary>
+    /// Parse or default.
+    /// </summary>
 
     private static int ParseOrDefault(string? rawValue, int defaultValue)
     {

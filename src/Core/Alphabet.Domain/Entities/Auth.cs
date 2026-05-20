@@ -16,6 +16,9 @@ public sealed class Auth : BaseEntity
     public string? ResetToken { get; private set; }
 
     public DateTimeOffset? ResetTokenExpiresAt { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Auth Create(Guid userId, string passwordHash)
     {
@@ -25,6 +28,9 @@ public sealed class Auth : BaseEntity
             PasswordHash = passwordHash
         };
     }
+    /// <summary>
+    /// Set reset token.
+    /// </summary>
 
     public void SetResetToken(string token, DateTimeOffset expiresAt)
     {

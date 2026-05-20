@@ -9,10 +9,16 @@ namespace Alphabet.Application.Features.Scheduler.Queries;
 /// Returns a single execution by identifier.
 /// </summary>
 public sealed record GetExecutionDetailsQuery(Guid ExecutionId) : IRequest<Result<JobExecutionDto>>;
+/// <summary>
+/// Get execution details query handler.
+/// </summary>
 
 public sealed class GetExecutionDetailsQueryHandler(IJobExecutionRepository executionRepository)
     : IRequestHandler<GetExecutionDetailsQuery, Result<JobExecutionDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<JobExecutionDto>> Handle(GetExecutionDetailsQuery request, CancellationToken cancellationToken)
     {
         var execution = await executionRepository.GetByIdAsync(request.ExecutionId, cancellationToken);

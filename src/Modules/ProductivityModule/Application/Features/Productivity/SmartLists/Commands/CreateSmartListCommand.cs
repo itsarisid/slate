@@ -1,7 +1,5 @@
 using System.Text.Json;
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using MediatR;
 
@@ -11,6 +9,9 @@ namespace Alphabet.Application.Features.Productivity.SmartLists.Commands;
 /// Creates a saved smart list.
 /// </summary>
 public sealed record CreateSmartListCommand(string Name, string EntityType, JsonDocument Criteria, bool IsShared) : IRequest<Result<Guid>>;
+/// <summary>
+/// Create smart list command handler.
+/// </summary>
 
 public sealed class CreateSmartListCommandHandler(
     IRepository<SmartList> smartListRepository,
@@ -18,6 +19,9 @@ public sealed class CreateSmartListCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateSmartListCommand, Result<Guid>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<Guid>> Handle(CreateSmartListCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

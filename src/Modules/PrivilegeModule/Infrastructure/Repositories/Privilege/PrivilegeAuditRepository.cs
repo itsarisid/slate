@@ -11,8 +11,14 @@ namespace Alphabet.Infrastructure.Repositories.Privilege;
 /// </summary>
 public sealed class PrivilegeAuditRepository(AppDbContext dbContext) : IPrivilegeAuditRepository
 {
+    /// <summary>
+    /// Add async.
+    /// </summary>
     public Task AddAsync(PrivilegeAuditLog logEntry, CancellationToken cancellationToken)
-        => dbContext.Set<PrivilegeAuditLog>().AddAsync(logEntry, cancellationToken).AsTask();
+    => dbContext.Set<PrivilegeAuditLog>().AddAsync(logEntry, cancellationToken).AsTask();
+    /// <summary>
+    /// Search async.
+    /// </summary>
 
     public async Task<IReadOnlyList<PrivilegeAuditLog>> SearchAsync(
         Guid? userId,
@@ -57,6 +63,9 @@ public sealed class PrivilegeAuditRepository(AppDbContext dbContext) : IPrivileg
             .Take(take)
             .ToListAsync(cancellationToken);
     }
+    /// <summary>
+    /// Get by user async.
+    /// </summary>
 
     public async Task<IReadOnlyList<PrivilegeAuditLog>> GetByUserAsync(Guid userId, int take, int skip, CancellationToken cancellationToken)
         => await dbContext.Set<PrivilegeAuditLog>()

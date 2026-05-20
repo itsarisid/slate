@@ -9,10 +9,16 @@ namespace Alphabet.Application.Features.Productivity.CrossEntity.Commands;
 /// Creates a reminder from another productivity item.
 /// </summary>
 public sealed record CreateReminderFromEntityCommand(string EntityType, Guid EntityId, string Title, string Description, DateTimeOffset ReminderTime) : IRequest<Result<ReminderDto>>;
+/// <summary>
+/// Create reminder from entity command handler.
+/// </summary>
 
 public sealed class CreateReminderFromEntityCommandHandler(ISender sender)
     : IRequestHandler<CreateReminderFromEntityCommand, Result<ReminderDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<ReminderDto>> Handle(CreateReminderFromEntityCommand request, CancellationToken cancellationToken)
     {
         return await sender.Send(

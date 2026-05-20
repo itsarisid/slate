@@ -12,9 +12,12 @@ public sealed class PrivilegeAuthorizationHandler(
     ICurrentUserService currentUserService)
     : AuthorizationHandler<PrivilegeRequirement>
 {
+    /// <summary>
+    /// Handle requirement async.
+    /// </summary>
     protected override async Task HandleRequirementAsync(
-        AuthorizationHandlerContext context,
-        PrivilegeRequirement requirement)
+    AuthorizationHandlerContext context,
+    PrivilegeRequirement requirement)
     {
         if (currentUserService.UserId is null)
         {

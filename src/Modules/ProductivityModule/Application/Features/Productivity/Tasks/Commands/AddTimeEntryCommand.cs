@@ -1,5 +1,4 @@
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using MediatR;
@@ -10,6 +9,9 @@ namespace Alphabet.Application.Features.Productivity.Tasks.Commands;
 /// Adds a time entry to a task.
 /// </summary>
 public sealed record AddTimeEntryCommand(Guid TaskId, DateTimeOffset StartTime, DateTimeOffset EndTime, string Description) : IRequest<Result>;
+/// <summary>
+/// Add time entry command handler.
+/// </summary>
 
 public sealed class AddTimeEntryCommandHandler(
     ITaskRepository taskRepository,
@@ -18,6 +20,9 @@ public sealed class AddTimeEntryCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<AddTimeEntryCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(AddTimeEntryCommand request, CancellationToken cancellationToken)
     {
         var task = await taskRepository.GetByIdAsync(request.TaskId, cancellationToken);

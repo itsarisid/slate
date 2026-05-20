@@ -9,6 +9,9 @@ namespace Alphabet.AppWire.Configuration;
 /// </summary>
 public sealed class SwaggerSetup : IConfigureOptions<SwaggerGenOptions>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(SwaggerGenOptions options)
     {
         options.SwaggerDoc("v1", new OpenApiInfo
