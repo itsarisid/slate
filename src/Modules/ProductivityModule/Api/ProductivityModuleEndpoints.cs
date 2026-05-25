@@ -15,8 +15,10 @@ using Alphabet.Application.Features.Productivity.Tasks.Queries;
 using Alphabet.Application.Features.Productivity.Templates.Commands;
 using Alphabet.Application.Features.Productivity.Todos.Commands;
 using Alphabet.Application.Features.Productivity.Todos.Queries;
+using Alphabet.Common.Extensions;
 using Alphabet.Modules.ProductivityModule.Api.Hubs;
 using Alphabet.Modules.ProductivityModule.Api.Models;
+using Alphabet.Modules.ProductivityModule.Api.Resource;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using MediatR;
@@ -65,7 +67,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Todos")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateTodo.Endpoint, async Task<IResult> (
             [FromBody] CreateTodoRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -89,9 +91,7 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateTodoRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateTodo")
-        .WithSummary("Creates a todo.")
-        .WithDescription("Creates a new todo with optional due date, recurrence metadata, tags, category, and assignment.");
+        .WithDocumentation(ApiResource.CreateTodo);
 
         group.MapGet("/", async Task<IResult> (
             [AsParameters] TodoQueryParameters query,

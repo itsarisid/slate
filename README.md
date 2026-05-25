@@ -5,6 +5,7 @@ Alphabet is a production-oriented .NET 10 Web API solution template built with C
 Authentication and MFA guidance lives in `README-AUTH.md`.
 Privilege-based access control guidance lives in `README-PRIVILEGE.md`.
 Productivity module guidance lives in `README-PRODUCTIVITY.md`.
+Asset management guidance lives in `README-ASSETMANAGEMENT.md`.
 
 ## Solution structure
 
@@ -23,6 +24,7 @@ Alphabet/
 |   |-- Modules/ProductivityModule
 |   |-- Modules/ProductModule
 |   |-- Modules/SchedulerModule
+|   |-- Modules/AssetManagementModule
 |   |-- Gateway/Alphabet.AppWire
 |   `-- Libraries/Alphabet.Utility
 |-- tests/
@@ -209,6 +211,33 @@ The module currently includes:
 - task boards, time tracking, and dependency graphs
 - calendar views, availability checks, and iCal export
 - global search, dashboards, smart lists, templates, and reports
+
+## Asset management module
+
+The solution includes a dedicated asset management module under [src/Modules/AssetManagementModule](/C:/Users/moinc/OneDrive/Documents/New%20project/src/Modules/AssetManagementModule) for inventory lifecycle management, assignment tracking, maintenance, workflows, and auditability.
+
+- API base paths:
+  - `/api/v1/assets`
+  - `/api/v1/asset-categories`
+  - `/api/v1/locations`
+  - `/api/v1/workflows`
+  - `/api/v1/inventory`
+  - `/api/v1/reports`
+  - `/api/v1/admin/activity`
+- SignalR hub:
+  - `/hubs/assets`
+- documentation:
+  - `README-ASSETMANAGEMENT.md`
+
+The module currently includes:
+
+- asset create, update, move, retire, and scan flows
+- assignment, return, transfer, and self-service assigned asset lookup
+- maintenance scheduling and completion
+- inventory balances, stock adjustments, and stock takes
+- workflow definitions, workflow starts, pending approvals, and step actions
+- depreciation, utilization, lifecycle, and compliance reporting
+- seeded asset privileges, categories, locations, and a default procurement workflow
 
 ## How to switch database providers
 

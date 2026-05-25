@@ -1,0 +1,189 @@
+CREATE TABLE Assets (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetTag NVARCHAR(50) NOT NULL UNIQUE,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(4000) NULL,
+    CategoryId UNIQUEIDENTIFIER NOT NULL,
+    Subcategory NVARCHAR(100) NULL,
+    Manufacturer NVARCHAR(100) NULL,
+    Model NVARCHAR(100) NULL,
+    SerialNumber NVARCHAR(100) NULL,
+    PurchaseDate DATE NULL,
+    WarrantyExpiry DATE NULL,
+    Cost DECIMAL(18, 2) NOT NULL,
+    Currency NVARCHAR(3) NOT NULL,
+    Status NVARCHAR(32) NOT NULL,
+    Condition NVARCHAR(32) NOT NULL,
+    LocationId UNIQUEIDENTIFIER NOT NULL,
+    SupplierId UNIQUEIDENTIFIER NULL,
+    CustomFieldsJson NVARCHAR(MAX) NOT NULL,
+    ImagesJson NVARCHAR(MAX) NOT NULL,
+    DocumentsJson NVARCHAR(MAX) NOT NULL,
+    QrCodePayload NVARCHAR(MAX) NULL,
+    BarcodePayload NVARCHAR(MAX) NULL,
+    AssignedToUserId UNIQUEIDENTIFIER NULL,
+    AssignedAt DATETIMEOFFSET NULL,
+    ExpectedReturnDate DATE NULL,
+    IsDeleted BIT NOT NULL DEFAULT 0,
+    LastInventoryCheckAt DATETIMEOFFSET NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetCategories (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(1000) NULL,
+    ParentCategoryId UNIQUEIDENTIFIER NULL,
+    CustomFieldsSchemaJson NVARCHAR(MAX) NOT NULL,
+    DepreciationRate DECIMAL(6, 2) NULL,
+    DefaultLocationId UNIQUEIDENTIFIER NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetLocations (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    Name NVARCHAR(200) NOT NULL,
+    Code NVARCHAR(50) NOT NULL UNIQUE,
+    Type NVARCHAR(32) NOT NULL,
+    Street NVARCHAR(200) NOT NULL,
+    City NVARCHAR(100) NOT NULL,
+    State NVARCHAR(100) NOT NULL,
+    PostalCode NVARCHAR(20) NOT NULL,
+    Country NVARCHAR(100) NOT NULL,
+    ParentLocationId UNIQUEIDENTIFIER NULL,
+    IsActive BIT NOT NULL,
+    Latitude DECIMAL(10, 6) NULL,
+    Longitude DECIMAL(10, 6) NULL,
+    ContactPerson NVARCHAR(200) NULL,
+    ContactPhone NVARCHAR(50) NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetAssignments (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetId UNIQUEIDENTIFIER NOT NULL,
+    AssignedToUserId UNIQUEIDENTIFIER NOT NULL,
+    AssignedByUserId UNIQUEIDENTIFIER NOT NULL,
+    AssignedAt DATETIMEOFFSET NOT NULL,
+    ExpectedReturnDate DATE NULL,
+    ActualReturnDate DATE NULL,
+    AssignmentType NVARCHAR(32) NOT NULL,
+    ConditionAtAssignment NVARCHAR(32) NOT NULL,
+    ConditionOnReturn NVARCHAR(32) NULL,
+    Purpose NVARCHAR(500) NULL,
+    Notes NVARCHAR(2000) NULL,
+    DamageNotes NVARCHAR(2000) NULL,
+    MissingItemsJson NVARCHAR(MAX) NOT NULL,
+    ReturnedByUserId UNIQUEIDENTIFIER NULL,
+    ReceivedByUserId UNIQUEIDENTIFIER NULL,
+    IsActive BIT NOT NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetMovements (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetId UNIQUEIDENTIFIER NOT NULL,
+    FromLocationId UNIQUEIDENTIFIER NULL,
+    ToLocationId UNIQUEIDENTIFIER NOT NULL,
+    Reason NVARCHAR(1000) NOT NULL,
+    MovedByUserId UNIQUEIDENTIFIER NOT NULL,
+    MovedAt DATETIMEOFFSET NOT NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetMaintenanceRecords (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetId UNIQUEIDENTIFIER NOT NULL,
+    MaintenanceType NVARCHAR(32) NOT NULL,
+    ScheduledDate DATE NOT NULL,
+    Description NVARCHAR(1000) NOT NULL,
+    AssignedToVendor NVARCHAR(200) NULL,
+    EstimatedCost DECIMAL(18, 2) NOT NULL,
+    Priority NVARCHAR(32) NOT NULL,
+    CompletionDate DATE NULL,
+    ActualCost DECIMAL(18, 2) NULL,
+    Notes NVARCHAR(4000) NULL,
+    NextMaintenanceDueDate DATE NULL,
+    IsCompleted BIT NOT NULL DEFAULT 0,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetWorkflowDefinitions (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(2000) NULL,
+    Version INT NOT NULL,
+    StepsJson NVARCHAR(MAX) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetWorkflowInstances (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    WorkflowDefinitionId UNIQUEIDENTIFIER NOT NULL,
+    AssetId UNIQUEIDENTIFIER NOT NULL,
+    Status NVARCHAR(32) NOT NULL,
+    CurrentStepId UNIQUEIDENTIFIER NULL,
+    ContextJson NVARCHAR(MAX) NOT NULL,
+    InitiatedByUserId UNIQUEIDENTIFIER NOT NULL,
+    InitiatedAt DATETIMEOFFSET NOT NULL,
+    CompletedAt DATETIMEOFFSET NULL,
+    StepsJson NVARCHAR(MAX) NOT NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE InventoryBalances (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetId UNIQUEIDENTIFIER NOT NULL,
+    LocationId UNIQUEIDENTIFIER NOT NULL,
+    QuantityOnHand INT NOT NULL,
+    MinimumThreshold INT NOT NULL,
+    LastCountedAt DATETIMEOFFSET NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL,
+    CONSTRAINT UX_InventoryBalances_AssetLocation UNIQUE (AssetId, LocationId)
+);
+
+CREATE TABLE StockAdjustments (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetId UNIQUEIDENTIFIER NOT NULL,
+    LocationId UNIQUEIDENTIFIER NOT NULL,
+    AdjustmentType NVARCHAR(32) NOT NULL,
+    Quantity INT NOT NULL,
+    Reason NVARCHAR(1000) NOT NULL,
+    PerformedByUserId UNIQUEIDENTIFIER NOT NULL,
+    ReferenceNumber NVARCHAR(100) NULL,
+    PerformedAt DATETIMEOFFSET NOT NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE TABLE AssetActivityLogs (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    AssetId UNIQUEIDENTIFIER NULL,
+    UserId UNIQUEIDENTIFIER NULL,
+    Action NVARCHAR(100) NOT NULL,
+    OldValueJson NVARCHAR(MAX) NULL,
+    NewValueJson NVARCHAR(MAX) NULL,
+    Timestamp DATETIMEOFFSET NOT NULL,
+    IpAddress NVARCHAR(64) NULL,
+    UserAgent NVARCHAR(1000) NULL,
+    Reason NVARCHAR(2000) NULL,
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    UpdatedAt DATETIMEOFFSET NOT NULL
+);
+
+CREATE INDEX IX_Assets_Status ON Assets(Status);
+CREATE INDEX IX_Assets_AssignedToUserId ON Assets(AssignedToUserId);
+CREATE INDEX IX_AssetAssignments_AssignedToUserId ON AssetAssignments(AssignedToUserId);
+CREATE INDEX IX_AssetActivityLogs_Timestamp ON AssetActivityLogs(Timestamp);
+CREATE INDEX IX_AssetWorkflowInstances_Status ON AssetWorkflowInstances(Status);

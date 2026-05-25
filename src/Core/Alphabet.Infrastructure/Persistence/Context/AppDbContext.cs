@@ -69,6 +69,30 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : AppId
     public DbSet<TimeEntry> ProductivityTimeEntries => Set<TimeEntry>();
 
     public DbSet<TaskDependency> ProductivityTaskDependencies => Set<TaskDependency>();
+
+    public DbSet<Asset> Assets => Set<Asset>();
+
+    public DbSet<AssetCategory> AssetCategories => Set<AssetCategory>();
+
+    public DbSet<Location> AssetLocations => Set<Location>();
+
+    public DbSet<AssetAssignment> AssetAssignments => Set<AssetAssignment>();
+
+    public DbSet<AssetMovement> AssetMovements => Set<AssetMovement>();
+
+    public DbSet<AssetMaintenanceRecord> AssetMaintenanceRecords => Set<AssetMaintenanceRecord>();
+
+    public DbSet<AssetWorkflowDefinition> AssetWorkflowDefinitions => Set<AssetWorkflowDefinition>();
+
+    public DbSet<AssetWorkflowInstance> AssetWorkflowInstances => Set<AssetWorkflowInstance>();
+
+    public DbSet<InventoryBalance> InventoryBalances => Set<InventoryBalance>();
+
+    public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
+
+    public DbSet<AssetActivityLog> AssetActivityLogs => Set<AssetActivityLog>();
+
+    public DbSet<AssetReservation> AssetReservations => Set<AssetReservation>();
     /// <summary>
     /// On model creating.
     /// </summary>

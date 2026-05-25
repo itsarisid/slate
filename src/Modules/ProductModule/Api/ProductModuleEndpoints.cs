@@ -1,7 +1,9 @@
 using Alphabet.Application.Features.Products;
 using Alphabet.Application.Features.Products.Commands.CreateProduct;
 using Alphabet.Application.Features.Products.Queries.GetProductById;
+using Alphabet.Common.Extensions;
 using Alphabet.Contracts.Products;
+using Alphabet.Modules.ProductModule.Api.Resource;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +35,7 @@ public static class ProductModuleEndpoints
             .WithTags("Product Module");
 
         group.MapPost(
-                "/",
+                ApiResource.CreateProduct.Endpoint,
                 async Task<Results<Created<ProductResponseDto>, BadRequest<ProblemDetails>>> (
                     CreateProductRequest request,
                     ISender sender,
@@ -57,12 +59,10 @@ public static class ProductModuleEndpoints
             .RequireAuthorization("CatalogWrite")
             .Produces<ProductResponseDto>(StatusCodes.Status201Created)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .WithName("CreateProduct")
-            .WithSummary("Creates a new product.")
-            .WithDescription("Creates a catalog product, persists it, and returns the created product representation. This endpoint requires the CatalogWrite policy.");
+            .WithDocumentation(ApiResource.CreateProduct);
 
         group.MapGet(
-                "/{id:guid}",
+                ApiResource.GetProductById.Endpoint,
                 async Task<Results<Ok<ProductResponseDto>, NotFound<ProblemDetails>>> (
                     Guid id,
                     ISender sender,
@@ -84,9 +84,7 @@ public static class ProductModuleEndpoints
             .AllowAnonymous()
             .Produces<ProductResponseDto>(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-            .WithName("GetProductById")
-            .WithSummary("Gets a product by identifier.")
-            .WithDescription("Returns the product details for the specified product id when the product exists.");
+            .WithDocumentation(ApiResource.GetProductById);
 
         return endpoints;
     }

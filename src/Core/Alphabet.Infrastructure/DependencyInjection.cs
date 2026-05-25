@@ -2,11 +2,13 @@ using System.Text;
 using System.Security.Claims;
 using Alphabet.Application.Common.Authentication;
 using Alphabet.Application.Common.Interfaces;
+using Alphabet.Application.Common.Interfaces.AssetManagement;
 using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Common.Interfaces.Privilege;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
+using Alphabet.Domain.Interfaces.AssetManagement;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.Interfaces.Privilege;
 using Alphabet.Infrastructure.BackgroundJobs;
@@ -18,11 +20,13 @@ using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Persistence.Context;
 using Alphabet.Infrastructure.Persistence.Repositories;
 using Alphabet.Infrastructure.Repositories;
+using Alphabet.Infrastructure.Repositories.AssetManagement;
 using Alphabet.Infrastructure.Repositories.Privilege;
 using Alphabet.Infrastructure.Scheduler;
 using Alphabet.Infrastructure.Scheduler.JobHandlers;
 using Alphabet.Infrastructure.Security;
 using Alphabet.Infrastructure.Services;
+using Alphabet.Infrastructure.Services.AssetManagement;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -64,6 +68,12 @@ public static class DependencyInjection
         services.Configure<ProductivityNotificationSettings>(configuration.GetSection(ProductivityNotificationSettings.SectionName));
         services.Configure<ProductivityFileStorageSettings>(configuration.GetSection(ProductivityFileStorageSettings.SectionName));
         services.Configure<RecurrenceSettings>(configuration.GetSection(RecurrenceSettings.SectionName));
+        services.Configure<AssetManagementSettings>(configuration.GetSection(AssetManagementSettings.SectionName));
+        services.Configure<AssetWorkflowSettings>(configuration.GetSection(AssetWorkflowSettings.SectionName));
+        services.Configure<AssetDepreciationSettings>(configuration.GetSection(AssetDepreciationSettings.SectionName));
+        services.Configure<AssetNotificationSettings>(configuration.GetSection(AssetNotificationSettings.SectionName));
+        services.Configure<AssetBarcodeSettings>(configuration.GetSection(AssetBarcodeSettings.SectionName));
+        services.Configure<AssetImportExportSettings>(configuration.GetSection(AssetImportExportSettings.SectionName));
 
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>() ?? new DatabaseSettings();
 
@@ -112,6 +122,7 @@ public static class DependencyInjection
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<ITaskRepository, TaskRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IAssetRepository, AssetRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -135,12 +146,19 @@ public static class DependencyInjection
         services.AddScoped<IFileStorageService, FileStorageService>();
         services.AddScoped<ICalendarExportService, CalendarExportService>();
         services.AddScoped<IProductivityReadService, ProductivityReadService>();
+        services.AddScoped<IAssetTagGenerator, AssetTagGenerator>();
+        services.AddScoped<IAssetBarcodeService, AssetBarcodeService>();
+        services.AddScoped<IAssetDepreciationService, AssetDepreciationService>();
+        services.AddScoped<IAssetUserDirectory, AssetUserDirectory>();
+        services.AddScoped<IAssetNotificationService, AssetNotificationService>();
         services.AddScoped<NoteSearchService>();
         services.AddScoped<ReminderTriggerJob>();
         services.AddScoped<RecurringTaskGeneratorJob>();
         services.AddScoped<TrashCleanupJob>();
         services.AddScoped<ProductivityReportJob>();
         services.AddScoped<CalendarSyncJob>();
+        services.AddScoped<WorkflowEscalationJob>();
+        services.AddScoped<MaintenanceReminderJob>();
         services.AddScoped<HttpCallJobHandler>();
         services.AddScoped<StoredProcedureJobHandler>();
         services.AddScoped<CodeExecutionJobHandler>();
