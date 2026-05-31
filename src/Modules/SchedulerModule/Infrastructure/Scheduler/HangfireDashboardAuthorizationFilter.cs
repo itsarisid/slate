@@ -7,6 +7,9 @@ namespace Alphabet.Infrastructure.Scheduler;
 /// </summary>
 public sealed class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
 {
+    /// <summary>
+    /// Authorize.
+    /// </summary>
     public bool Authorize(DashboardContext context)
     {
         var httpContext = context.GetHttpContext();

@@ -8,7 +8,9 @@ using Alphabet.Infrastructure.Logging;
 using Alphabet.Infrastructure.Options;
 using Alphabet.Infrastructure.Scheduler;
 using Alphabet.Infrastructure.Services;
+using Alphabet.Infrastructure.Services.AssetManagement;
 using Alphabet.Modules.CommunicationModule.Api;
+using Alphabet.Modules.AssetManagementModule.Api;
 using Alphabet.Modules.IdentityModule.Api;
 using Alphabet.Modules.PrivilegeModule.Api;
 using Alphabet.Modules.ProductivityModule.Api;
@@ -63,7 +65,9 @@ var app = builder.Build();
 //await ApplyDatabaseMigrationsAsync(app);
 await IdentitySetup.SeedAsync(app.Services);
 await DefaultPrivilegesSeeder.SeedAsync(app.Services);
+await AssetManagementSeedDataSeeder.SeedAsync(app.Services);
 ProductivityBackgroundJobSetup.Configure(app.Services);
+AssetManagementBackgroundJobSetup.Configure(app.Services);
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestLoggingMiddleware>();
@@ -94,6 +98,7 @@ app.MapIdentityModule();
 app.MapPrivilegeModule();
 app.MapSchedulerModule();
 app.MapProductivityModule();
+app.MapAssetManagementModule();
 
 var schedulerSettings = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SchedulerSettings>>().Value;
 if (schedulerSettings.Provider.Equals("Hangfire", StringComparison.OrdinalIgnoreCase) &&

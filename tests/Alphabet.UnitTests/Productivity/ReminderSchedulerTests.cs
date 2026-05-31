@@ -1,5 +1,4 @@
 using Alphabet.Domain.Entities;
-using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Infrastructure.Services;
 using FluentAssertions;
 using Hangfire;

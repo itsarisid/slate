@@ -27,6 +27,9 @@ public sealed class SmartList : BaseEntity
         CriteriaJson = string.IsNullOrWhiteSpace(criteriaJson) ? "{}" : criteriaJson;
         IsShared = isShared;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static SmartList Create(Guid ownerUserId, string name, string entityType, string criteriaJson, bool isShared)
         => new(ownerUserId, name, entityType, criteriaJson, isShared);

@@ -75,6 +75,24 @@
     <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Services\*.cs">
       <Link>Modules\ProductivityModule\Infrastructure\Services\%(Filename)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\..\Modules\AssetManagementModule\Infrastructure\BackgroundJobs\*.cs">
+      <Link>Modules\AssetManagementModule\Infrastructure\BackgroundJobs\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\AssetManagementModule\Infrastructure\Data\Seeders\*.cs">
+      <Link>Modules\AssetManagementModule\Infrastructure\Data\Seeders\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\AssetManagementModule\Infrastructure\Options\*.cs">
+      <Link>Modules\AssetManagementModule\Infrastructure\Options\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\AssetManagementModule\Infrastructure\Persistence\Configurations\*.cs">
+      <Link>Modules\AssetManagementModule\Infrastructure\Persistence\Configurations\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\AssetManagementModule\Infrastructure\Repositories\*.cs">
+      <Link>Modules\AssetManagementModule\Infrastructure\Repositories\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\AssetManagementModule\Infrastructure\Services\*.cs">
+      <Link>Modules\AssetManagementModule\Infrastructure\Services\%(Filename)%(Extension)</Link>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

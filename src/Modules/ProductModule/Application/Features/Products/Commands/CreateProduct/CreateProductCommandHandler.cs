@@ -1,6 +1,4 @@
-using Alphabet.Application.Features.Products;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.ValueObjects;
 using MediatR;

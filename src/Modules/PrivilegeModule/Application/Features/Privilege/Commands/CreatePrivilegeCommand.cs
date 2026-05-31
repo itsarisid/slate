@@ -43,6 +43,9 @@ public sealed class CreatePrivilegeCommandValidator : AbstractValidator<CreatePr
 public sealed class CreatePrivilegeCommandHandler(IPrivilegeService privilegeService)
     : IRequestHandler<CreatePrivilegeCommand, Result<Guid>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<Guid>> Handle(CreatePrivilegeCommand request, CancellationToken cancellationToken)
     {
         return privilegeService.CreatePrivilegeAsync(

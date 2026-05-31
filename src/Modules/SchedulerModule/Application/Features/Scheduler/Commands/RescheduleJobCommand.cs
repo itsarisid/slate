@@ -1,9 +1,7 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Application.Features.Scheduler.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using FluentValidation;
@@ -21,6 +19,9 @@ public sealed record RescheduleJobCommand(
     int? IntervalSeconds,
     DateTimeOffset? RunAt,
     DateTimeOffset? EffectiveFrom) : IRequest<Result<JobDto>>;
+/// <summary>
+/// Reschedule job command validator.
+/// </summary>
 
 public sealed class RescheduleJobCommandValidator : AbstractValidator<RescheduleJobCommand>
 {
@@ -36,6 +37,9 @@ public sealed class RescheduleJobCommandValidator : AbstractValidator<Reschedule
             .WithMessage("Interval jobs must run at least every 300 seconds.");
     }
 }
+/// <summary>
+/// Reschedule job command handler.
+/// </summary>
 
 public sealed class RescheduleJobCommandHandler(
     IJobRepository jobRepository,
@@ -45,6 +49,9 @@ public sealed class RescheduleJobCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<RescheduleJobCommand, Result<JobDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<JobDto>> Handle(RescheduleJobCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);

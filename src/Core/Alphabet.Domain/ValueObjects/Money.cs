@@ -26,6 +26,9 @@ public sealed record Money
         Amount = decimal.Round(amount, 2, MidpointRounding.ToEven);
         Currency = currency.Trim().ToUpperInvariant();
     }
+    /// <summary>
+    /// Zero.
+    /// </summary>
 
     public static Money Zero(string currency) => new(0m, currency);
 }

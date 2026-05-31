@@ -23,6 +23,11 @@
     <Compile Include="..\..\Modules\ProductivityModule\Domain\Interfaces\Productivity\*.cs" />
     <Compile Include="..\..\Modules\ProductivityModule\Domain\Models\*.cs" />
     <Compile Include="..\..\Modules\ProductivityModule\Domain\ValueObjects\*.cs" />
+    <Compile Include="..\..\Modules\AssetManagementModule\Domain\Entities\AssetManagement\*.cs" />
+    <Compile Include="..\..\Modules\AssetManagementModule\Domain\Enums\*.cs" />
+    <Compile Include="..\..\Modules\AssetManagementModule\Domain\Interfaces\AssetManagement\*.cs" />
+    <Compile Include="..\..\Modules\AssetManagementModule\Domain\Models\*.cs" />
+    <Compile Include="..\..\Modules\AssetManagementModule\Domain\ValueObjects\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

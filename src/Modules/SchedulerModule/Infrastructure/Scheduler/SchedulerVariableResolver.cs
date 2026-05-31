@@ -8,6 +8,9 @@ namespace Alphabet.Infrastructure.Scheduler;
 /// </summary>
 internal static class SchedulerVariableResolver
 {
+    /// <summary>
+    /// Resolve parameters.
+    /// </summary>
     public static JsonElement ResolveParameters(JsonElement parameters, Job job)
     {
         var json = parameters.GetRawText()

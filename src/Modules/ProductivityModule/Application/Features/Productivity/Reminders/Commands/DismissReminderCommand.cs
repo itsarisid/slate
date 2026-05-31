@@ -1,8 +1,6 @@
 using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
-using Alphabet.Domain.Interfaces.Productivity;
 using MediatR;
 
 namespace Alphabet.Application.Features.Productivity.Reminders.Commands;
@@ -11,6 +9,9 @@ namespace Alphabet.Application.Features.Productivity.Reminders.Commands;
 /// Dismisses or tests a reminder.
 /// </summary>
 public sealed record DismissReminderCommand(Guid ReminderId, bool TriggerTest) : IRequest<Result>;
+/// <summary>
+/// Dismiss reminder command handler.
+/// </summary>
 
 public sealed class DismissReminderCommandHandler(
     IRepository<Reminder> reminderRepository,
@@ -19,6 +20,9 @@ public sealed class DismissReminderCommandHandler(
     IUnitOfWork unitOfWork)
     : IRequestHandler<DismissReminderCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(DismissReminderCommand request, CancellationToken cancellationToken)
     {
         var reminder = await reminderRepository.GetByIdAsync(request.ReminderId, cancellationToken);

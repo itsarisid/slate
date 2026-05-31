@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
 using FluentValidation;
@@ -15,6 +14,9 @@ public sealed record RegisterCommand(
     string ConfirmPassword,
     string FirstName,
     string LastName) : IRequest<Result<UserDto>>;
+/// <summary>
+/// Register command validator.
+/// </summary>
 
 public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
@@ -33,10 +35,16 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
         RuleFor(x => x.ConfirmPassword).Equal(x => x.Password);
     }
 }
+/// <summary>
+/// Register command handler.
+/// </summary>
 
 public sealed class RegisterCommandHandler(IIdentityService identityService)
     : IRequestHandler<RegisterCommand, Result<UserDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<UserDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         return identityService.RegisterAsync(

@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Alphabet.FunctionalTests;
 
 using Xunit;

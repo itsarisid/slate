@@ -10,6 +10,9 @@ public abstract class BaseEntity
     public DateTimeOffset CreatedAt { get; protected set; } = DateTimeOffset.UtcNow;
 
     public DateTimeOffset UpdatedAt { get; protected set; } = DateTimeOffset.UtcNow;
+    /// <summary>
+    /// Touch.
+    /// </summary>
 
     protected void Touch()
     {

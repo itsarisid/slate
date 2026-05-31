@@ -16,6 +16,9 @@ public sealed class HangfireSchedulerService(
     IJobExecutionService jobExecutionService,
     IJobRepository jobRepository) : ISchedulerService
 {
+    /// <summary>
+    /// Schedule job async.
+    /// </summary>
     public Task<string?> ScheduleJobAsync(Job job, CancellationToken cancellationToken)
     {
         var schedulerJobId = BuildRecurringJobId(job);
@@ -55,15 +58,24 @@ public sealed class HangfireSchedulerService(
                 return Task.FromResult<string?>(schedulerJobId);
         }
     }
+    /// <summary>
+    /// Update schedule async.
+    /// </summary>
 
     public Task<string?> UpdateScheduleAsync(Job job, CancellationToken cancellationToken)
         => ScheduleJobAsync(job, cancellationToken);
+    /// <summary>
+    /// Delete job async.
+    /// </summary>
 
     public Task DeleteJobAsync(Job job, CancellationToken cancellationToken)
     {
         recurringJobManager.RemoveIfExists(BuildRecurringJobId(job));
         return Task.CompletedTask;
     }
+    /// <summary>
+    /// Trigger job async.
+    /// </summary>
 
     public async Task<Guid> TriggerJobAsync(Job job, Guid? triggeredBy, Guid? retryParentId, CancellationToken cancellationToken)
     {
@@ -71,15 +83,24 @@ public sealed class HangfireSchedulerService(
         backgroundJobClient.Enqueue<JobExecutor>(executor => executor.ExecuteQueuedAsync(job.Id, execution.Id, triggeredBy, retryParentId));
         return execution.Id;
     }
+    /// <summary>
+    /// Pause job async.
+    /// </summary>
 
     public Task PauseJobAsync(Job job, CancellationToken cancellationToken)
     {
         recurringJobManager.RemoveIfExists(BuildRecurringJobId(job));
         return Task.CompletedTask;
     }
+    /// <summary>
+    /// Resume job async.
+    /// </summary>
 
     public Task ResumeJobAsync(Job job, CancellationToken cancellationToken)
         => ScheduleJobAsync(job, cancellationToken);
+    /// <summary>
+    /// Get job status async.
+    /// </summary>
 
     public Task<string> GetJobStatusAsync(Job job, CancellationToken cancellationToken)
     {
@@ -105,6 +126,9 @@ public sealed class HangfireSchedulerService(
 
         return Task.FromResult("Active");
     }
+    /// <summary>
+    /// Get upcoming executions async.
+    /// </summary>
 
     public async Task<IReadOnlyList<UpcomingExecutionDto>> GetUpcomingExecutionsAsync(int take, CancellationToken cancellationToken)
     {
@@ -115,8 +139,14 @@ public sealed class HangfireSchedulerService(
             .Take(take)
             .ToArray();
     }
+    /// <summary>
+    /// Build recurring job id.
+    /// </summary>
 
     private static string BuildRecurringJobId(Job job) => $"scheduler-job:{job.Id}";
+    /// <summary>
+    /// Build interval cron.
+    /// </summary>
 
     private static string BuildIntervalCron(int intervalSeconds)
     {
@@ -125,6 +155,9 @@ public sealed class HangfireSchedulerService(
             ? $"0 */{Math.Max(1, minutes / 60)} * * *"
             : $"*/{minutes} * * * *";
     }
+    /// <summary>
+    /// Estimate next run.
+    /// </summary>
 
     private static DateTimeOffset? EstimateNextRun(Job job)
     {

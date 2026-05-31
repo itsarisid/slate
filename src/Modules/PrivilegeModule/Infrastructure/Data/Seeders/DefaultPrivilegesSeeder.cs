@@ -27,7 +27,20 @@ public static class DefaultPrivilegesSeeder
         ("privilege.assign", "Assign Privileges", "Privilege Management", ["privilege.view", "role.view"]),
         ("audit.view", "View Audit Logs", "Auditing", []),
         ("report.generate", "Generate Reports", "Reporting", []),
-        ("report.export", "Export Reports", "Reporting", ["report.generate"])
+        ("report.export", "Export Reports", "Reporting", ["report.generate"]),
+        ("asset.view", "View Assets", "Asset Management", []),
+        ("asset.create", "Create Assets", "Asset Management", ["asset.view"]),
+        ("asset.update", "Update Assets", "Asset Management", ["asset.view"]),
+        ("asset.delete", "Retire Assets", "Asset Management", ["asset.view"]),
+        ("asset.assign", "Assign Assets", "Asset Management", ["asset.view"]),
+        ("asset.unassign", "Return Assets", "Asset Management", ["asset.view"]),
+        ("asset.transfer", "Transfer Assets", "Asset Management", ["asset.assign"]),
+        ("asset.maintenance", "Manage Asset Maintenance", "Asset Management", ["asset.view"]),
+        ("asset.audit", "Audit Assets", "Asset Management", ["asset.view"]),
+        ("asset.admin", "Administer Asset Inventory", "Asset Management", ["asset.view", "asset.update"]),
+        ("workflow.initiate", "Initiate Workflows", "Asset Workflow", ["asset.view"]),
+        ("workflow.approve", "Approve Workflows", "Asset Workflow", ["workflow.initiate"]),
+        ("workflow.delegate", "Delegate Workflows", "Asset Workflow", ["workflow.approve"])
     ];
 
     /// <summary>
@@ -103,11 +116,14 @@ public static class DefaultPrivilegesSeeder
 
         await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
-        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Admin", ["user.view", "user.create", "user.edit", "user.delete", "role.view", "role.create", "role.assign", "privilege.view", "privilege.assign", "audit.view", "report.generate", "report.export"], logger);
+        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Admin", ["user.view", "user.create", "user.edit", "user.delete", "role.view", "role.create", "role.assign", "privilege.view", "privilege.assign", "audit.view", "report.generate", "report.export", "asset.view", "asset.create", "asset.update", "asset.delete", "asset.assign", "asset.unassign", "asset.transfer", "asset.maintenance", "asset.audit", "asset.admin", "workflow.initiate", "workflow.approve", "workflow.delegate"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "UserManager", ["user.view", "user.create", "user.edit", "user.delete", "role.view"], logger);
-        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Auditor", ["audit.view", "user.view"], logger);
-        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Reporter", ["report.generate", "report.export"], logger);
+        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Auditor", ["audit.view", "user.view", "asset.audit", "asset.view"], logger);
+        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Reporter", ["report.generate", "report.export", "asset.view"], logger);
     }
+    /// <summary>
+    /// Assign role privileges async.
+    /// </summary>
 
     private static async Task AssignRolePrivilegesAsync(
         IPrivilegeRepository repository,

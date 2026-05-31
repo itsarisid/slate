@@ -12,6 +12,9 @@ namespace Alphabet.Infrastructure.Scheduler.JobHandlers;
 /// </summary>
 public sealed class HttpCallJobHandler(IHttpClientFactory httpClientFactory) : IJobHandler
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public async Task<string> ExecuteAsync(Job job, JsonElement parameters, CancellationToken cancellationToken)
     {
         var config = JsonSerializer.Deserialize<JobConfigurationDto>(job.JobConfiguration)

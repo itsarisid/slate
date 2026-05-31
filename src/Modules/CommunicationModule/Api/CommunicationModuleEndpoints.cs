@@ -1,8 +1,9 @@
 using Alphabet.Application.Features.Communication;
 using Alphabet.Application.Features.Communication.Commands.SendCommunication;
 using Alphabet.Application.Features.Communication.Queries.GetCommunicationConfiguration;
+using Alphabet.Common.Extensions;
+using Alphabet.Modules.CommunicationModule.Api.Resource;
 using Asp.Versioning;
-using Asp.Versioning.Builder;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -34,7 +35,7 @@ public static class CommunicationModuleEndpoints
             .RequireAuthorization("AdminOnly");
 
         group.MapPost(
-                "/send",
+                ApiResource.SendCommunication.Endpoint,
                 async Task<Results<Ok<CommunicationBatchResponseDto>, BadRequest<ProblemDetails>>> (
                     [FromBody] SendCommunicationCommand command,
                     [FromServices] ISender sender,
@@ -55,13 +56,10 @@ public static class CommunicationModuleEndpoints
                 })
             .Produces<CommunicationBatchResponseDto>(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .WithName("SendCommunication")
-            .WithSummary("Sends a message through one or more configured channels.")
-            .WithDescription(
-                "Dispatches the provided subject and body through Email, Sms, Push, InApp, and Webhook channels based on the request payload and enabled configuration.");
+            .WithDocumentation(ApiResource.SendCommunication);
 
         group.MapGet(
-                "/configuration",
+                ApiResource.GetCommunicationConfiguration.Endpoint,
                 async Task<Results<Ok<CommunicationConfigurationDto>, BadRequest<ProblemDetails>>> (
                     [FromServices] ISender sender,
                     CancellationToken cancellationToken) =>
@@ -81,10 +79,7 @@ public static class CommunicationModuleEndpoints
                 })
             .Produces<CommunicationConfigurationDto>(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .WithName("GetCommunicationConfiguration")
-            .WithSummary("Gets the active communication module configuration.")
-            .WithDescription(
-                "Returns the enabled channels, default channel, and diagnostic settings used by the communication module.");
+            .WithDocumentation(ApiResource.GetCommunicationConfiguration);
 
         return endpoints;
     }

@@ -11,11 +11,20 @@ namespace Alphabet.Infrastructure.Repositories;
 /// </summary>
 public sealed class TaskRepository(AppDbContext dbContext) : ITaskRepository
 {
+    /// <summary>
+    /// Add async.
+    /// </summary>
     public async Task AddAsync(ProductivityTask task, CancellationToken cancellationToken)
-        => await dbContext.Set<ProductivityTask>().AddAsync(task, cancellationToken);
+    => await dbContext.Set<ProductivityTask>().AddAsync(task, cancellationToken);
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
 
     public async Task<ProductivityTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         => await dbContext.Set<ProductivityTask>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    /// <summary>
+    /// Get board async.
+    /// </summary>
 
     public async Task<IReadOnlyList<ProductivityTask>> GetBoardAsync(TaskBoardFilter filter, CancellationToken cancellationToken)
     {
@@ -38,6 +47,9 @@ public sealed class TaskRepository(AppDbContext dbContext) : ITaskRepository
 
         return await query.OrderBy(x => x.Status).ThenByDescending(x => x.Priority).ToArrayAsync(cancellationToken);
     }
+    /// <summary>
+    /// Get dependencies async.
+    /// </summary>
 
     public async Task<IReadOnlyList<TaskDependency>> GetDependenciesAsync(Guid taskId, CancellationToken cancellationToken)
     {
@@ -46,6 +58,9 @@ public sealed class TaskRepository(AppDbContext dbContext) : ITaskRepository
             .Where(x => x.ProductivityTaskId == taskId)
             .ToArrayAsync(cancellationToken);
     }
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(ProductivityTask task) => dbContext.Set<ProductivityTask>().Update(task);
 }

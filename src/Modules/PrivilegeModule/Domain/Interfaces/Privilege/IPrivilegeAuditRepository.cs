@@ -7,7 +7,13 @@ namespace Alphabet.Domain.Interfaces.Privilege;
 /// </summary>
 public interface IPrivilegeAuditRepository
 {
+    /// <summary>
+    /// Add async.
+    /// </summary>
     Task AddAsync(PrivilegeAuditLog logEntry, CancellationToken cancellationToken);
+    /// <summary>
+    /// Search async.
+    /// </summary>
 
     Task<IReadOnlyList<PrivilegeAuditLog>> SearchAsync(
         Guid? userId,
@@ -18,6 +24,9 @@ public interface IPrivilegeAuditRepository
         int take,
         int skip,
         CancellationToken cancellationToken);
+    /// <summary>
+    /// Get by user async.
+    /// </summary>
 
     Task<IReadOnlyList<PrivilegeAuditLog>> GetByUserAsync(
         Guid userId,

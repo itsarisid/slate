@@ -1,4 +1,3 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces.Productivity;
@@ -10,10 +9,16 @@ namespace Alphabet.Application.Features.Productivity.Notes.Queries;
 /// Gets note version history.
 /// </summary>
 public sealed record GetNoteVersionsQuery(Guid NoteId) : IRequest<Result<IReadOnlyList<NoteVersionDto>>>;
+/// <summary>
+/// Get note versions query handler.
+/// </summary>
 
 public sealed class GetNoteVersionsQueryHandler(INoteRepository noteRepository)
     : IRequestHandler<GetNoteVersionsQuery, Result<IReadOnlyList<NoteVersionDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<IReadOnlyList<NoteVersionDto>>> Handle(GetNoteVersionsQuery request, CancellationToken cancellationToken)
     {
         var note = await noteRepository.GetByIdAsync(request.NoteId, cancellationToken);

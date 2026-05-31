@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Persistence.Configurations;
 /// </summary>
 public sealed class JobHistoryConfiguration : IEntityTypeConfiguration<JobHistory>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<JobHistory> builder)
     {
         builder.ToTable("SchedulerJobHistory");

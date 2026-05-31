@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class NoteSearchService(AppDbContext dbContext)
 {
+    /// <summary>
+    /// Search async.
+    /// </summary>
     public async Task<IReadOnlyList<Note>> SearchAsync(Guid ownerUserId, string query, CancellationToken cancellationToken)
     {
         return await dbContext.Set<Note>()

@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Persistence.Configurations;
 /// </summary>
 public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("LegacyUsers");

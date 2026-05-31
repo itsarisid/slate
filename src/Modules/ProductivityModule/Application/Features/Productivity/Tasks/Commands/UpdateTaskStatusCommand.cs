@@ -8,10 +8,16 @@ namespace Alphabet.Application.Features.Productivity.Tasks.Commands;
 /// Updates a task status.
 /// </summary>
 public sealed record UpdateTaskStatusCommand(Guid TaskId, Alphabet.Domain.Enums.TaskStatus Status, string? Comment) : IRequest<Result>;
+/// <summary>
+/// Update task status command handler.
+/// </summary>
 
 public sealed class UpdateTaskStatusCommandHandler(ITaskRepository taskRepository)
     : IRequestHandler<UpdateTaskStatusCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(UpdateTaskStatusCommand request, CancellationToken cancellationToken)
     {
         var task = await taskRepository.GetByIdAsync(request.TaskId, cancellationToken);

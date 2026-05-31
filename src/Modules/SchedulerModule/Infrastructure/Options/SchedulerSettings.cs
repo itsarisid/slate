@@ -19,6 +19,9 @@ public sealed class SchedulerSettings
 
     public SchedulerMonitoringSettings Monitoring { get; init; } = new();
 }
+/// <summary>
+/// Hangfire settings.
+/// </summary>
 
 public sealed class HangfireSettings
 {
@@ -34,6 +37,9 @@ public sealed class HangfireSettings
 
     public string[] Queues { get; init; } = ["default", "critical", "background"];
 }
+/// <summary>
+/// Quartz settings.
+/// </summary>
 
 public sealed class QuartzSettings
 {
@@ -43,6 +49,9 @@ public sealed class QuartzSettings
 
     public string TablePrefix { get; init; } = "QRTZ_";
 }
+/// <summary>
+/// Scheduler jobs settings.
+/// </summary>
 
 public sealed class SchedulerJobsSettings
 {
@@ -56,6 +65,9 @@ public sealed class SchedulerJobsSettings
 
     public string[] AllowedFileRoots { get; init; } = ["C:\\Users\\moinc\\OneDrive\\Documents\\New project"];
 }
+/// <summary>
+/// Scheduler retry settings.
+/// </summary>
 
 public sealed class SchedulerRetrySettings
 {
@@ -63,6 +75,9 @@ public sealed class SchedulerRetrySettings
 
     public int DefaultDelaySeconds { get; init; } = 60;
 }
+/// <summary>
+/// Scheduler monitoring settings.
+/// </summary>
 
 public sealed class SchedulerMonitoringSettings
 {

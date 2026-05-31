@@ -15,6 +15,9 @@ public sealed class TrashCleanupJob(
     IOptions<ProductivitySettings> settings,
     ILogger<TrashCleanupJob> logger)
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public async Task ExecuteAsync()
     {
         var threshold = DateTimeOffset.UtcNow.AddDays(-settings.Value.TrashRetentionDays);

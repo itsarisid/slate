@@ -1,7 +1,5 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.ValueObjects;
@@ -28,6 +26,9 @@ public sealed record CreateReminderCommand(
     Guid? LinkedEntityId,
     IReadOnlyCollection<string> NotificationMethods,
     RecurrencePattern? RecurrencePattern) : IRequest<Result<ReminderDto>>;
+/// <summary>
+/// Create reminder command handler.
+/// </summary>
 
 public sealed class CreateReminderCommandHandler(
     IRepository<Reminder> reminderRepository,
@@ -36,6 +37,9 @@ public sealed class CreateReminderCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateReminderCommand, Result<ReminderDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<ReminderDto>> Handle(CreateReminderCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

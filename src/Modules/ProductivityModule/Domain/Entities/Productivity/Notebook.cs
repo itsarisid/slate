@@ -27,6 +27,9 @@ public sealed class Notebook : BaseEntity
         Color = color?.Trim();
         ParentNotebookId = parentNotebookId;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Notebook Create(Guid ownerUserId, string name, string? description, string? color, Guid? parentNotebookId)
         => new(ownerUserId, name, description, color, parentNotebookId);

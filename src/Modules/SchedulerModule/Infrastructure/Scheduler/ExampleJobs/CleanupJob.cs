@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Scheduler.ExampleJobs;
 /// </summary>
 public sealed class CleanupJob : IJobHandler
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public Task<string> ExecuteAsync(Job job, JsonElement parameters, CancellationToken cancellationToken)
-        => Task.FromResult($"Cleanup job '{job.Name}' ran successfully.");
+    => Task.FromResult($"Cleanup job '{job.Name}' ran successfully.");
 }

@@ -8,6 +8,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class SmsService(ILogger<SmsService> logger) : ISmsService
 {
+    /// <summary>
+    /// Send async.
+    /// </summary>
     public Task SendAsync(string to, string body, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

@@ -5,9 +5,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Alphabet.Modules.IdentityModule.Api;
+/// <summary>
+/// Identity cookie writer.
+/// </summary>
 
 internal static class IdentityCookieWriter
 {
+    /// <summary>
+    /// Write auth cookies.
+    /// </summary>
     public static void WriteAuthCookies(HttpContext context, AuthResponseDto response)
     {
         if (string.IsNullOrWhiteSpace(response.AccessToken) || string.IsNullOrWhiteSpace(response.RefreshToken))
@@ -46,6 +52,9 @@ internal static class IdentityCookieWriter
                 IsEssential = true
             });
     }
+    /// <summary>
+    /// Clear auth cookies.
+    /// </summary>
 
     public static void ClearAuthCookies(HttpContext context)
     {
@@ -56,6 +65,9 @@ internal static class IdentityCookieWriter
         context.Response.Cookies.Delete(accessTokenCookieName);
         context.Response.Cookies.Delete(refreshTokenCookieName);
     }
+    /// <summary>
+    /// Get refresh token from cookie.
+    /// </summary>
 
     public static string? GetRefreshTokenFromCookie(HttpContext context)
     {
@@ -63,12 +75,18 @@ internal static class IdentityCookieWriter
         var refreshTokenCookieName = cookieSettings["RefreshTokenCookieName"] ?? AuthenticationConstants.DefaultRefreshTokenCookieName;
         return context.Request.Cookies.TryGetValue(refreshTokenCookieName, out var refreshToken) ? refreshToken : null;
     }
+    /// <summary>
+    /// Read cookie settings.
+    /// </summary>
 
     private static IConfigurationSection ReadCookieSettings(HttpContext context)
     {
         var configuration = context.RequestServices.GetRequiredService<IConfiguration>();
         return configuration.GetSection(AuthenticationConstants.CookieSettingsSection);
     }
+    /// <summary>
+    /// Parse same site.
+    /// </summary>
 
     private static SameSiteMode ParseSameSite(string? sameSite)
     {

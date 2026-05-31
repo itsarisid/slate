@@ -24,6 +24,9 @@ public sealed class UserPrivilege : BaseEntity
     public DateTimeOffset? RevokedAt { get; private set; }
 
     public string? RevokedBy { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static UserPrivilege Create(
         Guid userId,
@@ -43,8 +46,14 @@ public sealed class UserPrivilege : BaseEntity
             Reason = reason?.Trim()
         };
     }
+    /// <summary>
+    /// Is active.
+    /// </summary>
 
     public bool IsActive(DateTimeOffset nowUtc) => RevokedAt is null && (!ExpiresAt.HasValue || ExpiresAt > nowUtc);
+    /// <summary>
+    /// Revoke.
+    /// </summary>
 
     public void Revoke(string revokedBy)
     {

@@ -1,7 +1,5 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.Models;
 using MediatR;
@@ -13,12 +11,18 @@ namespace Alphabet.Application.Features.Productivity.Tasks.Queries;
 /// Gets a Kanban board view of tasks.
 /// </summary>
 public sealed record GetTaskBoardQuery(Guid? ProjectId) : IRequest<Result<IReadOnlyList<TaskBoardColumnDto>>>;
+/// <summary>
+/// Get task board query handler.
+/// </summary>
 
 public sealed class GetTaskBoardQueryHandler(
     ITaskRepository taskRepository,
     ICurrentUserService currentUserService)
     : IRequestHandler<GetTaskBoardQuery, Result<IReadOnlyList<TaskBoardColumnDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<IReadOnlyList<TaskBoardColumnDto>>> Handle(GetTaskBoardQuery request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

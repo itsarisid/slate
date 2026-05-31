@@ -10,6 +10,9 @@ namespace Alphabet.Infrastructure.Services;
 public sealed class FileStorageService(IOptions<ProductivityFileStorageSettings> storageOptions) : IFileStorageService
 {
     private readonly ProductivityFileStorageSettings _settings = storageOptions.Value;
+    /// <summary>
+    /// Save async.
+    /// </summary>
 
     public async Task<string> SaveAsync(string fileName, string contentType, byte[] content, CancellationToken cancellationToken)
     {

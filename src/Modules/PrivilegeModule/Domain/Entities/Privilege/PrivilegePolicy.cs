@@ -38,6 +38,9 @@ public sealed class PrivilegePolicy : BaseEntity
     public IReadOnlyCollection<string> PrivilegeNames => _privilegeNames.ToArray();
 
     public PrivilegePolicyCondition Condition { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static PrivilegePolicy Create(
         string name,

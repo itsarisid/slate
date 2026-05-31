@@ -8,6 +8,9 @@ namespace Alphabet.Infrastructure.BackgroundJobs;
 /// </summary>
 public sealed class InProcessBackgroundJobService(ILogger<InProcessBackgroundJobService> logger) : IBackgroundJobService
 {
+    /// <summary>
+    /// Enqueue async.
+    /// </summary>
     public async Task EnqueueAsync(string jobName, Func<CancellationToken, Task> workItem, CancellationToken cancellationToken)
     {
         logger.LogInformation("Executing background job {JobName}", jobName);

@@ -22,6 +22,9 @@ public sealed record UpdatePrivilegeCommand(
 /// Deprecates or hard-deletes a privilege.
 /// </summary>
 public sealed record DeletePrivilegeCommand(Guid PrivilegeId, bool HardDelete) : IRequest<Result>;
+/// <summary>
+/// Update privilege command validator.
+/// </summary>
 
 public sealed class UpdatePrivilegeCommandValidator : AbstractValidator<UpdatePrivilegeCommand>
 {
@@ -33,10 +36,16 @@ public sealed class UpdatePrivilegeCommandValidator : AbstractValidator<UpdatePr
         RuleFor(x => x.Actions).NotEmpty();
     }
 }
+/// <summary>
+/// Update privilege command handler.
+/// </summary>
 
 public sealed class UpdatePrivilegeCommandHandler(IPrivilegeService privilegeService)
     : IRequestHandler<UpdatePrivilegeCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(UpdatePrivilegeCommand request, CancellationToken cancellationToken)
     {
         return privilegeService.UpdatePrivilegeAsync(
@@ -51,10 +60,16 @@ public sealed class UpdatePrivilegeCommandHandler(IPrivilegeService privilegeSer
             cancellationToken);
     }
 }
+/// <summary>
+/// Delete privilege command handler.
+/// </summary>
 
 public sealed class DeletePrivilegeCommandHandler(IPrivilegeService privilegeService)
     : IRequestHandler<DeletePrivilegeCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(DeletePrivilegeCommand request, CancellationToken cancellationToken)
     {
         return privilegeService.DeletePrivilegeAsync(request.PrivilegeId, request.HardDelete, cancellationToken);

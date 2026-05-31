@@ -24,6 +24,9 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
             await WriteProblemDetailsAsync(context, exception);
         }
     }
+    /// <summary>
+    /// Write problem details async.
+    /// </summary>
 
     private static async Task WriteProblemDetailsAsync(HttpContext context, Exception exception)
     {

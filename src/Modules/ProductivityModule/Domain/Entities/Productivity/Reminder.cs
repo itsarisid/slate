@@ -82,6 +82,9 @@ public sealed class Reminder : BaseEntity
         NotificationMethodsJson = ProductivityJson.Serialize(notificationMethods);
         RecurrencePatternJson = recurrencePattern is null ? null : ProductivityJson.Serialize(recurrencePattern);
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Reminder Create(
         Guid ownerUserId,
@@ -119,6 +122,9 @@ public sealed class Reminder : BaseEntity
             recurrencePattern);
 
     public IReadOnlyList<string> NotificationMethods => ProductivityJson.DeserializeList<string>(NotificationMethodsJson);
+    /// <summary>
+    /// Snooze.
+    /// </summary>
 
     public void Snooze(int minutes)
     {
@@ -126,18 +132,27 @@ public sealed class Reminder : BaseEntity
         Status = ReminderStatus.Snoozed;
         Touch();
     }
+    /// <summary>
+    /// Dismiss.
+    /// </summary>
 
     public void Dismiss()
     {
         Status = ReminderStatus.Dismissed;
         Touch();
     }
+    /// <summary>
+    /// Mark triggered.
+    /// </summary>
 
     public void MarkTriggered()
     {
         Status = ReminderStatus.Triggered;
         Touch();
     }
+    /// <summary>
+    /// Mark completed.
+    /// </summary>
 
     public void MarkCompleted()
     {

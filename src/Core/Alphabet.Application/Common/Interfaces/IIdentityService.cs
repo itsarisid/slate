@@ -9,42 +9,93 @@ namespace Alphabet.Application.Common.Interfaces;
 /// </summary>
 public interface IIdentityService
 {
+    /// <summary>
+    /// Register async.
+    /// </summary>
     Task<Result<UserDto>> RegisterAsync(
-        string email,
-        string password,
-        string firstName,
-        string lastName,
-        CancellationToken cancellationToken);
+    string email,
+    string password,
+    string firstName,
+    string lastName,
+    CancellationToken cancellationToken);
+    /// <summary>
+    /// Confirm email async.
+    /// </summary>
 
     Task<Result> ConfirmEmailAsync(Guid userId, string token, CancellationToken cancellationToken);
+    /// <summary>
+    /// Login async.
+    /// </summary>
 
     Task<Result<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken);
+    /// <summary>
+    /// Complete mfa login async.
+    /// </summary>
 
     Task<Result<AuthResponseDto>> CompleteMfaLoginAsync(string mfaToken, string verificationCode, CancellationToken cancellationToken);
+    /// <summary>
+    /// Send forgot password async.
+    /// </summary>
 
     Task<Result> SendForgotPasswordAsync(string email, CancellationToken cancellationToken);
+    /// <summary>
+    /// Reset password async.
+    /// </summary>
 
     Task<Result> ResetPasswordAsync(string email, string token, string newPassword, CancellationToken cancellationToken);
+    /// <summary>
+    /// Refresh token async.
+    /// </summary>
 
     Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
+    /// <summary>
+    /// Logout async.
+    /// </summary>
 
     Task<Result> LogoutAsync(string refreshToken, CancellationToken cancellationToken);
+    /// <summary>
+    /// Change password async.
+    /// </summary>
 
     Task<Result> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken);
+    /// <summary>
+    /// Enable authenticator async.
+    /// </summary>
 
     Task<Result<AuthenticatorSetupDto>> EnableAuthenticatorAsync(Guid userId, CancellationToken cancellationToken);
+    /// <summary>
+    /// Verify authenticator async.
+    /// </summary>
 
     Task<Result<RecoveryCodesDto>> VerifyAuthenticatorAsync(Guid userId, string verificationCode, CancellationToken cancellationToken);
+    /// <summary>
+    /// Enable otp async.
+    /// </summary>
 
     Task<Result> EnableOtpAsync(Guid userId, TwoFactorMethod method, string destination, CancellationToken cancellationToken);
+    /// <summary>
+    /// Verify otp async.
+    /// </summary>
 
     Task<Result> VerifyOtpAsync(Guid userId, string destination, string verificationCode, CancellationToken cancellationToken);
+    /// <summary>
+    /// Get recovery codes async.
+    /// </summary>
 
     Task<Result<RecoveryCodesDto>> GetRecoveryCodesAsync(Guid userId, CancellationToken cancellationToken);
+    /// <summary>
+    /// Regenerate recovery codes async.
+    /// </summary>
 
     Task<Result<RecoveryCodesDto>> RegenerateRecoveryCodesAsync(Guid userId, CancellationToken cancellationToken);
+    /// <summary>
+    /// Unlock user async.
+    /// </summary>
 
     Task<Result> UnlockUserAsync(Guid userId, CancellationToken cancellationToken);
+    /// <summary>
+    /// Get users async.
+    /// </summary>
 
     Task<IReadOnlyList<UserDto>> GetUsersAsync(CancellationToken cancellationToken);
 

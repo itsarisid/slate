@@ -7,18 +7,20 @@
     <Project Path="src/Core/Alphabet.Infrastructure/Alphabet.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/AssetManagementModule/AssetManagementModule.csproj" />
     <Project Path="src/Modules/CommunicationModule/CommunicationModule.csproj" />
     <Project Path="src/Modules/IdentityModule/IdentityModule.csproj" />
     <Project Path="src/Modules/OrderModule/OrderModule.csproj" />
     <Project Path="src/Modules/PrivilegeModule/PrivilegeModule.csproj" />
-    <Project Path="src/Modules/ProductModule/ProductModule.csproj" />
     <Project Path="src/Modules/ProductivityModule/ProductivityModule.csproj" />
+    <Project Path="src/Modules/ProductModule/ProductModule.csproj" />
     <Project Path="src/Modules/SchedulerModule/SchedulerModule.csproj" />
   </Folder>
   <Folder Name="/src/Gateway/">
     <Project Path="src/Gateway/Alphabet.AppWire/Alphabet.AppWire.csproj" />
   </Folder>
   <Folder Name="/src/Libraries/">
+    <Project Path="src/Libraries/Alphabet.Common/Alphabet.Common.csproj" Id="70fd6814-3ba2-4d01-862e-359d0fbc3e94" />
     <Project Path="src/Libraries/Alphabet.SearchEngine/Alphabet.SearchEngine.csproj" Id="ccc2d62f-b5c9-496b-9c79-cc1bf0940479" />
     <Project Path="src/Libraries/Alphabet.Utility/Alphabet.Utility.csproj" />
   </Folder>

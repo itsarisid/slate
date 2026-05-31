@@ -11,11 +11,20 @@ namespace Alphabet.Infrastructure.Repositories;
 /// </summary>
 public sealed class TodoRepository(AppDbContext dbContext) : ITodoRepository
 {
+    /// <summary>
+    /// Add async.
+    /// </summary>
     public async Task AddAsync(Todo todo, CancellationToken cancellationToken)
-        => await dbContext.Set<Todo>().AddAsync(todo, cancellationToken);
+    => await dbContext.Set<Todo>().AddAsync(todo, cancellationToken);
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
 
     public async Task<Todo?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         => await dbContext.Set<Todo>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    /// <summary>
+    /// Search async.
+    /// </summary>
 
     public async Task<ProductivityPagedResult<Todo>> SearchAsync(TodoQueryFilter filter, CancellationToken cancellationToken)
     {
@@ -88,6 +97,9 @@ public sealed class TodoRepository(AppDbContext dbContext) : ITodoRepository
 
         return new ProductivityPagedResult<Todo>(items, filter.Page, filter.PageSize, totalCount);
     }
+    /// <summary>
+    /// Get today async.
+    /// </summary>
 
     public async Task<IReadOnlyList<Todo>> GetTodayAsync(Guid ownerUserId, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken)
     {
@@ -97,6 +109,9 @@ public sealed class TodoRepository(AppDbContext dbContext) : ITodoRepository
             .OrderBy(x => x.DueDate)
             .ToArrayAsync(cancellationToken);
     }
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(Todo todo) => dbContext.Set<Todo>().Update(todo);
 }

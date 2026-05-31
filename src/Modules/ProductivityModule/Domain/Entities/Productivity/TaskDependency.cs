@@ -18,6 +18,9 @@ public sealed class TaskDependency : BaseEntity
         ProductivityTaskId = productivityTaskId;
         DependsOnTaskId = dependsOnTaskId;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static TaskDependency Create(Guid productivityTaskId, Guid dependsOnTaskId)
         => new(productivityTaskId, dependsOnTaskId);

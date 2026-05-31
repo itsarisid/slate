@@ -7,6 +7,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class RecurringTaskGeneratorJob(ILogger<RecurringTaskGeneratorJob> logger)
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public Task ExecuteAsync()
     {
         logger.LogInformation("Recurring task generation job executed.");

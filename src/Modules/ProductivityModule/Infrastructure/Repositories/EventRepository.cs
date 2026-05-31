@@ -11,11 +11,20 @@ namespace Alphabet.Infrastructure.Repositories;
 /// </summary>
 public sealed class EventRepository(AppDbContext dbContext) : IEventRepository
 {
+    /// <summary>
+    /// Add async.
+    /// </summary>
     public async Task AddAsync(CalendarEvent calendarEvent, CancellationToken cancellationToken)
-        => await dbContext.Set<CalendarEvent>().AddAsync(calendarEvent, cancellationToken);
+    => await dbContext.Set<CalendarEvent>().AddAsync(calendarEvent, cancellationToken);
+    /// <summary>
+    /// Get by id async.
+    /// </summary>
 
     public async Task<CalendarEvent?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         => await dbContext.Set<CalendarEvent>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    /// <summary>
+    /// Get calendar view async.
+    /// </summary>
 
     public async Task<IReadOnlyList<CalendarEvent>> GetCalendarViewAsync(CalendarViewFilter filter, CancellationToken cancellationToken)
     {
@@ -50,6 +59,9 @@ public sealed class EventRepository(AppDbContext dbContext) : IEventRepository
             .OrderBy(x => x.StartTime)
             .ToArrayAsync(cancellationToken);
     }
+    /// <summary>
+    /// Get range async.
+    /// </summary>
 
     public async Task<IReadOnlyList<CalendarEvent>> GetRangeAsync(Guid ownerUserId, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken)
     {
@@ -59,6 +71,9 @@ public sealed class EventRepository(AppDbContext dbContext) : IEventRepository
             .OrderBy(x => x.StartTime)
             .ToArrayAsync(cancellationToken);
     }
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(CalendarEvent calendarEvent) => dbContext.Set<CalendarEvent>().Update(calendarEvent);
 }

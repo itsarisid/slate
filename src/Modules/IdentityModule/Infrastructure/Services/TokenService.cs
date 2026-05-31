@@ -25,6 +25,9 @@ public sealed class TokenService(
     : ITokenService
 {
     private readonly JwtSettings _settings = options.Value;
+    /// <summary>
+    /// Create auth response async.
+    /// </summary>
 
     public async Task<AuthResponseDto> CreateAuthResponseAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
@@ -53,6 +56,9 @@ public sealed class TokenService(
             null,
             "Authentication successful.");
     }
+    /// <summary>
+    /// Create mfa token async.
+    /// </summary>
 
     public Task<string> CreateMfaTokenAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
@@ -61,6 +67,9 @@ public sealed class TokenService(
             DateTimeOffset.UtcNow.AddMinutes(_settings.MfaTokenExpiryMinutes),
             [new Claim("token_use", "mfa")]);
     }
+    /// <summary>
+    /// Get user id from mfa token async.
+    /// </summary>
 
     public Task<Guid?> GetUserIdFromMfaTokenAsync(string mfaToken, CancellationToken cancellationToken)
     {
@@ -73,9 +82,15 @@ public sealed class TokenService(
                 ? userId
                 : (Guid?)null);
     }
+    /// <summary>
+    /// Get refresh token async.
+    /// </summary>
 
     public Task<RefreshToken?> GetRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         => dbContext.RefreshTokens.Include(x => x.User).FirstOrDefaultAsync(x => x.Token == refreshToken, cancellationToken);
+    /// <summary>
+    /// Revoke refresh token async.
+    /// </summary>
 
     public async Task RevokeRefreshTokenAsync(RefreshToken refreshToken, string? ipAddress, CancellationToken cancellationToken)
     {
@@ -84,6 +99,9 @@ public sealed class TokenService(
         refreshToken.RevokedByIp = ipAddress;
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+    /// <summary>
+    /// Revoke all refresh tokens async.
+    /// </summary>
 
     public async Task RevokeAllRefreshTokensAsync(Guid userId, string? ipAddress, CancellationToken cancellationToken)
     {
@@ -97,6 +115,9 @@ public sealed class TokenService(
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+    /// <summary>
+    /// Create jwt token async.
+    /// </summary>
 
     private async Task<string> CreateJwtTokenAsync(
         ApplicationUser user,
@@ -125,6 +146,9 @@ public sealed class TokenService(
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    /// <summary>
+    /// Validate token.
+    /// </summary>
 
     private ClaimsPrincipal? ValidateToken(string token, bool validateLifetime)
     {

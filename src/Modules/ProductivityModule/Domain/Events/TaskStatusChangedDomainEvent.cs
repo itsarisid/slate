@@ -1,4 +1,3 @@
-using Alphabet.Domain.Enums;
 using ProductivityTaskStatus = Alphabet.Domain.Enums.TaskStatus;
 
 namespace Alphabet.Domain.Events;
