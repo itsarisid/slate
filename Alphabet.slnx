@@ -9,6 +9,7 @@
   <Folder Name="/src/Modules/">
     <Project Path="src/Modules/CommunicationModule/CommunicationModule.csproj" />
     <Project Path="src/Modules/IdentityModule/IdentityModule.csproj" />
+    <Project Path="src/Modules/LeaveManagementModule/LeaveManagementModule.csproj" />
     <Project Path="src/Modules/OrderModule/OrderModule.csproj" />
     <Project Path="src/Modules/PrivilegeModule/PrivilegeModule.csproj" />
     <Project Path="src/Modules/ProductModule/ProductModule.csproj" />

@@ -1,0 +1,47 @@
+{
+  "name": "Default Leave Approval",
+  "code": "DEFAULT-LEAVE",
+  "description": "Manager then HR approval for standard leave requests.",
+  "applicableTo": {
+    "leaveTypeIds": [],
+    "departmentIds": [],
+    "employeeLevels": [],
+    "geographyIds": [],
+    "minDays": 0,
+    "maxDays": null
+  },
+  "approvalLevels": [
+    {
+      "level": 1,
+      "name": "Manager Approval",
+      "approverType": "RoleBased",
+      "approverValue": "Manager",
+      "requiredApprovers": 1,
+      "timeoutHours": 48,
+      "escalationEnabled": true,
+      "escalationAfterHours": 48,
+      "escalationToRole": "HR",
+      "autoApproveOnTimeout": false,
+      "canDelegate": true,
+      "conditions": {}
+    },
+    {
+      "level": 2,
+      "name": "HR Approval",
+      "approverType": "Hr",
+      "approverValue": "HR",
+      "requiredApprovers": 1,
+      "timeoutHours": 48,
+      "escalationEnabled": true,
+      "escalationAfterHours": 48,
+      "escalationToRole": "Admin",
+      "autoApproveOnTimeout": false,
+      "canDelegate": true,
+      "conditions": {}
+    }
+  ],
+  "finalApprovalLevel": 2,
+  "allowSkipLevels": false,
+  "parallelApproval": false,
+  "isActive": true
+}

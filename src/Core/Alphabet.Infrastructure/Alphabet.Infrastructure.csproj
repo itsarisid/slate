@@ -75,6 +75,24 @@
     <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Services\*.cs">
       <Link>Modules\ProductivityModule\Infrastructure\Services\%(Filename)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\..\Modules\LeaveManagementModule\Infrastructure\BackgroundJobs\*.cs">
+      <Link>Modules\LeaveManagementModule\Infrastructure\BackgroundJobs\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\LeaveManagementModule\Infrastructure\Data\Seeders\*.cs">
+      <Link>Modules\LeaveManagementModule\Infrastructure\Data\Seeders\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\LeaveManagementModule\Infrastructure\Options\*.cs">
+      <Link>Modules\LeaveManagementModule\Infrastructure\Options\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\LeaveManagementModule\Infrastructure\Persistence\Configurations\*.cs">
+      <Link>Modules\LeaveManagementModule\Infrastructure\Persistence\Configurations\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\LeaveManagementModule\Infrastructure\Repositories\*.cs">
+      <Link>Modules\LeaveManagementModule\Infrastructure\Repositories\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\Modules\LeaveManagementModule\Infrastructure\Services\*.cs">
+      <Link>Modules\LeaveManagementModule\Infrastructure\Services\%(Filename)%(Extension)</Link>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

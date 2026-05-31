@@ -5,6 +5,7 @@ Alphabet is a production-oriented .NET 10 Web API solution template built with C
 Authentication and MFA guidance lives in `README-AUTH.md`.
 Privilege-based access control guidance lives in `README-PRIVILEGE.md`.
 Productivity module guidance lives in `README-PRODUCTIVITY.md`.
+Leave management guidance lives in `README-LEAVEMANAGEMENT.md`.
 
 ## Solution structure
 
@@ -18,6 +19,7 @@ Alphabet/
 |   |   `-- Alphabet.Infrastructure
 |   |-- Modules/CommunicationModule
 |   |-- Modules/IdentityModule
+|   |-- Modules/LeaveManagementModule
 |   |-- Modules/OrderModule
 |   |-- Modules/PrivilegeModule
 |   |-- Modules/ProductivityModule
@@ -209,6 +211,25 @@ The module currently includes:
 - task boards, time tracking, and dependency graphs
 - calendar views, availability checks, and iCal export
 - global search, dashboards, smart lists, templates, and reports
+
+## Leave management module
+
+The solution includes a dedicated leave management module under [src/Modules/LeaveManagementModule](/C:/Users/moinc/OneDrive/Documents/New%20project/src/Modules/LeaveManagementModule) for employee leave policies, balances, requests, approvals, delegations, holidays, blackout periods, accrual, audit logs, reporting, and real-time notifications.
+
+- API base paths:
+  - `/api/v1/leave/types`
+  - `/api/v1/leave/requests`
+  - `/api/v1/leave/approvals`
+  - `/api/v1/leave/balances`
+  - `/api/v1/leave/delegations`
+  - `/api/v1/leave/calendar`
+  - `/api/v1/leave/admin`
+- SignalR hub:
+  - `/hubs/leave-management`
+- documentation:
+  - `README-LEAVEMANAGEMENT.md`
+
+The module is configurable through the `LeaveManagement` settings section and includes SQL scripts plus a sample workflow JSON under `docs/leave-management`.
 
 ## How to switch database providers
 

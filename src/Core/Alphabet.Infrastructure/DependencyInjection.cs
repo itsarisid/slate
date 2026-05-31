@@ -2,11 +2,13 @@ using System.Text;
 using System.Security.Claims;
 using Alphabet.Application.Common.Authentication;
 using Alphabet.Application.Common.Interfaces;
+using Alphabet.Application.Common.Interfaces.LeaveManagement;
 using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Common.Interfaces.Privilege;
 using Alphabet.Application.Common.Interfaces.Scheduler;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
+using Alphabet.Domain.Interfaces.LeaveManagement;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.Interfaces.Privilege;
 using Alphabet.Infrastructure.BackgroundJobs;
@@ -65,6 +67,7 @@ public static class DependencyInjection
         services.Configure<ProductivityNotificationSettings>(configuration.GetSection(ProductivityNotificationSettings.SectionName));
         services.Configure<ProductivityFileStorageSettings>(configuration.GetSection(ProductivityFileStorageSettings.SectionName));
         services.Configure<RecurrenceSettings>(configuration.GetSection(RecurrenceSettings.SectionName));
+        services.Configure<LeaveManagementSettings>(configuration.GetSection(LeaveManagementSettings.SectionName));
 
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>() ?? new DatabaseSettings();
 
@@ -113,6 +116,7 @@ public static class DependencyInjection
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<ITaskRepository, TaskRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<ILeaveRepository, LeaveRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -136,12 +140,18 @@ public static class DependencyInjection
         services.AddScoped<IFileStorageService, FileStorageService>();
         services.AddScoped<ICalendarExportService, CalendarExportService>();
         services.AddScoped<IProductivityReadService, ProductivityReadService>();
+        services.AddScoped<ILeaveCalendarService, LeaveCalendarService>();
+        services.AddScoped<ILeaveApproverResolver, LeaveApproverResolver>();
+        services.AddScoped<ILeaveNotificationService, LeaveNotificationService>();
+        services.AddScoped<ILeaveCalendarSyncService, LeaveCalendarSyncService>();
         services.AddScoped<NoteSearchService>();
         services.AddScoped<ReminderTriggerJob>();
         services.AddScoped<RecurringTaskGeneratorJob>();
         services.AddScoped<TrashCleanupJob>();
         services.AddScoped<ProductivityReportJob>();
         services.AddScoped<CalendarSyncJob>();
+        services.AddScoped<LeaveAccrualJob>();
+        services.AddScoped<LeaveApprovalEscalationJob>();
         services.AddScoped<HttpCallJobHandler>();
         services.AddScoped<StoredProcedureJobHandler>();
         services.AddScoped<CodeExecutionJobHandler>();

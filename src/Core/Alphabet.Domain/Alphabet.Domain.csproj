@@ -23,6 +23,10 @@
     <Compile Include="..\..\Modules\ProductivityModule\Domain\Interfaces\Productivity\*.cs" />
     <Compile Include="..\..\Modules\ProductivityModule\Domain\Models\*.cs" />
     <Compile Include="..\..\Modules\ProductivityModule\Domain\ValueObjects\*.cs" />
+    <Compile Include="..\..\Modules\LeaveManagementModule\Domain\Entities\LeaveManagement\*.cs" />
+    <Compile Include="..\..\Modules\LeaveManagementModule\Domain\Enums\*.cs" />
+    <Compile Include="..\..\Modules\LeaveManagementModule\Domain\Interfaces\LeaveManagement\*.cs" />
+    <Compile Include="..\..\Modules\LeaveManagementModule\Domain\Models\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

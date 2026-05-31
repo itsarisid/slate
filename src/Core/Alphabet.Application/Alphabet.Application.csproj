@@ -17,6 +17,8 @@
     <Compile Include="..\..\Modules\SchedulerModule\Application\Features\Scheduler\**\*.cs" />
     <Compile Include="..\..\Modules\ProductivityModule\Application\Common\**\*.cs" />
     <Compile Include="..\..\Modules\ProductivityModule\Application\Features\Productivity\**\*.cs" />
+    <Compile Include="..\..\Modules\LeaveManagementModule\Application\Common\**\*.cs" />
+    <Compile Include="..\..\Modules\LeaveManagementModule\Application\Features\LeaveManagement\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -70,6 +70,28 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : AppId
 
     public DbSet<TaskDependency> ProductivityTaskDependencies => Set<TaskDependency>();
 
+    public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
+
+    public DbSet<LeaveBalance> LeaveBalances => Set<LeaveBalance>();
+
+    public DbSet<LeaveRequest> LeaveRequests => Set<LeaveRequest>();
+
+    public DbSet<ApprovalChain> LeaveApprovalChains => Set<ApprovalChain>();
+
+    public DbSet<ApprovalWorkflow> LeaveApprovalWorkflows => Set<ApprovalWorkflow>();
+
+    public DbSet<WorkflowStep> LeaveWorkflowSteps => Set<WorkflowStep>();
+
+    public DbSet<Delegation> LeaveDelegations => Set<Delegation>();
+
+    public DbSet<PublicHoliday> LeavePublicHolidays => Set<PublicHoliday>();
+
+    public DbSet<BlackoutPeriod> LeaveBlackoutPeriods => Set<BlackoutPeriod>();
+
+    public DbSet<AccrualRule> LeaveAccrualRules => Set<AccrualRule>();
+
+    public DbSet<LeaveActivityLog> LeaveActivityLogs => Set<LeaveActivityLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -27,7 +27,25 @@ public static class DefaultPrivilegesSeeder
         ("privilege.assign", "Assign Privileges", "Privilege Management", ["privilege.view", "role.view"]),
         ("audit.view", "View Audit Logs", "Auditing", []),
         ("report.generate", "Generate Reports", "Reporting", []),
-        ("report.export", "Export Reports", "Reporting", ["report.generate"])
+        ("report.export", "Export Reports", "Reporting", ["report.generate"]),
+        ("leave.request.create", "Create Leave Requests", "Leave Management", []),
+        ("leave.request.view", "View Leave Requests", "Leave Management", []),
+        ("leave.request.cancel", "Cancel Leave Requests", "Leave Management", ["leave.request.view"]),
+        ("leave.request.modify", "Modify Leave Requests", "Leave Management", ["leave.request.view"]),
+        ("leave.approve.level1", "Approve Leave Level 1", "Leave Management", ["leave.request.view"]),
+        ("leave.approve.level2", "Approve Leave Level 2", "Leave Management", ["leave.approve.level1"]),
+        ("leave.approve.levelN", "Approve Leave Any Level", "Leave Management", ["leave.approve.level2"]),
+        ("leave.approve.batch", "Batch Approve Leave", "Leave Management", ["leave.approve.level1"]),
+        ("leave.delegate.create", "Create Leave Delegations", "Leave Management", ["leave.request.view"]),
+        ("leave.delegate.revoke", "Revoke Leave Delegations", "Leave Management", ["leave.delegate.create"]),
+        ("leave.balance.view", "View Own Leave Balance", "Leave Management", []),
+        ("leave.balance.view.any", "View Any Leave Balance", "Leave Management", ["leave.balance.view"]),
+        ("leave.balance.adjust", "Adjust Leave Balance", "Leave Management", ["leave.balance.view.any"]),
+        ("leave.type.manage", "Manage Leave Types", "Leave Management", []),
+        ("leave.chain.manage", "Manage Leave Approval Chains", "Leave Management", []),
+        ("leave.report.view", "View Leave Reports", "Leave Management", []),
+        ("leave.audit.view", "View Leave Audit Logs", "Leave Management", ["leave.request.view"]),
+        ("leave.admin", "Administer Leave Management", "Leave Management", ["leave.type.manage", "leave.chain.manage", "leave.balance.adjust", "leave.audit.view"])
     ];
 
     /// <summary>
@@ -103,7 +121,7 @@ public static class DefaultPrivilegesSeeder
 
         await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
-        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Admin", ["user.view", "user.create", "user.edit", "user.delete", "role.view", "role.create", "role.assign", "privilege.view", "privilege.assign", "audit.view", "report.generate", "report.export"], logger);
+        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Admin", ["user.view", "user.create", "user.edit", "user.delete", "role.view", "role.create", "role.assign", "privilege.view", "privilege.assign", "audit.view", "report.generate", "report.export", "leave.request.create", "leave.request.view", "leave.request.cancel", "leave.request.modify", "leave.approve.level1", "leave.approve.level2", "leave.approve.levelN", "leave.approve.batch", "leave.delegate.create", "leave.delegate.revoke", "leave.balance.view", "leave.balance.view.any", "leave.balance.adjust", "leave.type.manage", "leave.chain.manage", "leave.report.view", "leave.audit.view", "leave.admin"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "UserManager", ["user.view", "user.create", "user.edit", "user.delete", "role.view"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Auditor", ["audit.view", "user.view"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Reporter", ["report.generate", "report.export"], logger);
