@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Alphabet.Application\Alphabet.Application.csproj" />
     <ProjectReference Include="..\..\Core\Alphabet.Contracts\Alphabet.Contracts.csproj" />
+    <ProjectReference Include="..\..\Libraries\Alphabet.Common\Alphabet.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

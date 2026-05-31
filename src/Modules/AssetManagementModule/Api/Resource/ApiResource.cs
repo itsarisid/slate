@@ -291,4 +291,5 @@ public static class ApiResource
         Summary = "Gets assets assigned to the current user.",
         Description = "Returns the authenticated user's currently assigned assets for self-service visibility."
     };
+
 }

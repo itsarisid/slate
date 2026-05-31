@@ -1,3 +1,5 @@
+using Alphabet.Modules.AssetManagementModule.Api.Resource;
+using Alphabet.Common.Extensions;
 using Alphabet.Application.Common.Security;
 using Alphabet.Application.Features.AssetManagement.Assignments.Commands;
 using Alphabet.Application.Features.AssetManagement.Assignments.Queries;
@@ -66,7 +68,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<Results<Created<string>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreateAsset.Endpoint, async Task<Results<Created<string>, BadRequest<ProblemDetails>>> (
             [FromBody] CreateAssetRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -100,11 +102,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<CreateAssetRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateAsset")
-        .WithSummary("Creates a new asset.")
-        .WithDescription("Creates an asset master record, generates barcode/QR payloads, and records the operation in the asset activity log.");
+        .WithDocumentation(ApiResource.CreateAsset);
 
-        group.MapGet("/", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssets.Endpoint, async Task<IResult> (
             [AsParameters] GetAssetsRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -132,11 +132,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetAssets")
-        .WithSummary("Gets a filtered and paginated asset list.")
-        .WithDescription("Returns assets with advanced filtering for status, category, location, assignee, cost range, warranty expiry, and search text.");
+        .WithDocumentation(ApiResource.GetAssets);
 
-        group.MapGet("/{assetId:guid}", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetById.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -147,11 +145,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("GetAssetById")
-        .WithSummary("Gets a single asset with full details.")
-        .WithDescription("Returns the asset master record together with assignment history, maintenance history, and activity timeline.");
+        .WithDocumentation(ApiResource.GetAssetById);
 
-        group.MapPut("/{assetId:guid}", async Task<IResult> (
+        group.MapPut(ApiResource.UpdateAsset.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] UpdateAssetRequest request,
             [FromServices] ISender sender,
@@ -183,11 +179,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<UpdateAssetRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UpdateAsset")
-        .WithSummary("Updates an existing asset.")
-        .WithDescription("Updates asset descriptive information, ownership metadata, and custom fields while preserving history.");
+        .WithDocumentation(ApiResource.UpdateAsset);
 
-        group.MapDelete("/{assetId:guid}", async Task<IResult> (
+        group.MapDelete(ApiResource.RetireAsset.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] RetireAssetRequest request,
             [FromServices] ISender sender,
@@ -200,11 +194,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<RetireAssetRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RetireAsset")
-        .WithSummary("Soft deletes an asset by retiring or disposing it.")
-        .WithDescription("Marks the asset as retired or disposed and records the change in the audit trail. Historical data remains intact.");
+        .WithDocumentation(ApiResource.RetireAsset);
 
-        group.MapPost("/{assetId:guid}/move", async Task<IResult> (
+        group.MapPost(ApiResource.MoveAsset.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] MoveAssetRequest request,
             [FromServices] ISender sender,
@@ -217,11 +209,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<MoveAssetRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("MoveAsset")
-        .WithSummary("Moves an asset to a new location.")
-        .WithDescription("Updates the asset location, records a movement history row, and writes an activity log entry with the move reason.");
+        .WithDocumentation(ApiResource.MoveAsset);
 
-        group.MapPost("/{assetId:guid}/assign", async Task<IResult> (
+        group.MapPost(ApiResource.AssignAsset.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] AssignAssetRequest request,
             [FromServices] ISender sender,
@@ -242,11 +232,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<AssignAssetRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AssignAsset")
-        .WithSummary("Assigns an asset to a user.")
-        .WithDescription("Assigns an available asset, creates assignment history, updates the asset status, and sends assignment notifications.");
+        .WithDocumentation(ApiResource.AssignAsset);
 
-        group.MapPost("/{assetId:guid}/unassign", async Task<IResult> (
+        group.MapPost(ApiResource.UnassignAsset.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] UnassignAssetRequest request,
             [FromServices] ISender sender,
@@ -267,11 +255,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<UnassignAssetRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UnassignAsset")
-        .WithSummary("Returns an assigned asset.")
-        .WithDescription("Ends the active assignment, records return details and condition, and makes the asset available again.");
+        .WithDocumentation(ApiResource.UnassignAsset);
 
-        group.MapPost("/{assetId:guid}/transfer", async Task<IResult> (
+        group.MapPost(ApiResource.TransferAsset.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] TransferAssetRequest request,
             [FromServices] ISender sender,
@@ -291,11 +277,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<TransferAssetRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("TransferAsset")
-        .WithSummary("Transfers an assignment between users.")
-        .WithDescription("Closes the source assignment, creates a new assignment for the target user, and keeps a continuous audit trail.");
+        .WithDocumentation(ApiResource.TransferAsset);
 
-        group.MapGet("/{assetId:guid}/assignments", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetAssignments.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -305,11 +289,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetAssignments")
-        .WithSummary("Gets assignment history for an asset.")
-        .WithDescription("Returns all historical and active assignments for the selected asset in reverse chronological order.");
+        .WithDocumentation(ApiResource.GetAssetAssignments);
 
-        group.MapPost("/{assetId:guid}/maintenance", async Task<IResult> (
+        group.MapPost(ApiResource.ScheduleAssetMaintenance.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] ScheduleMaintenanceRequest request,
             [FromServices] ISender sender,
@@ -330,11 +312,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<ScheduleMaintenanceRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ScheduleAssetMaintenance")
-        .WithSummary("Schedules maintenance for an asset.")
-        .WithDescription("Creates a maintenance record, marks the asset under repair, and stores the schedule for later reminders.");
+        .WithDocumentation(ApiResource.ScheduleAssetMaintenance);
 
-        group.MapPost("/{assetId:guid}/maintenance/{maintenanceId:guid}/complete", async Task<IResult> (
+        group.MapPost(ApiResource.CompleteAssetMaintenance.Endpoint, async Task<IResult> (
             Guid assetId,
             Guid maintenanceId,
             [FromBody] CompleteMaintenanceRequest request,
@@ -355,11 +335,9 @@ public static class AssetManagementModuleEndpoints
         .Accepts<CompleteMaintenanceRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CompleteAssetMaintenance")
-        .WithSummary("Completes a maintenance record.")
-        .WithDescription("Records completion details, actual cost, next due date, and returns the asset to an available state.");
+        .WithDocumentation(ApiResource.CompleteAssetMaintenance);
 
-        group.MapGet("/{assetId:guid}/maintenance", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetMaintenanceHistory.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -369,11 +347,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetMaintenanceHistory")
-        .WithSummary("Gets maintenance history for an asset.")
-        .WithDescription("Returns all scheduled and completed maintenance records for the selected asset.");
+        .WithDocumentation(ApiResource.GetAssetMaintenanceHistory);
 
-        group.MapGet("/{assetId:guid}/depreciation", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetDepreciation.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromQuery] DateOnly? asOfDate,
             [FromServices] ISender sender,
@@ -385,11 +361,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetAssetDepreciation")
-        .WithSummary("Calculates depreciation for an asset.")
-        .WithDescription("Returns current asset value, salvage value, accumulated depreciation, and year-to-date depreciation as of the requested date.");
+        .WithDocumentation(ApiResource.GetAssetDepreciation);
 
-        group.MapGet("/{assetId:guid}/activity", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetActivity.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromQuery] string? action,
             [FromQuery] DateTimeOffset? fromDate,
@@ -403,11 +377,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.audit"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetActivity")
-        .WithSummary("Gets the activity timeline for an asset.")
-        .WithDescription("Returns activity records for the selected asset with optional filtering by action, date range, and actor.");
+        .WithDocumentation(ApiResource.GetAssetActivity);
 
-        group.MapGet("/scan", async Task<IResult> (
+        group.MapGet(ApiResource.ScanAsset.Endpoint, async Task<IResult> (
             [FromQuery] string barcode,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -418,9 +390,7 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("ScanAsset")
-        .WithSummary("Scans an asset by barcode or QR payload.")
-        .WithDescription("Resolves an asset quickly from an asset tag, barcode payload, or QR payload and returns a concise quick-view response.");
+        .WithDocumentation(ApiResource.ScanAsset);
     }
 
     private static void MapCategories(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -431,7 +401,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateAssetCategory.Endpoint, async Task<IResult> (
             [FromBody] CreateAssetCategoryRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -449,11 +419,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.create"))
         .Accepts<CreateAssetCategoryRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("CreateAssetCategory")
-        .WithSummary("Creates a category in the asset hierarchy.")
-        .WithDescription("Creates a category with optional parent, depreciation settings, and dynamic custom field schema metadata.");
+        .WithDocumentation(ApiResource.CreateAssetCategory);
 
-        group.MapGet("/tree", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetCategoryTree.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -462,9 +430,7 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetCategoryTree")
-        .WithSummary("Gets the asset category hierarchy.")
-        .WithDescription("Returns categories as a recursive tree to drive category pickers and reporting rollups.");
+        .WithDocumentation(ApiResource.GetAssetCategoryTree);
     }
 
     private static void MapLocations(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -475,7 +441,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateAssetLocation.Endpoint, async Task<IResult> (
             [FromBody] CreateLocationRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -496,9 +462,7 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.create"))
         .Accepts<CreateLocationRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("CreateAssetLocation")
-        .WithSummary("Creates a location used by the asset module.")
-        .WithDescription("Creates a physical or logical location with address, type, optional coordinates, and hierarchy information.");
+        .WithDocumentation(ApiResource.CreateAssetLocation);
     }
 
     private static void MapWorkflows(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -509,7 +473,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateAssetWorkflowDefinition.Endpoint, async Task<IResult> (
             [FromBody] CreateWorkflowDefinitionRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -531,11 +495,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("workflow.initiate"))
         .Accepts<CreateWorkflowDefinitionRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("CreateAssetWorkflowDefinition")
-        .WithSummary("Creates an asset workflow definition.")
-        .WithDescription("Creates a reusable workflow definition with ordered steps, role ownership, approval requirements, timeouts, and allowed actions.");
+        .WithDocumentation(ApiResource.CreateAssetWorkflowDefinition);
 
-        group.MapPost("/assets/{assetId:guid}/start", async Task<IResult> (
+        group.MapPost(ApiResource.StartAssetWorkflow.Endpoint, async Task<IResult> (
             Guid assetId,
             [FromBody] StartWorkflowRequest request,
             [FromServices] ISender sender,
@@ -547,11 +509,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("workflow.initiate"))
         .Accepts<StartWorkflowRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("StartAssetWorkflow")
-        .WithSummary("Starts a workflow for an asset.")
-        .WithDescription("Creates a workflow instance for the selected asset and positions it on the first step.");
+        .WithDocumentation(ApiResource.StartAssetWorkflow);
 
-        group.MapGet("/instances/{instanceId:guid}", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetWorkflowInstance.Endpoint, async Task<IResult> (
             Guid instanceId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -561,11 +521,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("workflow.approve"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetWorkflowInstance")
-        .WithSummary("Gets a workflow instance.")
-        .WithDescription("Returns the current workflow state, active step, completion status, and step history for an asset workflow instance.");
+        .WithDocumentation(ApiResource.GetAssetWorkflowInstance);
 
-        group.MapPost("/instances/{instanceId:guid}/steps/{stepId:guid}/action", async Task<IResult> (
+        group.MapPost(ApiResource.ActOnAssetWorkflowStep.Endpoint, async Task<IResult> (
             Guid instanceId,
             Guid stepId,
             [FromBody] WorkflowStepActionRequest request,
@@ -578,11 +536,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("workflow.approve"))
         .Accepts<WorkflowStepActionRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("ActOnAssetWorkflowStep")
-        .WithSummary("Applies an action to the current workflow step.")
-        .WithDescription("Completes or rejects the current workflow step and advances the instance when appropriate.");
+        .WithDocumentation(ApiResource.ActOnAssetWorkflowStep);
 
-        group.MapGet("/pending", async Task<IResult> (
+        group.MapGet(ApiResource.GetPendingAssetWorkflows.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -591,9 +547,7 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("workflow.approve"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetPendingAssetWorkflows")
-        .WithSummary("Gets pending workflow work for the current user.")
-        .WithDescription("Returns active workflow instances where the current user is the delegate or one of the allowed roles for the current step.");
+        .WithDocumentation(ApiResource.GetPendingAssetWorkflows);
     }
 
     private static void MapInventory(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -604,7 +558,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapPost("/stock-adjustments", async Task<IResult> (
+        group.MapPost(ApiResource.AdjustAssetInventory.Endpoint, async Task<IResult> (
             [FromBody] StockAdjustmentRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -623,11 +577,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.admin"))
         .Accepts<StockAdjustmentRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("AdjustAssetInventory")
-        .WithSummary("Applies a stock adjustment.")
-        .WithDescription("Adds, removes, or sets stock quantities for a stock-tracked asset and location, then records the adjustment and audit trail.");
+        .WithDocumentation(ApiResource.AdjustAssetInventory);
 
-        group.MapPost("/stock-take", async Task<IResult> (
+        group.MapPost(ApiResource.PerformAssetStockTake.Endpoint, async Task<IResult> (
             [FromBody] StockTakeRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -643,11 +595,9 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.admin"))
         .Accepts<StockTakeRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("PerformAssetStockTake")
-        .WithSummary("Performs a physical stock take.")
-        .WithDescription("Records counted quantities for a location and updates the inventory balances for the counted assets.");
+        .WithDocumentation(ApiResource.PerformAssetStockTake);
 
-        group.MapGet("/low-stock", async Task<IResult> (
+        group.MapGet(ApiResource.GetLowStockAssets.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -656,11 +606,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetLowStockAssets")
-        .WithSummary("Gets low stock items.")
-        .WithDescription("Returns stock balances that are at or below their configured minimum thresholds.");
+        .WithDocumentation(ApiResource.GetLowStockAssets);
 
-        group.MapGet("/reports/current-stock", async Task<IResult> (
+        group.MapGet(ApiResource.GetCurrentStockReport.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -669,9 +617,7 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.view"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetCurrentStockReport")
-        .WithSummary("Gets the current stock report.")
-        .WithDescription("Returns the current inventory balances for all tracked asset and location combinations.");
+        .WithDocumentation(ApiResource.GetCurrentStockReport);
     }
 
     private static void MapReports(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -682,7 +628,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapGet("/utilization", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetUtilizationReport.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -691,11 +637,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("report.generate"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetUtilizationReport")
-        .WithSummary("Gets asset utilization metrics.")
-        .WithDescription("Returns assignment and idle metrics to help identify underused or highly utilized asset groups.");
+        .WithDocumentation(ApiResource.GetAssetUtilizationReport);
 
-        group.MapGet("/lifecycle", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetLifecycleReport.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -704,11 +648,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("report.generate"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetLifecycleReport")
-        .WithSummary("Gets asset lifecycle metrics.")
-        .WithDescription("Groups assets by age buckets and supports replacement planning and end-of-life analysis.");
+        .WithDocumentation(ApiResource.GetAssetLifecycleReport);
 
-        group.MapGet("/compliance", async Task<IResult> (
+        group.MapGet(ApiResource.GetAssetComplianceReport.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -717,9 +659,7 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.audit"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetAssetComplianceReport")
-        .WithSummary("Gets asset compliance metrics.")
-        .WithDescription("Returns counts for unassigned assets, overdue returns, missing warranties, and maintenance items due soon.");
+        .WithDocumentation(ApiResource.GetAssetComplianceReport);
     }
 
     private static void MapAdmin(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -730,7 +670,7 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapGet("/activity", async Task<IResult> (
+        group.MapGet(ApiResource.GetGlobalAssetActivity.Endpoint, async Task<IResult> (
             [AsParameters] GetAdminActivityRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -747,11 +687,9 @@ public static class AssetManagementModuleEndpoints
         })
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.audit"))
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetGlobalAssetActivity")
-        .WithSummary("Gets the global asset activity feed.")
-        .WithDescription("Returns cross-system asset activity entries for audit, investigation, and operational reporting.");
+        .WithDocumentation(ApiResource.GetGlobalAssetActivity);
 
-        group.MapPost("/audit/generate", async Task<IResult> (
+        group.MapPost(ApiResource.GenerateAssetAuditReport.Endpoint, async Task<IResult> (
             [FromBody] GenerateAuditReportRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -762,9 +700,7 @@ public static class AssetManagementModuleEndpoints
         .WithMetadata(new PrivilegeAuthorizeAttribute("asset.audit"))
         .Accepts<GenerateAuditReportRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("GenerateAssetAuditReport")
-        .WithSummary("Queues an audit report for generation.")
-        .WithDescription("Queues a background job that gathers asset activity records for the requested date range and report format.");
+        .WithDocumentation(ApiResource.GenerateAssetAuditReport);
     }
 
     private static void MapSelfService(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
@@ -775,16 +711,14 @@ public static class AssetManagementModuleEndpoints
             .WithTags("Asset Management Module")
             .RequireAuthorization();
 
-        group.MapGet("/assets", async Task<IResult> (
+        group.MapGet(ApiResource.GetMyAssignedAssets.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
             var result = await sender.Send(new GetMyAssignedAssetsQuery(), ct);
             return result.IsFailure ? Results.BadRequest(new ProblemDetails { Title = "My assets query failed", Detail = result.Error }) : Results.Ok(result.Value);
         })
-        .WithName("GetMyAssignedAssets")
-        .WithSummary("Gets assets assigned to the current user.")
-        .WithDescription("Returns the authenticated user's currently assigned assets for self-service visibility.");
+        .WithDocumentation(ApiResource.GetMyAssignedAssets);
     }
 }
 

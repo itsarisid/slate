@@ -1,3 +1,5 @@
+using Alphabet.Modules.PrivilegeModule.Api.Resource;
+using Alphabet.Common.Extensions;
 using System.Text;
 using Alphabet.Application.Features.Privilege.Commands;
 using Alphabet.Application.Features.Privilege.Dtos;
@@ -49,7 +51,7 @@ public static class PrivilegeModuleEndpoints
             .WithTags("Privilege Module")
             .RequireAuthorization("PrivilegeManagers");
 
-        group.MapPost("/", async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreatePrivilege.Endpoint, async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
             [FromBody] CreatePrivilegeRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -72,11 +74,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<CreatePrivilegeRequest>("application/json")
         .Produces<Guid>(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreatePrivilege")
-        .WithSummary("Creates a new privilege definition.")
-        .WithDescription("Creates a fine-grained privilege that can later be assigned to roles, users, or composite policies. Categories are auto-created when needed.");
+        .WithDocumentation(ApiResource.CreatePrivilege);
 
-        group.MapGet("/", async Task<Ok<PagedResponseDto<PrivilegeDto>>> (
+        group.MapGet(ApiResource.GetPrivileges.Endpoint, async Task<Ok<PagedResponseDto<PrivilegeDto>>> (
             [FromQuery] int pageNumber,
             [FromQuery] int pageSize,
             [FromQuery] string? category,
@@ -89,11 +89,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<PagedResponseDto<PrivilegeDto>>(StatusCodes.Status200OK)
-        .WithName("GetPrivileges")
-        .WithSummary("Gets a paginated list of privileges.")
-        .WithDescription("Returns privileges with optional pagination, category filtering, full-text search, and deprecated inclusion.");
+        .WithDocumentation(ApiResource.GetPrivileges);
 
-        group.MapGet("/{privilegeId:guid}", async Task<Results<Ok<PrivilegeDto>, NotFound<ProblemDetails>>> (
+        group.MapGet(ApiResource.GetPrivilegeById.Endpoint, async Task<Results<Ok<PrivilegeDto>, NotFound<ProblemDetails>>> (
             Guid privilegeId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -105,11 +103,9 @@ public static class PrivilegeModuleEndpoints
         })
         .Produces<PrivilegeDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("GetPrivilegeById")
-        .WithSummary("Gets a single privilege definition.")
-        .WithDescription("Returns privilege metadata, dependencies, actions, and category details for the specified privilege id.");
+        .WithDocumentation(ApiResource.GetPrivilegeById);
 
-        group.MapPut("/{privilegeId:guid}", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPut(ApiResource.UpdatePrivilege.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid privilegeId,
             [FromBody] UpdatePrivilegeRequest request,
             [FromServices] ISender sender,
@@ -132,11 +128,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<UpdatePrivilegeRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UpdatePrivilege")
-        .WithSummary("Updates privilege metadata.")
-        .WithDescription("Updates a privilege's mutable fields including display name, description, category, attributes, actions, and dependencies. The privilege name remains immutable.");
+        .WithDocumentation(ApiResource.UpdatePrivilege);
 
-        group.MapDelete("/{privilegeId:guid}", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapDelete(ApiResource.DeletePrivilege.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid privilegeId,
             [FromQuery] bool hardDelete,
             [FromServices] ISender sender,
@@ -149,11 +143,9 @@ public static class PrivilegeModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("DeletePrivilege")
-        .WithSummary("Deprecates or hard-deletes a privilege.")
-        .WithDescription("Soft-deletes a privilege by default. When hardDelete is true, the API attempts a permanent delete and rejects the operation if the privilege is still assigned.");
+        .WithDocumentation(ApiResource.DeletePrivilege);
 
-        group.MapPost("/categories", async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreatePrivilegeCategory.Endpoint, async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
             [FromBody] CreatePrivilegeCategoryRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -166,11 +158,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<CreatePrivilegeCategoryRequest>("application/json")
         .Produces<Guid>(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreatePrivilegeCategory")
-        .WithSummary("Creates a privilege category.")
-        .WithDescription("Creates a privilege category and optionally places it under a parent category to build a hierarchy.");
+        .WithDocumentation(ApiResource.CreatePrivilegeCategory);
 
-        group.MapGet("/categories", async Task<Ok<IReadOnlyList<PrivilegeCategoryDto>>> (
+        group.MapGet(ApiResource.GetPrivilegeCategories.Endpoint, async Task<Ok<IReadOnlyList<PrivilegeCategoryDto>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -178,11 +168,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<PrivilegeCategoryDto>>(StatusCodes.Status200OK)
-        .WithName("GetPrivilegeCategories")
-        .WithSummary("Gets all privilege categories.")
-        .WithDescription("Returns a hierarchical tree of privilege categories that can be used to organize and browse the permission catalog.");
+        .WithDocumentation(ApiResource.GetPrivilegeCategories);
 
-        group.MapPatch("/{privilegeId:guid}/category", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPatch(ApiResource.MovePrivilegeCategory.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid privilegeId,
             [FromBody] MovePrivilegeCategoryRequest request,
             [FromServices] ISender sender,
@@ -196,11 +184,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<MovePrivilegeCategoryRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("MovePrivilegeCategory")
-        .WithSummary("Moves a privilege to a different category.")
-        .WithDescription("Reassigns an existing privilege to another privilege category.");
+        .WithDocumentation(ApiResource.MovePrivilegeCategory);
 
-        group.MapPost("/policies", async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreatePrivilegePolicy.Endpoint, async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
             [FromBody] CreatePrivilegePolicyRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -213,9 +199,7 @@ public static class PrivilegeModuleEndpoints
         .Accepts<CreatePrivilegePolicyRequest>("application/json")
         .Produces<Guid>(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreatePrivilegePolicy")
-        .WithSummary("Creates a composite privilege policy.")
-        .WithDescription("Creates a reusable policy that groups multiple privileges together using either all-required or any-required evaluation semantics.");
+        .WithDocumentation(ApiResource.CreatePrivilegePolicy);
     }
     /// <summary>
     /// Map role assignments.
@@ -229,7 +213,7 @@ public static class PrivilegeModuleEndpoints
             .WithTags("Privilege Module")
             .RequireAuthorization("PrivilegeManagers");
 
-        group.MapPost("/{roleId:guid}/privileges", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AssignPrivilegeToRole.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid roleId,
             [FromBody] AssignRolePrivilegesRequest request,
             [FromServices] ISender sender,
@@ -243,11 +227,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<AssignRolePrivilegesRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AssignPrivilegeToRole")
-        .WithSummary("Assigns privileges to a role.")
-        .WithDescription("Grants one or more privileges to a role and optionally applies an expiration date to the assignment.");
+        .WithDocumentation(ApiResource.AssignPrivilegeToRole);
 
-        group.MapGet("/{roleId:guid}/privileges", async Task<Ok<IReadOnlyList<PrivilegeAssignmentDto>>> (
+        group.MapGet(ApiResource.GetRolePrivileges.Endpoint, async Task<Ok<IReadOnlyList<PrivilegeAssignmentDto>>> (
             Guid roleId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -256,11 +238,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<PrivilegeAssignmentDto>>(StatusCodes.Status200OK)
-        .WithName("GetRolePrivileges")
-        .WithSummary("Gets privileges assigned to a role.")
-        .WithDescription("Returns direct role privilege assignments together with grant metadata and active status.");
+        .WithDocumentation(ApiResource.GetRolePrivileges);
 
-        group.MapDelete("/{roleId:guid}/privileges/{privilegeId:guid}", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapDelete(ApiResource.RevokePrivilegeFromRole.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid roleId,
             Guid privilegeId,
             [FromServices] ISender sender,
@@ -273,11 +253,9 @@ public static class PrivilegeModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RevokePrivilegeFromRole")
-        .WithSummary("Revokes a privilege from a role.")
-        .WithDescription("Deactivates a privilege assignment for the specified role.");
+        .WithDocumentation(ApiResource.RevokePrivilegeFromRole);
 
-        group.MapPost("/bulk/assign-privileges", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.BulkAssignPrivilegesToRoles.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] BulkRolePrivilegeRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -290,11 +268,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<BulkRolePrivilegeRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("BulkAssignPrivilegesToRoles")
-        .WithSummary("Bulk assigns or revokes privileges for roles.")
-        .WithDescription("Adds or removes one or more privileges across multiple roles in a single operation.");
+        .WithDocumentation(ApiResource.BulkAssignPrivilegesToRoles);
 
-        group.MapPost("/{roleId:guid}/policies", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AssignPolicyToRole.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid roleId,
             [FromBody] AssignPolicyRequest request,
             [FromServices] ISender sender,
@@ -308,9 +284,7 @@ public static class PrivilegeModuleEndpoints
         .Accepts<AssignPolicyRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AssignPolicyToRole")
-        .WithSummary("Assigns a privilege policy to a role.")
-        .WithDescription("Associates a composite privilege policy with a role so the policy's privileges are evaluated through the role.");
+        .WithDocumentation(ApiResource.AssignPolicyToRole);
     }
     /// <summary>
     /// Map user assignments.
@@ -324,7 +298,7 @@ public static class PrivilegeModuleEndpoints
             .WithTags("Privilege Module")
             .RequireAuthorization("PrivilegeManagers");
 
-        adminGroup.MapPost("/{userId:guid}/privileges", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        adminGroup.MapPost(ApiResource.AssignPrivilegeToUser.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
             [FromBody] AssignUserPrivilegeRequest request,
             [FromServices] ISender sender,
@@ -338,11 +312,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<AssignUserPrivilegeRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AssignPrivilegeToUser")
-        .WithSummary("Assigns a direct privilege to a user.")
-        .WithDescription("Creates a direct allow or deny assignment for a user. Direct denies override role-based allows during privilege evaluation.");
+        .WithDocumentation(ApiResource.AssignPrivilegeToUser);
 
-        adminGroup.MapGet("/{userId:guid}/privileges/effective", async Task<Ok<IReadOnlyList<UserEffectivePrivilegeDto>>> (
+        adminGroup.MapGet(ApiResource.GetUserEffectivePrivileges.Endpoint, async Task<Ok<IReadOnlyList<UserEffectivePrivilegeDto>>> (
             Guid userId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -351,11 +323,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<UserEffectivePrivilegeDto>>(StatusCodes.Status200OK)
-        .WithName("GetUserEffectivePrivileges")
-        .WithSummary("Gets the user's effective privileges.")
-        .WithDescription("Returns the full evaluated privilege set for the user after combining role-based grants, direct user grants, direct user denies, and composite policies.");
+        .WithDocumentation(ApiResource.GetUserEffectivePrivileges);
 
-        adminGroup.MapDelete("/{userId:guid}/privileges/{privilegeId:guid}", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        adminGroup.MapDelete(ApiResource.RevokePrivilegeFromUser.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
             Guid privilegeId,
             [FromServices] ISender sender,
@@ -368,11 +338,9 @@ public static class PrivilegeModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RevokePrivilegeFromUser")
-        .WithSummary("Revokes a direct privilege from a user.")
-        .WithDescription("Revokes the user's direct privilege assignment while preserving the audit trail.");
+        .WithDocumentation(ApiResource.RevokePrivilegeFromUser);
 
-        adminGroup.MapGet("/{userId:guid}/privileges/audit", async Task<Ok<IReadOnlyList<PrivilegeAuditLogDto>>> (
+        adminGroup.MapGet(ApiResource.GetUserPrivilegeAudit.Endpoint, async Task<Ok<IReadOnlyList<PrivilegeAuditLogDto>>> (
             Guid userId,
             [FromQuery] int take,
             [FromQuery] int skip,
@@ -383,11 +351,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<PrivilegeAuditLogDto>>(StatusCodes.Status200OK)
-        .WithName("GetUserPrivilegeAudit")
-        .WithSummary("Gets privilege audit history for a user.")
-        .WithDescription("Returns assignment, revocation, and evaluation events for the selected user's privilege history.");
+        .WithDocumentation(ApiResource.GetUserPrivilegeAudit);
 
-        adminGroup.MapPost("/{userId:guid}/policies", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        adminGroup.MapPost(ApiResource.AssignPolicyToUser.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
             [FromBody] AssignPolicyRequest request,
             [FromServices] ISender sender,
@@ -401,9 +367,7 @@ public static class PrivilegeModuleEndpoints
         .Accepts<AssignPolicyRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AssignPolicyToUser")
-        .WithSummary("Assigns a privilege policy directly to a user.")
-        .WithDescription("Associates a composite policy with a specific user outside role membership.");
+        .WithDocumentation(ApiResource.AssignPolicyToUser);
     }
     /// <summary>
     /// Map privilege evaluation.
@@ -417,7 +381,7 @@ public static class PrivilegeModuleEndpoints
             .WithTags("Privilege Module")
             .RequireAuthorization();
 
-        group.MapGet("/check-privilege/{privilegeName}", async Task<Results<Ok<PrivilegeCheckResultDto>, BadRequest<ProblemDetails>>> (
+        group.MapGet(ApiResource.CheckCurrentUserPrivilege.Endpoint, async Task<Results<Ok<PrivilegeCheckResultDto>, BadRequest<ProblemDetails>>> (
             string privilegeName,
             HttpContext httpContext,
             [FromServices] ISender sender,
@@ -435,11 +399,9 @@ public static class PrivilegeModuleEndpoints
         })
         .Produces<PrivilegeCheckResultDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CheckCurrentUserPrivilege")
-        .WithSummary("Checks whether the current user has a privilege.")
-        .WithDescription("Evaluates a single privilege for the authenticated user and returns whether it is currently granted, together with the source that granted it.");
+        .WithDocumentation(ApiResource.CheckCurrentUserPrivilege);
 
-        group.MapPost("/check-privileges", async Task<Results<Ok<IReadOnlyDictionary<string, bool>>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.BatchCheckCurrentUserPrivileges.Endpoint, async Task<Results<Ok<IReadOnlyDictionary<string, bool>>, BadRequest<ProblemDetails>>> (
             [FromBody] BatchPrivilegeCheckRequest request,
             HttpContext httpContext,
             [FromServices] ISender sender,
@@ -456,9 +418,7 @@ public static class PrivilegeModuleEndpoints
         .Accepts<BatchPrivilegeCheckRequest>("application/json")
         .Produces<IReadOnlyDictionary<string, bool>>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("BatchCheckCurrentUserPrivileges")
-        .WithSummary("Checks multiple privileges for the current user.")
-        .WithDescription("Evaluates multiple privilege names in a single request and returns a privilege-to-boolean map for the authenticated user.");
+        .WithDocumentation(ApiResource.BatchCheckCurrentUserPrivileges);
     }
     /// <summary>
     /// Map privilege administration.
@@ -472,7 +432,7 @@ public static class PrivilegeModuleEndpoints
             .WithTags("Privilege Module")
             .RequireAuthorization("PrivilegeManagers");
 
-        group.MapGet("/privileges/analytics", async Task<Ok<PrivilegeAnalyticsDto>> (
+        group.MapGet(ApiResource.GetPrivilegeAnalytics.Endpoint, async Task<Ok<PrivilegeAnalyticsDto>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -480,11 +440,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<PrivilegeAnalyticsDto>(StatusCodes.Status200OK)
-        .WithName("GetPrivilegeAnalytics")
-        .WithSummary("Gets privilege usage analytics.")
-        .WithDescription("Returns privilege usage metrics, unused privileges, and assignment trends to support governance and access reviews.");
+        .WithDocumentation(ApiResource.GetPrivilegeAnalytics);
 
-        group.MapGet("/audit/privileges", async Task<Ok<IReadOnlyList<PrivilegeAuditLogDto>>> (
+        group.MapGet(ApiResource.GetPrivilegeAuditLogs.Endpoint, async Task<Ok<IReadOnlyList<PrivilegeAuditLogDto>>> (
             [FromQuery] Guid? userId,
             [FromQuery] Guid? privilegeId,
             [FromQuery] Alphabet.Domain.Enums.PrivilegeAction? action,
@@ -499,11 +457,9 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<PrivilegeAuditLogDto>>(StatusCodes.Status200OK)
-        .WithName("GetPrivilegeAuditLogs")
-        .WithSummary("Gets privilege audit logs.")
-        .WithDescription("Searches privilege audit logs by user, privilege, action, and date range for governance and operational investigations.");
+        .WithDocumentation(ApiResource.GetPrivilegeAuditLogs);
 
-        group.MapGet("/privileges/export", async Task<IResult> (
+        group.MapGet(ApiResource.ExportPrivilegeMatrix.Endpoint, async Task<IResult> (
             [FromQuery] string format,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -526,11 +482,9 @@ public static class PrivilegeModuleEndpoints
             return Results.Json(privileges.Items, contentType: "application/json");
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("ExportPrivilegeMatrix")
-        .WithSummary("Exports the privilege catalog.")
-        .WithDescription("Exports the privilege catalog in JSON or CSV format for governance reviews, reporting, and offline analysis.");
+        .WithDocumentation(ApiResource.ExportPrivilegeMatrix);
 
-        group.MapPost("/privilege-requests/{requestId:guid}/approve", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ApprovePrivilegeRequest.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid requestId,
             [FromBody] DecidePrivilegeRequest request,
             [FromServices] ISender sender,
@@ -544,11 +498,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<DecidePrivilegeRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ApprovePrivilegeRequest")
-        .WithSummary("Approves a self-service privilege request.")
-        .WithDescription("Approves a pending user privilege request and grants the requested privilege for the approved duration.");
+        .WithDocumentation(ApiResource.ApprovePrivilegeRequest);
 
-        group.MapPost("/privilege-requests/{requestId:guid}/deny", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.DenyPrivilegeRequest.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid requestId,
             [FromBody] DecidePrivilegeRequest request,
             [FromServices] ISender sender,
@@ -562,9 +514,7 @@ public static class PrivilegeModuleEndpoints
         .Accepts<DecidePrivilegeRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("DenyPrivilegeRequest")
-        .WithSummary("Denies a self-service privilege request.")
-        .WithDescription("Denies a pending user privilege request while preserving the request and decision details for audit.");
+        .WithDocumentation(ApiResource.DenyPrivilegeRequest);
     }
     /// <summary>
     /// Map self service.
@@ -578,7 +528,7 @@ public static class PrivilegeModuleEndpoints
             .WithTags("Privilege Module")
             .RequireAuthorization();
 
-        group.MapPost("/privilege-requests", async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreatePrivilegeRequest.Endpoint, async Task<Results<Created<Guid>, BadRequest<ProblemDetails>>> (
             [FromBody] CreatePrivilegeAccessRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -591,11 +541,9 @@ public static class PrivilegeModuleEndpoints
         .Accepts<CreatePrivilegeAccessRequest>("application/json")
         .Produces<Guid>(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreatePrivilegeRequest")
-        .WithSummary("Requests temporary additional privilege access.")
-        .WithDescription("Allows the authenticated user to request extra privilege access for a limited period, subject to approval workflows.");
+        .WithDocumentation(ApiResource.CreatePrivilegeRequest);
 
-        group.MapGet("/privileges", async Task<Ok<IReadOnlyList<UserEffectivePrivilegeDto>>> (
+        group.MapGet(ApiResource.GetMyPrivileges.Endpoint, async Task<Ok<IReadOnlyList<UserEffectivePrivilegeDto>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -603,9 +551,7 @@ public static class PrivilegeModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<UserEffectivePrivilegeDto>>(StatusCodes.Status200OK)
-        .WithName("GetMyPrivileges")
-        .WithSummary("Gets the authenticated user's current privileges.")
-        .WithDescription("Returns the authenticated user's current effective privileges after all role, user, and policy rules have been applied.");
+        .WithDocumentation(ApiResource.GetMyPrivileges);
     }
     /// <summary>
     /// Try resolve current user id.

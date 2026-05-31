@@ -339,4 +339,5 @@ public static class ApiResource
         Summary = "Instantiates a template.",
         Description = "Returns the saved serialized template payload so clients can prefill creation forms."
     };
+
 }

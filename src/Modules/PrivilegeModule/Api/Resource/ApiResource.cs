@@ -239,4 +239,5 @@ public static class ApiResource
         Summary = "Gets the authenticated user's current privileges.",
         Description = "Returns the authenticated user's current effective privileges after all role, user, and policy rules have been applied."
     };
+
 }

@@ -1,3 +1,5 @@
+using Alphabet.Modules.SchedulerModule.Api.Resource;
+using Alphabet.Common.Extensions;
 using Alphabet.Application.Features.Scheduler.Commands;
 using Alphabet.Application.Features.Scheduler.Dtos;
 using Alphabet.Application.Features.Scheduler.Queries;
@@ -45,7 +47,7 @@ public static class SchedulerModuleEndpoints
             .WithTags("Scheduler Module")
             .RequireAuthorization();
 
-        group.MapPost("/jobs", async Task<Results<Created<JobDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreateSchedulerJob.Endpoint, async Task<Results<Created<JobDto>, BadRequest<ProblemDetails>>> (
             [FromBody] CreateSchedulerJobRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -75,11 +77,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<CreateSchedulerJobRequest>("application/json")
         .Produces<JobDto>(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateSchedulerJob")
-        .WithSummary("Creates a scheduler job.")
-        .WithDescription("Creates and schedules a new job for HTTP calls, stored procedures, code execution, or file operations.");
+        .WithDocumentation(ApiResource.CreateSchedulerJob);
 
-        group.MapGet("/jobs", async Task<Ok<PagedResponseDto<JobDto>>> (
+        group.MapGet(ApiResource.GetSchedulerJobs.Endpoint, async Task<Ok<PagedResponseDto<JobDto>>> (
             [FromQuery] int? pageNumber,
             [FromQuery] int? pageSize,
             [FromQuery] JobType? jobType,
@@ -95,11 +95,9 @@ public static class SchedulerModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<PagedResponseDto<JobDto>>(StatusCodes.Status200OK)
-        .WithName("GetSchedulerJobs")
-        .WithSummary("Gets scheduler jobs.")
-        .WithDescription("Returns a paged list of jobs with optional filtering, search, sorting, and job-type or state restrictions.");
+        .WithDocumentation(ApiResource.GetSchedulerJobs);
 
-        group.MapGet("/jobs/{jobId:guid}", async Task<Results<Ok<JobDto>, NotFound<ProblemDetails>>> (
+        group.MapGet(ApiResource.GetSchedulerJobById.Endpoint, async Task<Results<Ok<JobDto>, NotFound<ProblemDetails>>> (
             Guid jobId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -111,11 +109,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces<JobDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("GetSchedulerJobById")
-        .WithSummary("Gets a scheduler job by id.")
-        .WithDescription("Returns the full scheduler job definition, current state, retry policy, and schedule details for the requested job.");
+        .WithDocumentation(ApiResource.GetSchedulerJobById);
 
-        group.MapPut("/jobs/{jobId:guid}", async Task<Results<Ok<JobDto>, BadRequest<ProblemDetails>>> (
+        group.MapPut(ApiResource.UpdateSchedulerJob.Endpoint, async Task<Results<Ok<JobDto>, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromBody] UpdateSchedulerJobRequest request,
             [FromServices] ISender sender,
@@ -146,11 +142,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<UpdateSchedulerJobRequest>("application/json")
         .Produces<JobDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UpdateSchedulerJob")
-        .WithSummary("Updates a scheduler job.")
-        .WithDescription("Updates an existing scheduler job. If the schedule or enablement changes, the underlying scheduler registration is updated as well.");
+        .WithDocumentation(ApiResource.UpdateSchedulerJob);
 
-        group.MapDelete("/jobs/{jobId:guid}", async Task<Results<NoContent, BadRequest<ProblemDetails>>> (
+        group.MapDelete(ApiResource.DeleteSchedulerJob.Endpoint, async Task<Results<NoContent, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromQuery] bool? hardDelete,
             [FromServices] ISender sender,
@@ -163,11 +157,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces(StatusCodes.Status204NoContent)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("DeleteSchedulerJob")
-        .WithSummary("Deletes a scheduler job.")
-        .WithDescription("Soft deletes a scheduler job by default while preserving history. Set hardDelete to true to remove the persisted record.");
+        .WithDocumentation(ApiResource.DeleteSchedulerJob);
 
-        group.MapPatch("/jobs/{jobId:guid}/reschedule", async Task<Results<Ok<JobDto>, BadRequest<ProblemDetails>>> (
+        group.MapPatch(ApiResource.RescheduleSchedulerJob.Endpoint, async Task<Results<Ok<JobDto>, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromBody] RescheduleSchedulerJobRequest request,
             [FromServices] ISender sender,
@@ -181,11 +173,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<RescheduleSchedulerJobRequest>("application/json")
         .Produces<JobDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RescheduleSchedulerJob")
-        .WithSummary("Reschedules a scheduler job.")
-        .WithDescription("Changes the schedule type and timing configuration for an existing job and reapplies the schedule in the active scheduler provider.");
+        .WithDocumentation(ApiResource.RescheduleSchedulerJob);
 
-        group.MapPost("/jobs/{jobId:guid}/pause", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.PauseSchedulerJob.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -197,11 +187,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("PauseSchedulerJob")
-        .WithSummary("Pauses a scheduler job.")
-        .WithDescription("Stops future scheduled runs for the selected job without deleting its definition or execution history.");
+        .WithDocumentation(ApiResource.PauseSchedulerJob);
 
-        group.MapPost("/jobs/{jobId:guid}/resume", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ResumeSchedulerJob.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -213,11 +201,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ResumeSchedulerJob")
-        .WithSummary("Resumes a scheduler job.")
-        .WithDescription("Restores a paused scheduler job and re-registers its active schedule in the configured scheduler provider.");
+        .WithDocumentation(ApiResource.ResumeSchedulerJob);
 
-        group.MapPost("/jobs/{jobId:guid}/trigger", async Task<Results<Accepted<Guid>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.TriggerSchedulerJob.Endpoint, async Task<Results<Accepted<Guid>, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -229,11 +215,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces<Guid>(StatusCodes.Status202Accepted)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("TriggerSchedulerJob")
-        .WithSummary("Triggers a job immediately.")
-        .WithDescription("Queues the selected job for immediate execution and returns the new execution id for tracking.");
+        .WithDocumentation(ApiResource.TriggerSchedulerJob);
 
-        group.MapGet("/jobs/{jobId:guid}/executions", async Task<Ok<PagedResponseDto<JobExecutionDto>>> (
+        group.MapGet(ApiResource.GetSchedulerJobExecutions.Endpoint, async Task<Ok<PagedResponseDto<JobExecutionDto>>> (
             Guid jobId,
             [FromQuery] int? pageNumber,
             [FromQuery] int? pageSize,
@@ -247,11 +231,9 @@ public static class SchedulerModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<PagedResponseDto<JobExecutionDto>>(StatusCodes.Status200OK)
-        .WithName("GetSchedulerJobExecutions")
-        .WithSummary("Gets executions for a job.")
-        .WithDescription("Returns paged execution history for the selected job with optional status and date-range filtering.");
+        .WithDocumentation(ApiResource.GetSchedulerJobExecutions);
 
-        group.MapGet("/executions/{executionId:guid}", async Task<Results<Ok<JobExecutionDto>, NotFound<ProblemDetails>>> (
+        group.MapGet(ApiResource.GetSchedulerExecutionDetails.Endpoint, async Task<Results<Ok<JobExecutionDto>, NotFound<ProblemDetails>>> (
             Guid executionId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -263,11 +245,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces<JobExecutionDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("GetSchedulerExecutionDetails")
-        .WithSummary("Gets execution details.")
-        .WithDescription("Returns the detailed execution record for a specific scheduler run, including output, duration, retries, and final status.");
+        .WithDocumentation(ApiResource.GetSchedulerExecutionDetails);
 
-        group.MapPost("/executions/{executionId:guid}/cancel", async Task<Results<Ok, Conflict<ProblemDetails>>> (
+        group.MapPost(ApiResource.CancelSchedulerExecution.Endpoint, async Task<Results<Ok, Conflict<ProblemDetails>>> (
             Guid executionId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -279,11 +259,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status409Conflict)
-        .WithName("CancelSchedulerExecution")
-        .WithSummary("Cancels a running execution.")
-        .WithDescription("Attempts to cancel a still-running scheduler execution. A conflict is returned when the execution can no longer be cancelled.");
+        .WithDocumentation(ApiResource.CancelSchedulerExecution);
 
-        group.MapPost("/executions/{executionId:guid}/retry", async Task<Results<Accepted<Guid>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.RetrySchedulerExecution.Endpoint, async Task<Results<Accepted<Guid>, BadRequest<ProblemDetails>>> (
             Guid executionId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -295,11 +273,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces<Guid>(StatusCodes.Status202Accepted)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RetrySchedulerExecution")
-        .WithSummary("Retries a failed execution.")
-        .WithDescription("Queues a new execution for the same job using the selected failed execution as the retry parent.");
+        .WithDocumentation(ApiResource.RetrySchedulerExecution);
 
-        group.MapPost("/jobs/{jobId:guid}/exclusions", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AddSchedulerJobExclusions.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromBody] AddJobExclusionRequest request,
             [FromServices] ISender sender,
@@ -313,11 +289,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<AddJobExclusionRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AddSchedulerJobExclusions")
-        .WithSummary("Adds exclusion rules to a job.")
-        .WithDescription("Stores excluded dates, days of week, and optional blocked time windows that should prevent the job from running.");
+        .WithDocumentation(ApiResource.AddSchedulerJobExclusions);
 
-        group.MapPost("/jobs/{jobId:guid}/dependencies", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AddSchedulerJobDependencies.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid jobId,
             [FromBody] AddJobDependencyRequest request,
             [FromServices] ISender sender,
@@ -331,11 +305,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<AddJobDependencyRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AddSchedulerJobDependencies")
-        .WithSummary("Adds dependency rules to a job.")
-        .WithDescription("Defines prerequisite jobs and dependency conditions that should be satisfied before the selected job can execute.");
+        .WithDocumentation(ApiResource.AddSchedulerJobDependencies);
 
-        group.MapPost("/workflows", async Task<Results<Ok<string>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.CreateSchedulerWorkflow.Endpoint, async Task<Results<Ok<string>, BadRequest<ProblemDetails>>> (
             [FromBody] CreateWorkflowRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -348,11 +320,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<CreateWorkflowRequest>("application/json")
         .Produces<string>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateSchedulerWorkflow")
-        .WithSummary("Creates a scheduler workflow definition.")
-        .WithDescription("Creates a chained workflow definition made up of multiple jobs and dependency relationships.");
+        .WithDocumentation(ApiResource.CreateSchedulerWorkflow);
 
-        group.MapGet("/dashboard/stats", async Task<Ok<DashboardStatsDto>> (
+        group.MapGet(ApiResource.GetSchedulerDashboardStats.Endpoint, async Task<Ok<DashboardStatsDto>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -360,11 +330,9 @@ public static class SchedulerModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<DashboardStatsDto>(StatusCodes.Status200OK)
-        .WithName("GetSchedulerDashboardStats")
-        .WithSummary("Gets dashboard statistics.")
-        .WithDescription("Returns scheduler health and activity metrics including totals, success rate, and upcoming executions.");
+        .WithDocumentation(ApiResource.GetSchedulerDashboardStats);
 
-        group.MapGet("/jobs/failed", async Task<Ok<IReadOnlyList<JobDto>>> (
+        group.MapGet(ApiResource.GetSchedulerFailedJobs.Endpoint, async Task<Ok<IReadOnlyList<JobDto>>> (
             [FromQuery] int? threshold,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -373,11 +341,9 @@ public static class SchedulerModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<JobDto>>(StatusCodes.Status200OK)
-        .WithName("GetSchedulerFailedJobs")
-        .WithSummary("Gets jobs with repeated failures.")
-        .WithDescription("Returns jobs whose consecutive failure count meets or exceeds the supplied threshold.");
+        .WithDocumentation(ApiResource.GetSchedulerFailedJobs);
 
-        group.MapGet("/executions/timeline", async Task<Ok<IReadOnlyList<TimelinePointDto>>> (
+        group.MapGet(ApiResource.GetSchedulerExecutionTimeline.Endpoint, async Task<Ok<IReadOnlyList<TimelinePointDto>>> (
             [FromQuery] int? hours,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -386,9 +352,7 @@ public static class SchedulerModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<TimelinePointDto>>(StatusCodes.Status200OK)
-        .WithName("GetSchedulerExecutionTimeline")
-        .WithSummary("Gets execution timeline data.")
-        .WithDescription("Returns time-bucketed execution counts for success, failure, and running states to power monitoring charts.");
+        .WithDocumentation(ApiResource.GetSchedulerExecutionTimeline);
     }
     /// <summary>
     /// Map admin.
@@ -402,7 +366,7 @@ public static class SchedulerModuleEndpoints
             .WithTags("Scheduler Module")
             .RequireAuthorization("AdminOnly");
 
-        group.MapPost("/pause-all", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.PauseAllSchedulerJobs.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -413,11 +377,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("PauseAllSchedulerJobs")
-        .WithSummary("Pauses all jobs.")
-        .WithDescription("Pauses every active scheduler job in the system. This endpoint is intended for administrative maintenance windows.");
+        .WithDocumentation(ApiResource.PauseAllSchedulerJobs);
 
-        group.MapPost("/resume-all", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ResumeAllSchedulerJobs.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -428,11 +390,9 @@ public static class SchedulerModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ResumeAllSchedulerJobs")
-        .WithSummary("Resumes all jobs.")
-        .WithDescription("Resumes every persisted scheduler job and re-registers active schedules in the configured scheduler provider.");
+        .WithDocumentation(ApiResource.ResumeAllSchedulerJobs);
 
-        group.MapDelete("/clear-logs", async Task<Results<Ok<int>, BadRequest<ProblemDetails>>> (
+        group.MapDelete(ApiResource.ClearSchedulerExecutionLogs.Endpoint, async Task<Results<Ok<int>, BadRequest<ProblemDetails>>> (
             [FromBody] ClearExecutionLogsRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -445,11 +405,9 @@ public static class SchedulerModuleEndpoints
         .Accepts<ClearExecutionLogsRequest>("application/json")
         .Produces<int>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ClearSchedulerExecutionLogs")
-        .WithSummary("Clears old execution logs.")
-        .WithDescription("Deletes persisted execution records older than the requested number of days and returns the number of deleted items.");
+        .WithDocumentation(ApiResource.ClearSchedulerExecutionLogs);
 
-        group.MapGet("/export", async Task<IResult> (
+        group.MapGet(ApiResource.ExportSchedulerJobs.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -457,11 +415,9 @@ public static class SchedulerModuleEndpoints
             return Results.File(System.Text.Encoding.UTF8.GetBytes(payload), "application/json", "scheduler-jobs-export.json");
         })
         .Produces(StatusCodes.Status200OK, contentType: "application/json")
-        .WithName("ExportSchedulerJobs")
-        .WithSummary("Exports job configurations.")
-        .WithDescription("Exports the current scheduler job definitions as a JSON file for backup, migration, or review.");
+        .WithDocumentation(ApiResource.ExportSchedulerJobs);
 
-        group.MapPost("/import", async Task<Results<Ok<int>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ImportSchedulerJobs.Endpoint, async Task<Results<Ok<int>, BadRequest<ProblemDetails>>> (
             [FromBody] ImportSchedulerJobsRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -474,8 +430,6 @@ public static class SchedulerModuleEndpoints
         .Accepts<ImportSchedulerJobsRequest>("application/json")
         .Produces<int>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ImportSchedulerJobs")
-        .WithSummary("Imports job configurations.")
-        .WithDescription("Creates scheduler jobs from the supplied JSON payload and returns the number of successfully imported jobs.");
+        .WithDocumentation(ApiResource.ImportSchedulerJobs);
     }
 }
