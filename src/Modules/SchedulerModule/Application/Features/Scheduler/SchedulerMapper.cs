@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Alphabet.Application.Features.Scheduler.Dtos;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Models;
 
 namespace Alphabet.Application.Features.Scheduler;
@@ -10,6 +9,9 @@ namespace Alphabet.Application.Features.Scheduler;
 /// </summary>
 public static class SchedulerMapper
 {
+    /// <summary>
+    /// To dto.
+    /// </summary>
     public static JobDto ToDto(this Job job, string currentStatus)
     {
         var config = JsonSerializer.Deserialize<JobConfigurationDto>(job.JobConfiguration) ?? new JobConfigurationDto(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -42,6 +44,9 @@ public static class SchedulerMapper
             job.LastExecutionStatus,
             job.ConsecutiveFailures);
     }
+    /// <summary>
+    /// To dto.
+    /// </summary>
 
     public static JobExecutionDto ToDto(this JobExecution execution)
         => new(
@@ -57,6 +62,9 @@ public static class SchedulerMapper
             execution.RetryCount,
             execution.RetryParentId,
             execution.CreatedAt);
+    /// <summary>
+    /// To dto.
+    /// </summary>
 
     public static PagedResponseDto<JobDto> ToDto(this PagedResult<Job> jobs, IReadOnlyDictionary<Guid, string> statuses)
         => new(
@@ -64,6 +72,9 @@ public static class SchedulerMapper
             jobs.TotalCount,
             jobs.PageNumber,
             jobs.PageSize);
+    /// <summary>
+    /// To dto.
+    /// </summary>
 
     public static PagedResponseDto<JobExecutionDto> ToDto(this PagedResult<JobExecution> executions)
         => new(

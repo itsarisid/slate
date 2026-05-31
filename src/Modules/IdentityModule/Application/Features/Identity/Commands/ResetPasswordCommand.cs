@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
 using FluentValidation;
 using MediatR;
@@ -9,6 +8,9 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Resets a user password with a reset token.
 /// </summary>
 public sealed record ResetPasswordCommand(string Email, string Token, string NewPassword, string ConfirmPassword) : IRequest<Result>;
+/// <summary>
+/// Reset password command validator.
+/// </summary>
 
 public sealed class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordCommand>
 {
@@ -26,9 +28,15 @@ public sealed class ResetPasswordCommandValidator : AbstractValidator<ResetPassw
         RuleFor(x => x.ConfirmPassword).Equal(x => x.NewPassword);
     }
 }
+/// <summary>
+/// Reset password command handler.
+/// </summary>
 
 public sealed class ResetPasswordCommandHandler(IIdentityService identityService) : IRequestHandler<ResetPasswordCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
-        => identityService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword, cancellationToken);
+    => identityService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword, cancellationToken);
 }

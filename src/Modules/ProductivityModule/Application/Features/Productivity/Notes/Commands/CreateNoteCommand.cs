@@ -1,7 +1,5 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using MediatR;
@@ -22,6 +20,9 @@ public sealed record CreateNoteCommand(
     bool IsFavorite,
     Guid? NotebookId,
     IReadOnlyCollection<string>? Collaborators) : IRequest<Result<NoteDto>>;
+/// <summary>
+/// Create note command handler.
+/// </summary>
 
 public sealed class CreateNoteCommandHandler(
     INoteRepository noteRepository,
@@ -30,6 +31,9 @@ public sealed class CreateNoteCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateNoteCommand, Result<NoteDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<NoteDto>> Handle(CreateNoteCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

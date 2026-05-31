@@ -1,5 +1,4 @@
 using Alphabet.Application.Common.Interfaces.Productivity;
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
@@ -11,6 +10,9 @@ namespace Alphabet.Application.Features.Productivity.Todos.Commands;
 /// Marks a todo as complete or incomplete.
 /// </summary>
 public sealed record CompleteTodoCommand(Guid TodoId, bool IsComplete) : IRequest<Result>;
+/// <summary>
+/// Complete todo command handler.
+/// </summary>
 
 public sealed class CompleteTodoCommandHandler(
     ITodoRepository todoRepository,
@@ -20,6 +22,9 @@ public sealed class CompleteTodoCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CompleteTodoCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(CompleteTodoCommand request, CancellationToken cancellationToken)
     {
         var todo = await todoRepository.GetByIdAsync(request.TodoId, cancellationToken);
@@ -53,6 +58,9 @@ public sealed class CompleteTodoCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Simple reminder specification.
+    /// </summary>
 
     private sealed class SimpleReminderSpecification(Guid todoId) : Alphabet.Domain.Specifications.BaseSpecification<Reminder>(x => x.LinkedEntityId == todoId)
     {

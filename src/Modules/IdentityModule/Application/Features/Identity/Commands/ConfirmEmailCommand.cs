@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
 using MediatR;
 
@@ -8,9 +7,15 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Confirms a user email address.
 /// </summary>
 public sealed record ConfirmEmailCommand(Guid UserId, string Token) : IRequest<Result>;
+/// <summary>
+/// Confirm email command handler.
+/// </summary>
 
 public sealed class ConfirmEmailCommandHandler(IIdentityService identityService) : IRequestHandler<ConfirmEmailCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
-        => identityService.ConfirmEmailAsync(request.UserId, request.Token, cancellationToken);
+    => identityService.ConfirmEmailAsync(request.UserId, request.Token, cancellationToken);
 }

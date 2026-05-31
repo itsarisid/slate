@@ -10,6 +10,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public static class ProductivityBackgroundJobSetup
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public static void Configure(IServiceProvider services)
     {
         using var scope = services.CreateScope();

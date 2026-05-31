@@ -7,6 +7,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class ProductivityReportJob(ILogger<ProductivityReportJob> logger)
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public Task ExecuteAsync()
     {
         logger.LogInformation("Productivity report job executed.");

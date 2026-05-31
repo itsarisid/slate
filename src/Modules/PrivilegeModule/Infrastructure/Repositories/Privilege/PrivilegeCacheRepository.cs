@@ -7,11 +7,20 @@ namespace Alphabet.Infrastructure.Repositories.Privilege;
 /// </summary>
 public sealed class PrivilegeCacheRepository(ICacheService cacheService)
 {
+    /// <summary>
+    /// Get async.
+    /// </summary>
     public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken)
-        => cacheService.GetAsync<T>(key, cancellationToken);
+    => cacheService.GetAsync<T>(key, cancellationToken);
+    /// <summary>
+    /// Set async.
+    /// </summary>
 
     public Task SetAsync<T>(string key, T value, TimeSpan ttl, CancellationToken cancellationToken)
         => cacheService.SetAsync(key, value, ttl, cancellationToken);
+    /// <summary>
+    /// Remove async.
+    /// </summary>
 
     public Task RemoveAsync(string key, CancellationToken cancellationToken)
         => cacheService.RemoveAsync(key, cancellationToken);

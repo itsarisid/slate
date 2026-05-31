@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
 using FluentValidation;
@@ -10,6 +9,9 @@ namespace Alphabet.Application.Features.Identity.Commands.Mfa;
 /// Verifies an authenticator app code and enables MFA.
 /// </summary>
 public sealed record VerifyAuthenticatorCommand(string VerificationCode) : IRequest<Result<RecoveryCodesDto>>;
+/// <summary>
+/// Verify authenticator command validator.
+/// </summary>
 
 public sealed class VerifyAuthenticatorCommandValidator : AbstractValidator<VerifyAuthenticatorCommand>
 {
@@ -18,10 +20,16 @@ public sealed class VerifyAuthenticatorCommandValidator : AbstractValidator<Veri
         RuleFor(x => x.VerificationCode).NotEmpty().Length(6);
     }
 }
+/// <summary>
+/// Verify authenticator command handler.
+/// </summary>
 
 public sealed class VerifyAuthenticatorCommandHandler(IIdentityService identityService, ICurrentUserService currentUserService)
     : IRequestHandler<VerifyAuthenticatorCommand, Result<RecoveryCodesDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<RecoveryCodesDto>> Handle(VerifyAuthenticatorCommand request, CancellationToken cancellationToken)
     {
         return currentUserService.UserId is { } userId

@@ -1,4 +1,3 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces.Productivity;
@@ -19,12 +18,18 @@ public sealed record SearchNotesQuery(
     string? Search,
     int Page,
     int PageSize) : IRequest<Result<PagedResponseDto<NoteDto>>>;
+/// <summary>
+/// Search notes query handler.
+/// </summary>
 
 public sealed class SearchNotesQueryHandler(
     INoteRepository noteRepository,
     ICurrentUserService currentUserService)
     : IRequestHandler<SearchNotesQuery, Result<PagedResponseDto<NoteDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<PagedResponseDto<NoteDto>>> Handle(SearchNotesQuery request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

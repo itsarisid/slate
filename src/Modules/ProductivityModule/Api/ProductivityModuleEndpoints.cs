@@ -15,15 +15,15 @@ using Alphabet.Application.Features.Productivity.Tasks.Queries;
 using Alphabet.Application.Features.Productivity.Templates.Commands;
 using Alphabet.Application.Features.Productivity.Todos.Commands;
 using Alphabet.Application.Features.Productivity.Todos.Queries;
-using Alphabet.Application.Results;
+using Alphabet.Common.Extensions;
 using Alphabet.Modules.ProductivityModule.Api.Hubs;
 using Alphabet.Modules.ProductivityModule.Api.Models;
+using Alphabet.Modules.ProductivityModule.Api.Resource;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -55,6 +55,9 @@ public static class ProductivityModuleEndpoints
         endpoints.MapHub<ProductivityHub>("/hubs/productivity").RequireAuthorization();
         return endpoints;
     }
+    /// <summary>
+    /// Map todos.
+    /// </summary>
 
     private static void MapTodos(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -64,7 +67,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Todos")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateTodo.Endpoint, async Task<IResult> (
             [FromBody] CreateTodoRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -88,11 +91,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateTodoRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateTodo")
-        .WithSummary("Creates a todo.")
-        .WithDescription("Creates a new todo with optional due date, recurrence metadata, tags, category, and assignment.");
+        .WithDocumentation(ApiResource.CreateTodo);
 
-        group.MapGet("/", async Task<IResult> (
+        group.MapGet(ApiResource.GetTodos.Endpoint, async Task<IResult> (
             [AsParameters] TodoQueryParameters query,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -103,11 +104,9 @@ public static class ProductivityModuleEndpoints
                 : TypedResults.Ok(result.Value);
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetTodos")
-        .WithSummary("Gets todos with advanced filtering.")
-        .WithDescription("Returns paginated todos filtered by status, priority, category, tag, due-date range, assignment, and text search.");
+        .WithDocumentation(ApiResource.GetTodos);
 
-        group.MapGet("/{todoId:guid}", async Task<IResult> (
+        group.MapGet(ApiResource.GetTodoById.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -119,11 +118,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("GetTodoById")
-        .WithSummary("Gets a todo by id.")
-        .WithDescription("Returns a single todo item including its recurrence and completion metadata.");
+        .WithDocumentation(ApiResource.GetTodoById);
 
-        group.MapPut("/{todoId:guid}", async Task<IResult> (
+        group.MapPut(ApiResource.UpdateTodo.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromBody] UpdateTodoRequest request,
             [FromServices] ISender sender,
@@ -137,11 +134,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<UpdateTodoRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UpdateTodo")
-        .WithSummary("Updates a todo.")
-        .WithDescription("Updates the todo details, due date, assignment, and recurrence information.");
+        .WithDocumentation(ApiResource.UpdateTodo);
 
-        group.MapPost("/{todoId:guid}/complete", async Task<IResult> (
+        group.MapPost(ApiResource.CompleteTodo.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -151,11 +146,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CompleteTodo")
-        .WithSummary("Marks a todo as complete.")
-        .WithDescription("Completes the todo and closes any linked reminder records.");
+        .WithDocumentation(ApiResource.CompleteTodo);
 
-        group.MapPost("/{todoId:guid}/uncomplete", async Task<IResult> (
+        group.MapPost(ApiResource.UncompleteTodo.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -165,11 +158,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UncompleteTodo")
-        .WithSummary("Reopens a completed todo.")
-        .WithDescription("Moves a completed todo back to the pending state.");
+        .WithDocumentation(ApiResource.UncompleteTodo);
 
-        group.MapDelete("/{todoId:guid}", async Task<IResult> (
+        group.MapDelete(ApiResource.DeleteOrRestoreTodo.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromQuery] bool restore,
             [FromServices] ISender sender,
@@ -180,11 +171,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("DeleteOrRestoreTodo")
-        .WithSummary("Soft deletes or restores a todo.")
-        .WithDescription("Soft deletes a todo by default. When the restore query flag is true, the endpoint restores the item from trash.");
+        .WithDocumentation(ApiResource.DeleteOrRestoreTodo);
 
-        group.MapPost("/{todoId:guid}/convert-to-task", async Task<IResult> (
+        group.MapPost(ApiResource.ConvertTodoToTask.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -196,11 +185,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ConvertTodoToTask")
-        .WithSummary("Converts a todo to a task.")
-        .WithDescription("Creates a linked task from the todo while preserving the source todo for traceability.");
+        .WithDocumentation(ApiResource.ConvertTodoToTask);
 
-        group.MapPost("/{todoId:guid}/create-reminder", async Task<IResult> (
+        group.MapPost(ApiResource.CreateReminderFromTodo.Endpoint, async Task<IResult> (
             Guid todoId,
             [FromBody] CreateReminderFromEntityRequest request,
             [FromServices] ISender sender,
@@ -214,10 +201,11 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateReminderFromEntityRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateReminderFromTodo")
-        .WithSummary("Creates a reminder from a todo.")
-        .WithDescription("Creates a linked reminder record for the selected todo.");
+        .WithDocumentation(ApiResource.CreateReminderFromTodo);
     }
+    /// <summary>
+    /// Map reminders.
+    /// </summary>
 
     private static void MapReminders(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -227,7 +215,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Reminders")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateReminder.Endpoint, async Task<IResult> (
             [FromBody] CreateReminderRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -240,11 +228,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateReminderRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateReminder")
-        .WithSummary("Creates a reminder.")
-        .WithDescription("Creates a reminder with scheduling, recurrence, snooze, and delivery-channel settings.");
+        .WithDocumentation(ApiResource.CreateReminder);
 
-        group.MapGet("/", async Task<IResult> (
+        group.MapGet(ApiResource.GetReminders.Endpoint, async Task<IResult> (
             [FromQuery] DateTimeOffset? from,
             [FromQuery] DateTimeOffset? to,
             [FromQuery] Alphabet.Domain.Enums.ReminderType? type,
@@ -259,11 +245,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetReminders")
-        .WithSummary("Gets reminders.")
-        .WithDescription("Returns reminders filtered by date range, reminder type, and delivery status.");
+        .WithDocumentation(ApiResource.GetReminders);
 
-        group.MapPost("/{reminderId:guid}/snooze", async Task<IResult> (
+        group.MapPost(ApiResource.SnoozeReminder.Endpoint, async Task<IResult> (
             Guid reminderId,
             [FromBody] SnoozeReminderRequest request,
             [FromServices] ISender sender,
@@ -275,11 +259,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<SnoozeReminderRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("SnoozeReminder")
-        .WithSummary("Snoozes a reminder.")
-        .WithDescription("Pushes the reminder forward by the specified number of minutes.");
+        .WithDocumentation(ApiResource.SnoozeReminder);
 
-        group.MapPost("/{reminderId:guid}/dismiss", async Task<IResult> (
+        group.MapPost(ApiResource.DismissReminder.Endpoint, async Task<IResult> (
             Guid reminderId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -289,11 +271,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("DismissReminder")
-        .WithSummary("Dismisses a reminder.")
-        .WithDescription("Marks the reminder as dismissed and suppresses further delivery.");
+        .WithDocumentation(ApiResource.DismissReminder);
 
-        group.MapPost("/{reminderId:guid}/test", async Task<IResult> (
+        group.MapPost(ApiResource.TestReminder.Endpoint, async Task<IResult> (
             Guid reminderId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -303,10 +283,11 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("TestReminder")
-        .WithSummary("Triggers a reminder immediately for testing.")
-        .WithDescription("Marks the reminder as triggered and dispatches its notification channels immediately.");
+        .WithDocumentation(ApiResource.TestReminder);
     }
+    /// <summary>
+    /// Map notes.
+    /// </summary>
 
     private static void MapNotes(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -316,7 +297,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Notes")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateNote.Endpoint, async Task<IResult> (
             [FromBody] CreateNoteRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -329,11 +310,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateNoteRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateNote")
-        .WithSummary("Creates a note.")
-        .WithDescription("Creates a note with formatting, tags, notebook organization, and collaboration metadata.");
+        .WithDocumentation(ApiResource.CreateNote);
 
-        group.MapGet("/", async Task<IResult> (
+        group.MapGet(ApiResource.GetNotes.Endpoint, async Task<IResult> (
             [FromQuery] string? category,
             [FromQuery] string? tag,
             [FromQuery] Guid? notebookId,
@@ -351,11 +330,9 @@ public static class ProductivityModuleEndpoints
                 : TypedResults.Ok(result.Value);
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetNotes")
-        .WithSummary("Gets notes.")
-        .WithDescription("Returns paginated notes filtered by category, tag, notebook, pinned/favorite flags, and search text.");
+        .WithDocumentation(ApiResource.GetNotes);
 
-        group.MapGet("/search", async Task<IResult> (
+        group.MapGet(ApiResource.SearchNotes.Endpoint, async Task<IResult> (
             [FromQuery(Name = "q")] string q,
             [FromQuery(Name = "in")] string? searchIn,
             [FromServices] ISender sender,
@@ -367,11 +344,9 @@ public static class ProductivityModuleEndpoints
                 : TypedResults.Ok(result.Value);
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("SearchNotes")
-        .WithSummary("Searches notes.")
-        .WithDescription("Searches notes by title and content and returns paginated relevance-style results.");
+        .WithDocumentation(ApiResource.SearchNotes);
 
-        group.MapPut("/{noteId:guid}", async Task<IResult> (
+        group.MapPut(ApiResource.UpdateNote.Endpoint, async Task<IResult> (
             Guid noteId,
             [FromBody] UpdateNoteRequest request,
             [FromServices] ISender sender,
@@ -385,11 +360,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<UpdateNoteRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UpdateNote")
-        .WithSummary("Updates a note.")
-        .WithDescription("Updates the note content and stores a version snapshot for restore and audit scenarios.");
+        .WithDocumentation(ApiResource.UpdateNote);
 
-        group.MapPost("/{noteId:guid}/share", async Task<IResult> (
+        group.MapPost(ApiResource.ShareNote.Endpoint, async Task<IResult> (
             Guid noteId,
             [FromBody] ShareNoteRequest request,
             [FromServices] ISender sender,
@@ -401,11 +374,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<ShareNoteRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ShareNote")
-        .WithSummary("Shares a note.")
-        .WithDescription("Adds a collaborator to the note. Permission is accepted for client compatibility and documented intent.");
+        .WithDocumentation(ApiResource.ShareNote);
 
-        group.MapGet("/{noteId:guid}/versions", async Task<IResult> (
+        group.MapGet(ApiResource.GetNoteVersions.Endpoint, async Task<IResult> (
             Guid noteId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -417,11 +388,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
-        .WithName("GetNoteVersions")
-        .WithSummary("Gets note versions.")
-        .WithDescription("Returns note version history so clients can show change history or restore workflows.");
+        .WithDocumentation(ApiResource.GetNoteVersions);
 
-        group.MapGet("/{noteId:guid}/export", async Task<IResult> (
+        group.MapGet(ApiResource.ExportNote.Endpoint, async Task<IResult> (
             Guid noteId,
             [FromQuery] string format,
             [FromServices] ISender sender,
@@ -446,10 +415,11 @@ public static class ProductivityModuleEndpoints
             return Results.File(Encoding.UTF8.GetBytes(note.Content), "text/plain", $"{note.Title}.{extension}");
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("ExportNote")
-        .WithSummary("Exports a note.")
-        .WithDescription("Exports note content in a simple file form. Markdown is returned by default, while HTML/PDF/DOCX requests use a text fallback in this module baseline.");
+        .WithDocumentation(ApiResource.ExportNote);
     }
+    /// <summary>
+    /// Map tasks.
+    /// </summary>
 
     private static void MapTasks(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -459,7 +429,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Tasks")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateTask.Endpoint, async Task<IResult> (
             [FromBody] CreateTaskRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -472,11 +442,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateTaskRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateTask")
-        .WithSummary("Creates a task.")
-        .WithDescription("Creates an advanced task with ownership, assignee/reviewer, checklist items, dependency ids, and estimation metadata.");
+        .WithDocumentation(ApiResource.CreateTask);
 
-        group.MapGet("/board", async Task<IResult> (
+        group.MapGet(ApiResource.GetTaskBoard.Endpoint, async Task<IResult> (
             [FromQuery] Guid? projectId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -487,11 +455,9 @@ public static class ProductivityModuleEndpoints
                 : TypedResults.Ok(result.Value);
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetTaskBoard")
-        .WithSummary("Gets the task board.")
-        .WithDescription("Returns tasks grouped by status so clients can render a Kanban board.");
+        .WithDocumentation(ApiResource.GetTaskBoard);
 
-        group.MapPatch("/{taskId:guid}/status", async Task<IResult> (
+        group.MapPatch(ApiResource.UpdateTaskStatus.Endpoint, async Task<IResult> (
             Guid taskId,
             [FromBody] UpdateTaskStatusRequest request,
             [FromServices] ISender sender,
@@ -503,11 +469,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<UpdateTaskStatusRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("UpdateTaskStatus")
-        .WithSummary("Updates task status.")
-        .WithDescription("Moves a task between statuses and optionally appends a status-change comment.");
+        .WithDocumentation(ApiResource.UpdateTaskStatus);
 
-        group.MapPost("/{taskId:guid}/time-entries", async Task<IResult> (
+        group.MapPost(ApiResource.AddTimeEntry.Endpoint, async Task<IResult> (
             Guid taskId,
             [FromBody] AddTimeEntryRequest request,
             [FromServices] ISender sender,
@@ -519,11 +483,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<AddTimeEntryRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AddTimeEntry")
-        .WithSummary("Adds a task time entry.")
-        .WithDescription("Records tracked time and rolls the duration into the task's actual-hours total.");
+        .WithDocumentation(ApiResource.AddTimeEntry);
 
-        group.MapGet("/{taskId:guid}/dependencies/graph", async Task<IResult> (
+        group.MapGet(ApiResource.GetTaskDependencyGraph.Endpoint, async Task<IResult> (
             Guid taskId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -535,10 +497,11 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetTaskDependencyGraph")
-        .WithSummary("Gets task dependencies.")
-        .WithDescription("Returns the current task dependency graph as a flat list of dependency ids.");
+        .WithDocumentation(ApiResource.GetTaskDependencyGraph);
     }
+    /// <summary>
+    /// Map events.
+    /// </summary>
 
     private static void MapEvents(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -548,7 +511,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Events")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateEvent.Endpoint, async Task<IResult> (
             [FromBody] CreateEventRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -561,11 +524,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateEventRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateEvent")
-        .WithSummary("Creates a calendar event.")
-        .WithDescription("Creates an event with attendee, reminder, recurrence, and meeting-link support.");
+        .WithDocumentation(ApiResource.CreateEvent);
 
-        group.MapGet("/calendar", async Task<IResult> (
+        group.MapGet(ApiResource.GetCalendarView.Endpoint, async Task<IResult> (
             [FromQuery] string? view,
             [FromQuery] DateTimeOffset? date,
             [FromQuery] DateTimeOffset? start,
@@ -579,11 +540,9 @@ public static class ProductivityModuleEndpoints
                 : TypedResults.Ok(result.Value);
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("GetCalendarView")
-        .WithSummary("Gets a calendar view.")
-        .WithDescription("Returns event data for month, week, day, or agenda-style calendar screens.");
+        .WithDocumentation(ApiResource.GetCalendarView);
 
-        group.MapPost("/availability", async Task<IResult> (
+        group.MapPost(ApiResource.CheckAvailability.Endpoint, async Task<IResult> (
             [FromBody] CheckAvailabilityRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -596,11 +555,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CheckAvailabilityRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CheckAvailability")
-        .WithSummary("Checks attendee availability.")
-        .WithDescription("Returns available slots for the supplied users and date range.");
+        .WithDocumentation(ApiResource.CheckAvailability);
 
-        group.MapPost("/{eventId:guid}/respond", async Task<IResult> (
+        group.MapPost(ApiResource.RespondToEvent.Endpoint, async Task<IResult> (
             Guid eventId,
             [FromBody] RespondToEventRequest request,
             [FromServices] ISender sender,
@@ -612,11 +569,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<RespondToEventRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RespondToEvent")
-        .WithSummary("Responds to an invitation.")
-        .WithDescription("Records Accepted, Declined, or Tentative responses for the current user.");
+        .WithDocumentation(ApiResource.RespondToEvent);
 
-        group.MapGet("/export/ical", async Task<IResult> (
+        group.MapGet(ApiResource.ExportCalendarIcal.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             [FromServices] ICalendarExportService calendarExportService,
             CancellationToken ct) =>
@@ -631,11 +586,9 @@ public static class ProductivityModuleEndpoints
             return Results.File(Encoding.UTF8.GetBytes(content), "text/calendar", "calendar.ics");
         })
         .Produces(StatusCodes.Status200OK)
-        .WithName("ExportCalendarIcal")
-        .WithSummary("Exports calendar data to iCal.")
-        .WithDescription("Exports a baseline iCal feed for the next month of events.");
+        .WithDocumentation(ApiResource.ExportCalendarIcal);
 
-        group.MapPost("/suggest-times", async Task<IResult> (
+        group.MapPost(ApiResource.SuggestMeetingTimes.Endpoint, async Task<IResult> (
             [FromBody] SuggestMeetingTimesRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -649,10 +602,11 @@ public static class ProductivityModuleEndpoints
         .Accepts<SuggestMeetingTimesRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("SuggestMeetingTimes")
-        .WithSummary("Suggests meeting times.")
-        .WithDescription("Suggests likely meeting times based on the requested date range and desired meeting duration.");
+        .WithDocumentation(ApiResource.SuggestMeetingTimes);
     }
+    /// <summary>
+    /// Map cross entity.
+    /// </summary>
 
     private static void MapCrossEntity(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -662,7 +616,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Notes")
             .RequireAuthorization();
 
-        notesGroup.MapPost("/{noteId:guid}/convert-to-todo", async Task<IResult> (
+        notesGroup.MapPost(ApiResource.ConvertNoteToTodo.Endpoint, async Task<IResult> (
             Guid noteId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -674,11 +628,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ConvertNoteToTodo")
-        .WithSummary("Converts a note to a todo.")
-        .WithDescription("Creates a todo from the selected note while keeping the original note intact.");
+        .WithDocumentation(ApiResource.ConvertNoteToTodo);
 
-        notesGroup.MapPost("/notebooks", async Task<IResult> (
+        notesGroup.MapPost(ApiResource.CreateNotebook.Endpoint, async Task<IResult> (
             [FromBody] CreateNotebookRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -691,9 +643,7 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateNotebookRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateNotebook")
-        .WithSummary("Creates a notebook.")
-        .WithDescription("Creates a notebook and optionally nests it under a parent notebook.");
+        .WithDocumentation(ApiResource.CreateNotebook);
 
         var sharedGroup = endpoints.MapGroup("api/v{version:apiVersion}")
             .WithApiVersionSet(versionSet)
@@ -701,7 +651,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Smart Views")
             .RequireAuthorization();
 
-        sharedGroup.MapGet("/search", async Task<IResult> (
+        sharedGroup.MapGet(ApiResource.GlobalProductivitySearch.Endpoint, async Task<IResult> (
             [FromQuery(Name = "q")] string q,
             [FromQuery(Name = "types")] string? types,
             [FromServices] ISender sender,
@@ -714,11 +664,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GlobalProductivitySearch")
-        .WithSummary("Performs global productivity search.")
-        .WithDescription("Searches across todos, notes, tasks, and events using a shared search experience.");
+        .WithDocumentation(ApiResource.GlobalProductivitySearch);
 
-        sharedGroup.MapGet("/dashboard/today", async Task<IResult> (
+        sharedGroup.MapGet(ApiResource.GetProductivityDashboardToday.Endpoint, async Task<IResult> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -729,11 +677,9 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetProductivityDashboardToday")
-        .WithSummary("Gets the productivity dashboard.")
-        .WithDescription("Returns today's overdue work, due work, events, reminders, recent notes, and summary metrics.");
+        .WithDocumentation(ApiResource.GetProductivityDashboardToday);
 
-        sharedGroup.MapPost("/smart-lists", async Task<IResult> (
+        sharedGroup.MapPost(ApiResource.CreateSmartList.Endpoint, async Task<IResult> (
             [FromBody] CreateSmartListRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -746,10 +692,11 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateSmartListRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateSmartList")
-        .WithSummary("Creates a smart list.")
-        .WithDescription("Saves reusable filter criteria for a specific productivity entity type.");
+        .WithDocumentation(ApiResource.CreateSmartList);
     }
+    /// <summary>
+    /// Map reports.
+    /// </summary>
 
     private static void MapReports(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -759,7 +706,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Reports")
             .RequireAuthorization();
 
-        group.MapGet("/productivity", async Task<IResult> (
+        group.MapGet(ApiResource.GetProductivityReport.Endpoint, async Task<IResult> (
             [FromQuery] string? period,
             [FromQuery] DateTimeOffset? start,
             [FromQuery] DateTimeOffset? end,
@@ -773,10 +720,11 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetProductivityReport")
-        .WithSummary("Gets a productivity report.")
-        .WithDescription("Returns completion, category, and activity metrics for the requested reporting window.");
+        .WithDocumentation(ApiResource.GetProductivityReport);
     }
+    /// <summary>
+    /// Map templates.
+    /// </summary>
 
     private static void MapTemplates(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -786,7 +734,7 @@ public static class ProductivityModuleEndpoints
             .WithTags("Productivity Module - Templates")
             .RequireAuthorization();
 
-        group.MapPost("/", async Task<IResult> (
+        group.MapPost(ApiResource.CreateTemplate.Endpoint, async Task<IResult> (
             [FromBody] CreateTemplateRequest request,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -799,11 +747,9 @@ public static class ProductivityModuleEndpoints
         .Accepts<CreateTemplateRequest>("application/json")
         .Produces(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("CreateTemplate")
-        .WithSummary("Creates a reusable productivity template.")
-        .WithDescription("Saves a serialized todo, note, task, or event payload for later instantiation.");
+        .WithDocumentation(ApiResource.CreateTemplate);
 
-        group.MapPost("/{templateId:guid}/instantiate", async Task<IResult> (
+        group.MapPost(ApiResource.InstantiateTemplate.Endpoint, async Task<IResult> (
             Guid templateId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -815,13 +761,17 @@ public static class ProductivityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("InstantiateTemplate")
-        .WithSummary("Instantiates a template.")
-        .WithDescription("Returns the saved serialized template payload so clients can prefill creation forms.");
+        .WithDocumentation(ApiResource.InstantiateTemplate);
     }
+    /// <summary>
+    /// Create problem.
+    /// </summary>
 
     private static ProblemDetails CreateProblem(string title, string? detail)
         => new() { Title = title, Detail = detail };
+    /// <summary>
+    /// Todo query parameters.
+    /// </summary>
 
     private sealed class TodoQueryParameters
     {

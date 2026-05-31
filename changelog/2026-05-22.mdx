@@ -1,0 +1,23 @@
+---
+title: "Week of May 22, 2026"
+description: "Productivity module ships with full task, note, reminder, and calendar support, plus real-time collaboration."
+---
+
+The productivity module has fully landed this week, bringing todos, tasks, notes, reminders, calendar events, and real-time collaboration to the platform.
+
+## New features
+
+- **Todos, tasks, and reminders.** Create and manage personal todos, convert them into tasks with statuses and dependencies, and attach reminders that fire on a schedule. Tasks support a board view, status updates, and built-in time tracking.
+- **Notes and notebooks.** Capture rich notes, organize them into notebooks, share with other users, view version history, and export. Notes can be converted into todos in one step.
+- **Calendar events.** Schedule events, view your calendar, track attendee responses, check availability, and get meeting-time suggestions. Calendars can be exported to iCal for use in external clients.
+- **Cross-entity dashboards.** A new global search spans todos, tasks, notes, and events. The today dashboard, smart lists, templates, and productivity reports give you a single place to review your day and track output over time.
+- **Real-time collaboration.** A new SignalR hub at `/hubs/productivity` delivers live updates as collaborators add, edit, or complete items — no polling required.
+
+## Updates
+
+- **Recurring background jobs.** The productivity module registers recurring jobs for task generation, trash cleanup, weekly reporting, and calendar sync out of the box. They run through the existing [scheduler](/scheduler/overview), so you can monitor and retry them like any other job.
+- **Attachment storage.** Notes and tasks can carry file attachments, backed by the platform's pluggable file storage. The local provider is enabled by default; swap in a cloud provider through configuration.
+
+## Bug fixes
+
+- No customer-reported issues were fixed this week.

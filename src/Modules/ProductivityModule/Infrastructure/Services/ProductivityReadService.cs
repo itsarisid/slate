@@ -14,6 +14,9 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class ProductivityReadService(AppDbContext dbContext) : IProductivityReadService
 {
+    /// <summary>
+    /// Global search async.
+    /// </summary>
     public async Task<IReadOnlyList<SearchResultDto>> GlobalSearchAsync(Guid ownerUserId, string query, IReadOnlyCollection<string>? types, CancellationToken cancellationToken)
     {
         var normalizedTypes = (types ?? []).Select(x => x.Trim().ToLowerInvariant()).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -59,6 +62,9 @@ public sealed class ProductivityReadService(AppDbContext dbContext) : IProductiv
 
         return results.OrderByDescending(x => x.Score).ThenByDescending(x => x.UpdatedAt).ToArray();
     }
+    /// <summary>
+    /// Get dashboard async.
+    /// </summary>
 
     public async Task<DashboardDto> GetDashboardAsync(Guid ownerUserId, DateTimeOffset today, CancellationToken cancellationToken)
     {
@@ -104,6 +110,9 @@ public sealed class ProductivityReadService(AppDbContext dbContext) : IProductiv
             recentNotes.Select(x => x.ToDto()).ToArray(),
             new ProductivityStatsDto(completedToday, pendingTotal, tasksInProgress));
     }
+    /// <summary>
+    /// Get report async.
+    /// </summary>
 
     public async Task<ProductivityReportDto> GetReportAsync(Guid ownerUserId, string period, DateTimeOffset? start, DateTimeOffset? end, CancellationToken cancellationToken)
     {
@@ -135,12 +144,18 @@ public sealed class ProductivityReadService(AppDbContext dbContext) : IProductiv
 
         return new ProductivityReportDto(completedTasks, completedTodos, "2.5h", mostProductiveDay, categoryBreakdown);
     }
+    /// <summary>
+    /// Check availability async.
+    /// </summary>
 
     public Task<IReadOnlyList<AvailabilitySlotDto>> CheckAvailabilityAsync(IReadOnlyCollection<Guid> userIds, DateTimeOffset start, DateTimeOffset end, int durationMinutes, CancellationToken cancellationToken)
     {
         var slot = new AvailabilitySlotDto(start, start.AddMinutes(durationMinutes), userIds.ToArray());
         return Task.FromResult<IReadOnlyList<AvailabilitySlotDto>>([slot]);
     }
+    /// <summary>
+    /// Suggest meeting times async.
+    /// </summary>
 
     public Task<IReadOnlyList<MeetingSuggestionDto>> SuggestMeetingTimesAsync(IReadOnlyCollection<string> attendees, DateTimeOffset start, DateTimeOffset end, int durationMinutes, string? timezone, CancellationToken cancellationToken)
     {

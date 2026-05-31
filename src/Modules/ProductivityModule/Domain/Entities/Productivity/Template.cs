@@ -27,6 +27,9 @@ public sealed class ProductivityTemplate : BaseEntity
         Description = description?.Trim();
         TemplateJson = string.IsNullOrWhiteSpace(templateJson) ? "{}" : templateJson;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static ProductivityTemplate Create(Guid ownerUserId, string name, string entityType, string? description, string templateJson)
         => new(ownerUserId, name, entityType, description, templateJson);

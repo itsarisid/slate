@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Identity.Configurations;
 /// </summary>
 public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<RefreshToken> builder)
     {
         builder.ToTable("RefreshTokens");

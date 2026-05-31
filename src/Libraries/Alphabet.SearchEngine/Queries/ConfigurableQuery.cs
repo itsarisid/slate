@@ -1,5 +1,8 @@
-﻿
+
 namespace Alphabet.SearchEngine.Queries;
+/// <summary>
+/// Configurable query.
+/// </summary>
 
 public abstract class ConfigurableQuery : SearchQuery
 {

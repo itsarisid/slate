@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
 using MediatR;
@@ -9,10 +8,16 @@ namespace Alphabet.Application.Features.Identity.Queries;
 /// Gets current recovery codes for the authenticated user.
 /// </summary>
 public sealed record GetRecoveryCodesQuery : IRequest<Result<RecoveryCodesDto>>;
+/// <summary>
+/// Get recovery codes query handler.
+/// </summary>
 
 public sealed class GetRecoveryCodesQueryHandler(IIdentityService identityService, ICurrentUserService currentUserService)
     : IRequestHandler<GetRecoveryCodesQuery, Result<RecoveryCodesDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<RecoveryCodesDto>> Handle(GetRecoveryCodesQuery request, CancellationToken cancellationToken)
     {
         return currentUserService.UserId is { } userId

@@ -27,6 +27,9 @@ public sealed class Tag : BaseEntity
         NormalizedName = name.Trim().ToLowerInvariant();
         Color = string.IsNullOrWhiteSpace(color) ? null : color.Trim();
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Tag Create(string entityType, Guid entityId, string name, string? color = null)
         => new(entityType, entityId, name, color);

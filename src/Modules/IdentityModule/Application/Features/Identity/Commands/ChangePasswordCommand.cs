@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
 using FluentValidation;
 using MediatR;
@@ -9,6 +8,9 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Changes the password for the current user.
 /// </summary>
 public sealed record ChangePasswordCommand(string CurrentPassword, string NewPassword, string ConfirmPassword) : IRequest<Result>;
+/// <summary>
+/// Change password command validator.
+/// </summary>
 
 public sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCommand>
 {
@@ -25,10 +27,16 @@ public sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePas
         RuleFor(x => x.ConfirmPassword).Equal(x => x.NewPassword);
     }
 }
+/// <summary>
+/// Change password command handler.
+/// </summary>
 
 public sealed class ChangePasswordCommandHandler(IIdentityService identityService, ICurrentUserService currentUserService)
     : IRequestHandler<ChangePasswordCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         return currentUserService.UserId is { } userId

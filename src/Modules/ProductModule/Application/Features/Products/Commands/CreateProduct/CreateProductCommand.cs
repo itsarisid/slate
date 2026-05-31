@@ -1,4 +1,3 @@
-using Alphabet.Application.Features.Products;
 using Alphabet.Application.Results;
 using MediatR;
 

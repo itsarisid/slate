@@ -1,8 +1,5 @@
-using Alphabet.Application.Common.Interfaces.Productivity;
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.ValueObjects;
@@ -27,6 +24,9 @@ public sealed record CreateEventCommand(
     string? Color,
     IReadOnlyCollection<int>? ReminderMinutesBefore,
     string? ConferenceLink) : IRequest<Result<CalendarEventDto>>;
+/// <summary>
+/// Create event command handler.
+/// </summary>
 
 public sealed class CreateEventCommandHandler(
     IEventRepository eventRepository,
@@ -35,6 +35,9 @@ public sealed class CreateEventCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateEventCommand, Result<CalendarEventDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<CalendarEventDto>> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

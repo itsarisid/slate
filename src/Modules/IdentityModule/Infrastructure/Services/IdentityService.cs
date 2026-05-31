@@ -32,6 +32,9 @@ public sealed class IdentityService(
 {
     private readonly FrontendUrlsSettings _frontendUrls = frontendUrlsOptions.Value;
     private readonly MfaSettings _mfaSettings = mfaOptions.Value;
+    /// <summary>
+    /// Register async.
+    /// </summary>
 
     public async Task<Result<UserDto>> RegisterAsync(string email, string password, string firstName, string lastName, CancellationToken cancellationToken)
     {
@@ -68,6 +71,9 @@ public sealed class IdentityService(
 
         return new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, user.EmailConfirmed);
     }
+    /// <summary>
+    /// Confirm email async.
+    /// </summary>
 
     public async Task<Result> ConfirmEmailAsync(Guid userId, string token, CancellationToken cancellationToken)
     {
@@ -88,6 +94,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "ConfirmEmail", true, "Email confirmed.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Login async.
+    /// </summary>
 
     public async Task<Result<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken)
     {
@@ -136,6 +145,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "Login", true, "Login successful.", cancellationToken);
         return auth;
     }
+    /// <summary>
+    /// Complete mfa login async.
+    /// </summary>
 
     public async Task<Result<AuthResponseDto>> CompleteMfaLoginAsync(string mfaToken, string verificationCode, CancellationToken cancellationToken)
     {
@@ -177,6 +189,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "MfaLogin", true, "MFA login successful.", cancellationToken);
         return auth;
     }
+    /// <summary>
+    /// Send forgot password async.
+    /// </summary>
 
     public async Task<Result> SendForgotPasswordAsync(string email, CancellationToken cancellationToken)
     {
@@ -191,6 +206,9 @@ public sealed class IdentityService(
 
         return Result.Success();
     }
+    /// <summary>
+    /// Reset password async.
+    /// </summary>
 
     public async Task<Result> ResetPasswordAsync(string email, string token, string newPassword, CancellationToken cancellationToken)
     {
@@ -210,6 +228,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "ResetPassword", true, "Password reset completed.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Refresh token async.
+    /// </summary>
 
     public async Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
@@ -224,6 +245,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(token.UserId, "RefreshToken", true, "Refresh token rotated.", cancellationToken);
         return auth;
     }
+    /// <summary>
+    /// Logout async.
+    /// </summary>
 
     public async Task<Result> LogoutAsync(string refreshToken, CancellationToken cancellationToken)
     {
@@ -237,6 +261,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(token.UserId, "Logout", true, "Refresh token revoked.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Change password async.
+    /// </summary>
 
     public async Task<Result> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken)
     {
@@ -256,6 +283,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "ChangePassword", true, "Password changed.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Enable authenticator async.
+    /// </summary>
 
     public async Task<Result<AuthenticatorSetupDto>> EnableAuthenticatorAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -268,6 +298,9 @@ public sealed class IdentityService(
         var setup = await twoFactorService.GenerateAuthenticatorSetupAsync(user, cancellationToken);
         return new AuthenticatorSetupDto(setup.SharedKey, setup.AuthenticatorUri, setup.ManualEntryKey);
     }
+    /// <summary>
+    /// Verify authenticator async.
+    /// </summary>
 
     public async Task<Result<RecoveryCodesDto>> VerifyAuthenticatorAsync(Guid userId, string verificationCode, CancellationToken cancellationToken)
     {
@@ -291,6 +324,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "EnableAuthenticator", true, "Authenticator MFA enabled.", cancellationToken);
         return new RecoveryCodesDto(recoveryCodes);
     }
+    /// <summary>
+    /// Enable otp async.
+    /// </summary>
 
     public async Task<Result> EnableOtpAsync(Guid userId, TwoFactorMethod method, string destination, CancellationToken cancellationToken)
     {
@@ -307,6 +343,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "EnableOtp", true, $"OTP challenge sent via {method}.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Verify otp async.
+    /// </summary>
 
     public async Task<Result> VerifyOtpAsync(Guid userId, string destination, string verificationCode, CancellationToken cancellationToken)
     {
@@ -330,6 +369,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "VerifyOtp", true, "OTP MFA enabled.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Get recovery codes async.
+    /// </summary>
 
     public async Task<Result<RecoveryCodesDto>> GetRecoveryCodesAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -342,6 +384,9 @@ public sealed class IdentityService(
         var stored = TwoFactorService.ParseRecoveryCodes(user.RecoveryCodes);
         return new RecoveryCodesDto(stored);
     }
+    /// <summary>
+    /// Regenerate recovery codes async.
+    /// </summary>
 
     public async Task<Result<RecoveryCodesDto>> RegenerateRecoveryCodesAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -357,6 +402,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "RegenerateRecoveryCodes", true, "Recovery codes regenerated.", cancellationToken);
         return new RecoveryCodesDto(recoveryCodes);
     }
+    /// <summary>
+    /// Unlock user async.
+    /// </summary>
 
     public async Task<Result> UnlockUserAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -371,12 +419,18 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "UnlockUser", true, "User unlocked by admin.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Get users async.
+    /// </summary>
 
     public async Task<IReadOnlyList<UserDto>> GetUsersAsync(CancellationToken cancellationToken)
     {
         var users = await userRepository.GetAllAsync(cancellationToken);
         return users.Select(x => new UserDto(x.Id, x.Email ?? string.Empty, x.FirstName, x.LastName, x.EmailConfirmed)).ToArray();
     }
+    /// <summary>
+    /// Admin create user async.
+    /// </summary>
 
     // ── Admin management ──────────────────────────────────────────────
 
@@ -415,6 +469,9 @@ public sealed class IdentityService(
 
         return new UserDto(user.Id, user.Email!, user.FirstName, user.LastName, user.EmailConfirmed);
     }
+    /// <summary>
+    /// Lock user async.
+    /// </summary>
 
     public async Task<Result> LockUserAsync(Guid userId, int durationMinutes, CancellationToken cancellationToken)
     {
@@ -433,6 +490,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "LockUser", true, $"User locked by admin for {durationText}.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Admin reset password async.
+    /// </summary>
 
     public async Task<Result> AdminResetPasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken)
     {
@@ -453,6 +513,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "AdminResetPassword", true, "Password reset by admin.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Admin send reset link async.
+    /// </summary>
 
     public async Task<Result> AdminSendResetLinkAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -473,6 +536,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "AdminSendResetLink", true, "Password reset link sent by admin.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Admin force logout async.
+    /// </summary>
 
     public async Task<Result> AdminForceLogoutAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -490,6 +556,9 @@ public sealed class IdentityService(
         await WriteAuditAsync(user.Id, "AdminForceLogout", true, "User force-logged out by admin.", cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Get user by id async.
+    /// </summary>
 
     public async Task<Result<AdminUserDetailDto>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -515,6 +584,9 @@ public sealed class IdentityService(
             user.CreatedAt,
             roles.ToArray());
     }
+    /// <summary>
+    /// Get user audit logs async.
+    /// </summary>
 
     public async Task<IReadOnlyList<AuditLogDto>> GetUserAuditLogsAsync(Guid userId, int take, int skip, CancellationToken cancellationToken)
     {
@@ -529,6 +601,9 @@ public sealed class IdentityService(
             x.UserAgent,
             x.Timestamp)).ToArray();
     }
+    /// <summary>
+    /// Write audit async.
+    /// </summary>
 
     private async Task WriteAuditAsync(Guid? userId, string action, bool success, string message, CancellationToken cancellationToken)
     {

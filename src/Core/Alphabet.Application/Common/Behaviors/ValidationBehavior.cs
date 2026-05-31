@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Exceptions;
 using FluentValidation;
 using MediatR;
 

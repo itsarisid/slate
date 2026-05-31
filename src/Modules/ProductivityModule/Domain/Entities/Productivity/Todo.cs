@@ -64,6 +64,9 @@ public sealed class Todo : BaseEntity
         IsRecurring = isRecurring;
         RecurrencePatternJson = recurrencePattern is null ? null : ProductivityJson.Serialize(recurrencePattern);
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Todo Create(
         Guid createdByUserId,
@@ -77,6 +80,9 @@ public sealed class Todo : BaseEntity
         bool isRecurring,
         RecurrencePattern? recurrencePattern)
         => new(createdByUserId, assignedToUserId, title, description, priority, dueDate, category, reminderMinutesBefore, isRecurring, recurrencePattern);
+    /// <summary>
+    /// Update details.
+    /// </summary>
 
     public void UpdateDetails(
         string title,
@@ -100,6 +106,9 @@ public sealed class Todo : BaseEntity
         RecurrencePatternJson = recurrencePattern is null ? null : ProductivityJson.Serialize(recurrencePattern);
         Touch();
     }
+    /// <summary>
+    /// Complete.
+    /// </summary>
 
     public void Complete()
     {
@@ -107,6 +116,9 @@ public sealed class Todo : BaseEntity
         CompletedAt = DateTimeOffset.UtcNow;
         Touch();
     }
+    /// <summary>
+    /// Uncomplete.
+    /// </summary>
 
     public void Uncomplete()
     {
@@ -114,12 +126,18 @@ public sealed class Todo : BaseEntity
         CompletedAt = null;
         Touch();
     }
+    /// <summary>
+    /// Archive.
+    /// </summary>
 
     public void Archive()
     {
         Status = TodoStatus.Archived;
         Touch();
     }
+    /// <summary>
+    /// Move to trash.
+    /// </summary>
 
     public void MoveToTrash()
     {
@@ -127,6 +145,9 @@ public sealed class Todo : BaseEntity
         Status = TodoStatus.Trash;
         Touch();
     }
+    /// <summary>
+    /// Restore.
+    /// </summary>
 
     public void Restore()
     {
@@ -134,6 +155,9 @@ public sealed class Todo : BaseEntity
         Status = TodoStatus.Pending;
         Touch();
     }
+    /// <summary>
+    /// Mark converted.
+    /// </summary>
 
     public void MarkConverted(Guid taskId)
     {

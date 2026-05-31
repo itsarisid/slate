@@ -16,6 +16,9 @@ public sealed class RolePrivilege : BaseEntity
     public DateTimeOffset? ExpiresAt { get; private set; }
 
     public bool IsActive { get; private set; } = true;
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static RolePrivilege Create(Guid roleId, Guid privilegeId, string grantedBy, DateTimeOffset? expiresAt)
     {
@@ -27,6 +30,9 @@ public sealed class RolePrivilege : BaseEntity
             ExpiresAt = expiresAt
         };
     }
+    /// <summary>
+    /// Revoke.
+    /// </summary>
 
     public void Revoke()
     {

@@ -1,4 +1,3 @@
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces.Productivity;
@@ -11,12 +10,18 @@ namespace Alphabet.Application.Features.Productivity.Events.Queries;
 /// Gets the current user's calendar view.
 /// </summary>
 public sealed record GetCalendarViewQuery(string View, DateTimeOffset? Date, DateTimeOffset? Start, DateTimeOffset? End) : IRequest<Result<IReadOnlyList<CalendarEventDto>>>;
+/// <summary>
+/// Get calendar view query handler.
+/// </summary>
 
 public sealed class GetCalendarViewQueryHandler(
     IEventRepository eventRepository,
     ICurrentUserService currentUserService)
     : IRequestHandler<GetCalendarViewQuery, Result<IReadOnlyList<CalendarEventDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<IReadOnlyList<CalendarEventDto>>> Handle(GetCalendarViewQuery request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

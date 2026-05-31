@@ -9,11 +9,17 @@ namespace Alphabet.Application.Features.Scheduler.Queries;
 /// Returns dashboard statistics for the scheduler module.
 /// </summary>
 public sealed record GetDashboardStatsQuery : IRequest<DashboardStatsDto>;
+/// <summary>
+/// Get dashboard stats query handler.
+/// </summary>
 
 public sealed class GetDashboardStatsQueryHandler(
     IJobExecutionRepository executionRepository,
     ISchedulerService schedulerService) : IRequestHandler<GetDashboardStatsQuery, DashboardStatsDto>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<DashboardStatsDto> Handle(GetDashboardStatsQuery request, CancellationToken cancellationToken)
     {
         var snapshot = await executionRepository.GetDashboardStatsAsync(DateTimeOffset.UtcNow.Date, cancellationToken);

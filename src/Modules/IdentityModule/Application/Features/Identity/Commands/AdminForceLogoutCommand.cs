@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
 using MediatR;
 
@@ -8,10 +7,16 @@ namespace Alphabet.Application.Features.Identity.Commands;
 /// Admin force-logs out a user by revoking all refresh tokens and updating the security stamp.
 /// </summary>
 public sealed record AdminForceLogoutCommand(Guid UserId) : IRequest<Result>;
+/// <summary>
+/// Admin force logout command handler.
+/// </summary>
 
 public sealed class AdminForceLogoutCommandHandler(IIdentityService identityService)
     : IRequestHandler<AdminForceLogoutCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result> Handle(AdminForceLogoutCommand request, CancellationToken cancellationToken)
-        => identityService.AdminForceLogoutAsync(request.UserId, cancellationToken);
+    => identityService.AdminForceLogoutAsync(request.UserId, cancellationToken);
 }

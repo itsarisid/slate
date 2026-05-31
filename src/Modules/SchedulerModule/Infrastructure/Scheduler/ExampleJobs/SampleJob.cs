@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Scheduler.ExampleJobs;
 /// </summary>
 public sealed class SampleJob : IJobHandler
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public Task<string> ExecuteAsync(Job job, JsonElement parameters, CancellationToken cancellationToken)
-        => Task.FromResult($"Sample job '{job.Name}' executed at {DateTimeOffset.UtcNow:O}.");
+    => Task.FromResult($"Sample job '{job.Name}' executed at {DateTimeOffset.UtcNow:O}.");
 }

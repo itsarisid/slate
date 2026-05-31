@@ -20,10 +20,16 @@ public sealed record GetJobsQuery(
     string? SortBy = null,
     string? SortDirection = null,
     string? CreatedBy = null) : IRequest<PagedResponseDto<JobDto>>;
+/// <summary>
+/// Get jobs query handler.
+/// </summary>
 
 public sealed class GetJobsQueryHandler(IJobRepository jobRepository, ISchedulerService schedulerService)
     : IRequestHandler<GetJobsQuery, PagedResponseDto<JobDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<PagedResponseDto<JobDto>> Handle(GetJobsQuery request, CancellationToken cancellationToken)
     {
         var page = await jobRepository.GetPagedAsync(

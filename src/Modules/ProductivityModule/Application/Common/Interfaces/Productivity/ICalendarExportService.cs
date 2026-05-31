@@ -7,5 +7,8 @@ namespace Alphabet.Application.Common.Interfaces.Productivity;
 /// </summary>
 public interface ICalendarExportService
 {
+    /// <summary>
+    /// Export icalendar async.
+    /// </summary>
     Task<string> ExportICalendarAsync(IReadOnlyCollection<CalendarEventDto> events, CancellationToken cancellationToken);
 }

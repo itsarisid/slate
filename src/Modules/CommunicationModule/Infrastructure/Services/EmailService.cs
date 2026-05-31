@@ -8,12 +8,18 @@ namespace Alphabet.Infrastructure.External.Email;
 /// </summary>
 public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
 {
+    /// <summary>
+    /// Send async.
+    /// </summary>
     public Task SendAsync(string to, string subject, string body, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         logger.LogInformation("Sending email to {To} with subject {Subject}", to, subject);
         return Task.CompletedTask;
     }
+    /// <summary>
+    /// Send template async.
+    /// </summary>
 
     public Task SendTemplateAsync(string to, string subject, string htmlBody, CancellationToken cancellationToken)
     {

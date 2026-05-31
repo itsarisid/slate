@@ -12,6 +12,9 @@ public sealed class NotificationService(
     ICommunicationService communicationService,
     AppDbContext dbContext) : INotificationService
 {
+    /// <summary>
+    /// Send reminder async.
+    /// </summary>
     public async Task SendReminderAsync(Guid userId, string title, string body, IReadOnlyCollection<string> channels, CancellationToken cancellationToken)
     {
         var user = await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
@@ -28,6 +31,9 @@ public sealed class NotificationService(
                 false),
             cancellationToken);
     }
+    /// <summary>
+    /// Send assignment async.
+    /// </summary>
 
     public async Task SendAssignmentAsync(Guid userId, string title, string body, CancellationToken cancellationToken)
     {

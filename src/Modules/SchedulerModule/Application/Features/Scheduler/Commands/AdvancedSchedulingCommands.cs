@@ -1,7 +1,5 @@
 using System.Text.Json;
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using MediatR;
@@ -17,6 +15,9 @@ public sealed record AddJobDependencyCommand(Guid JobId, IReadOnlyList<Guid> Dep
 public sealed record CreateWorkflowJobItem(Guid JobId, IReadOnlyList<Guid> DependsOn, string OnFailure);
 
 public sealed record CreateWorkflowCommand(string Name, IReadOnlyList<CreateWorkflowJobItem> Jobs) : IRequest<Result<string>>;
+/// <summary>
+/// Add job exclusion command handler.
+/// </summary>
 
 public sealed class AddJobExclusionCommandHandler(
     IJobRepository jobRepository,
@@ -25,6 +26,9 @@ public sealed class AddJobExclusionCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<AddJobExclusionCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(AddJobExclusionCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);
@@ -47,6 +51,9 @@ public sealed class AddJobExclusionCommandHandler(
         return Result.Success();
     }
 }
+/// <summary>
+/// Add job dependency command handler.
+/// </summary>
 
 public sealed class AddJobDependencyCommandHandler(
     IJobRepository jobRepository,
@@ -55,6 +62,9 @@ public sealed class AddJobDependencyCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<AddJobDependencyCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(AddJobDependencyCommand request, CancellationToken cancellationToken)
     {
         var job = await jobRepository.GetByIdAsync(request.JobId, cancellationToken);
@@ -71,9 +81,15 @@ public sealed class AddJobDependencyCommandHandler(
         return Result.Success();
     }
 }
+/// <summary>
+/// Create workflow command handler.
+/// </summary>
 
 public sealed class CreateWorkflowCommandHandler : IRequestHandler<CreateWorkflowCommand, Result<string>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public Task<Result<string>> Handle(CreateWorkflowCommand request, CancellationToken cancellationToken)
-        => Task.FromResult(Result<string>.Success(JsonSerializer.Serialize(request)));
+    => Task.FromResult(Result<string>.Success(JsonSerializer.Serialize(request)));
 }

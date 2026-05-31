@@ -14,11 +14,17 @@ public abstract class BaseSpecification<T>(Expression<Func<T, bool>> criteria) :
     public IReadOnlyCollection<Expression<Func<T, object>>> Includes => _includes.AsReadOnly();
 
     public Func<IQueryable<T>, IOrderedQueryable<T>>? OrderBy { get; private set; }
+    /// <summary>
+    /// Add include.
+    /// </summary>
 
     protected void AddInclude(Expression<Func<T, object>> includeExpression)
     {
         _includes.Add(includeExpression);
     }
+    /// <summary>
+    /// Apply order by.
+    /// </summary>
 
     protected void ApplyOrderBy(Func<IQueryable<T>, IOrderedQueryable<T>> orderByExpression)
     {

@@ -14,6 +14,9 @@ namespace Alphabet.Infrastructure.Scheduler.JobHandlers;
 /// </summary>
 public sealed class FileOperationJobHandler(IOptions<SchedulerSettings> schedulerOptions) : IJobHandler
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public Task<string> ExecuteAsync(Job job, JsonElement parameters, CancellationToken cancellationToken)
     {
         var config = JsonSerializer.Deserialize<JobConfigurationDto>(job.JobConfiguration)
@@ -65,6 +68,9 @@ public sealed class FileOperationJobHandler(IOptions<SchedulerSettings> schedule
 
         return Task.FromResult(builder.ToString().Trim());
     }
+    /// <summary>
+    /// Resolve files.
+    /// </summary>
 
     private static IEnumerable<string> ResolveFiles(string searchPattern)
     {
@@ -78,6 +84,9 @@ public sealed class FileOperationJobHandler(IOptions<SchedulerSettings> schedule
 
         return Directory.GetFiles(directory, string.IsNullOrWhiteSpace(pattern) ? "*" : pattern, SearchOption.TopDirectoryOnly);
     }
+    /// <summary>
+    /// Ensure path allowed.
+    /// </summary>
 
     private static void EnsurePathAllowed(string path, string[] allowedRoots)
     {

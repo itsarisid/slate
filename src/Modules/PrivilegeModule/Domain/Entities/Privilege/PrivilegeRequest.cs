@@ -26,6 +26,9 @@ public sealed class PrivilegeRequest : BaseEntity
     public string? ApproverEmail { get; private set; }
 
     public string? DecisionNotes { get; private set; }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static PrivilegeRequest Create(
         Guid userId,
@@ -43,6 +46,9 @@ public sealed class PrivilegeRequest : BaseEntity
             ApproverEmail = approverEmail?.Trim()
         };
     }
+    /// <summary>
+    /// Approve.
+    /// </summary>
 
     public void Approve(Guid approverId, int durationDays, string? notes)
     {
@@ -53,6 +59,9 @@ public sealed class PrivilegeRequest : BaseEntity
         DecisionNotes = notes?.Trim();
         Touch();
     }
+    /// <summary>
+    /// Deny.
+    /// </summary>
 
     public void Deny(Guid approverId, string? notes)
     {

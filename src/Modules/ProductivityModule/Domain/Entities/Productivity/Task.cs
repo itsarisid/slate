@@ -69,6 +69,9 @@ public sealed class ProductivityTask : BaseEntity
         ProjectId = projectId;
         ChecklistJson = ProductivityJson.Serialize(checklist);
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static ProductivityTask Create(
         Guid ownerUserId,
@@ -86,6 +89,9 @@ public sealed class ProductivityTask : BaseEntity
         => new(ownerUserId, title, description, priority, status, dueDate, estimatedHours, assigneeId, reviewerId, parentTaskId, projectId, checklist);
 
     public IReadOnlyList<TodoChecklistItem> Checklist => ProductivityJson.DeserializeList<TodoChecklistItem>(ChecklistJson);
+    /// <summary>
+    /// Update status.
+    /// </summary>
 
     public void UpdateStatus(ProductivityTaskStatus status, string? comment)
     {
@@ -99,6 +105,9 @@ public sealed class ProductivityTask : BaseEntity
 
         Touch();
     }
+    /// <summary>
+    /// Add time.
+    /// </summary>
 
     public void AddTime(decimal hours)
     {

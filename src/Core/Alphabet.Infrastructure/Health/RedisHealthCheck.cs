@@ -8,6 +8,9 @@ namespace Alphabet.Infrastructure.Health;
 /// </summary>
 public sealed class RedisHealthCheck(IDistributedCache distributedCache) : IHealthCheck
 {
+    /// <summary>
+    /// Check health async.
+    /// </summary>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         const string probeKey = "health:probe";

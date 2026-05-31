@@ -1,9 +1,7 @@
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
-using Alphabet.Domain.Models;
 using MediatR;
 
 namespace Alphabet.Application.Features.Productivity.Reminders.Queries;
@@ -16,18 +14,27 @@ public sealed record GetRemindersQuery(
     DateTimeOffset? To,
     ReminderType? Type,
     ReminderStatus? Status) : IRequest<Result<IReadOnlyList<ReminderDto>>>;
+/// <summary>
+/// Get reminders query handler.
+/// </summary>
 
 public sealed class GetRemindersQueryHandler(
     IRepository<Reminder> reminderRepository,
     ICurrentUserService currentUserService)
     : IRequestHandler<GetRemindersQuery, Result<IReadOnlyList<ReminderDto>>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<IReadOnlyList<ReminderDto>>> Handle(GetRemindersQuery request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);
         var items = await reminderRepository.FindAsync(new ReminderSpecification(userId, request), cancellationToken);
         return Result<IReadOnlyList<ReminderDto>>.Success(items.Select(x => x.ToDto()).ToArray());
     }
+    /// <summary>
+    /// Reminder specification.
+    /// </summary>
 
     private sealed class ReminderSpecification(Guid userId, GetRemindersQuery query)
         : Alphabet.Domain.Specifications.BaseSpecification<Reminder>(x =>

@@ -1,3 +1,5 @@
+using Alphabet.Modules.IdentityModule.Api.Resource;
+using Alphabet.Common.Extensions;
 using Alphabet.Application.Features.Identity.Commands;
 using Alphabet.Application.Features.Identity.Commands.Mfa;
 using Alphabet.Application.Features.Identity.Dtos;
@@ -33,6 +35,9 @@ public static class IdentityModuleEndpoints
         MapAdmin(endpoints, versionSet);
         return endpoints;
     }
+    /// <summary>
+    /// Map auth.
+    /// </summary>
 
     private static void MapAuth(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -41,7 +46,7 @@ public static class IdentityModuleEndpoints
             .HasApiVersion(new ApiVersion(1, 0))
             .WithTags("Identity Module");
 
-        group.MapPost("/register", async Task<Results<Created<UserDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.RegisterUser.Endpoint, async Task<Results<Created<UserDto>, BadRequest<ProblemDetails>>> (
             [FromBody] RegisterCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -54,11 +59,9 @@ public static class IdentityModuleEndpoints
         .Accepts<RegisterCommand>("application/json")
         .Produces<UserDto>(StatusCodes.Status201Created)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RegisterUser")
-        .WithSummary("Registers a new user account.")
-        .WithDescription("Creates a new user account and returns the created user projection. Email confirmation may still be required before sign-in.");
+        .WithDocumentation(ApiResource.RegisterUser);
 
-        group.MapPost("/confirm-email", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ConfirmEmail.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] ConfirmEmailCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -71,11 +74,9 @@ public static class IdentityModuleEndpoints
         .Accepts<ConfirmEmailCommand>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ConfirmEmail")
-        .WithSummary("Confirms a user's email address.")
-        .WithDescription("Validates the email confirmation token for the target account and marks the email address as confirmed.");
+        .WithDocumentation(ApiResource.ConfirmEmail);
 
-        group.MapPost("/login", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.Login.Endpoint, async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (
             [FromBody] LoginRequest request,
             HttpContext httpContext,
             [FromServices] ISender sender,
@@ -97,11 +98,9 @@ public static class IdentityModuleEndpoints
         .Accepts<LoginRequest>("application/json")
         .Produces<AuthResponseDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("Login")
-        .WithSummary("Authenticates a user.")
-        .WithDescription("Signs a user in with email and password. When useCookies is true, auth cookies are also written to the response.");
+        .WithDocumentation(ApiResource.Login);
 
-        group.MapPost("/forgot-password", async Task<Ok> (
+        group.MapPost(ApiResource.ForgotPassword.Endpoint, async Task<Ok> (
             [FromBody] ForgotPasswordCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -111,11 +110,9 @@ public static class IdentityModuleEndpoints
         })
         .Accepts<ForgotPasswordCommand>("application/json")
         .Produces(StatusCodes.Status200OK)
-        .WithName("ForgotPassword")
-        .WithSummary("Starts the forgot-password flow.")
-        .WithDescription("Generates and sends a password reset message when the account exists. The response stays generic for security reasons.");
+        .WithDocumentation(ApiResource.ForgotPassword);
 
-        group.MapPost("/reset-password", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ResetPassword.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] ResetPasswordCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -128,11 +125,9 @@ public static class IdentityModuleEndpoints
         .Accepts<ResetPasswordCommand>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ResetPassword")
-        .WithSummary("Completes the password reset flow.")
-        .WithDescription("Resets the user's password using a valid reset token and the new password provided in the request.");
+        .WithDocumentation(ApiResource.ResetPassword);
 
-        group.MapPost("/refresh-token", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.RefreshToken.Endpoint, async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (
             [FromBody] RefreshTokenRequest request,
             HttpContext httpContext,
             [FromServices] ISender sender,
@@ -158,11 +153,9 @@ public static class IdentityModuleEndpoints
         .Accepts<RefreshTokenRequest>("application/json")
         .Produces<AuthResponseDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RefreshToken")
-        .WithSummary("Refreshes an expired or expiring access token.")
-        .WithDescription("Uses a refresh token from the request body or auth cookie to issue a fresh access token and refresh token pair.");
+        .WithDocumentation(ApiResource.RefreshToken);
 
-        group.MapPost("/logout", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.Logout.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] LogoutRequest request,
             HttpContext httpContext,
             [FromServices] ISender sender,
@@ -185,11 +178,9 @@ public static class IdentityModuleEndpoints
         .Accepts<LogoutRequest>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("Logout")
-        .WithSummary("Signs the current user out.")
-        .WithDescription("Revokes the refresh token, clears auth cookies when present, and ends the current authenticated session.");
+        .WithDocumentation(ApiResource.Logout);
 
-        group.MapPost("/change-password", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.ChangePassword.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] ChangePasswordCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -203,11 +194,9 @@ public static class IdentityModuleEndpoints
         .Accepts<ChangePasswordCommand>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("ChangePassword")
-        .WithSummary("Changes the current user's password.")
-        .WithDescription("Changes the authenticated user's password by validating the current password and storing the new one.");
+        .WithDocumentation(ApiResource.ChangePassword);
 
-        group.MapPost("/mfa/enable-authenticator", async Task<Results<Ok<AuthenticatorSetupDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.EnableAuthenticator.Endpoint, async Task<Results<Ok<AuthenticatorSetupDto>, BadRequest<ProblemDetails>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -219,11 +208,9 @@ public static class IdentityModuleEndpoints
         .RequireAuthorization()
         .Produces<AuthenticatorSetupDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("EnableAuthenticator")
-        .WithSummary("Starts authenticator-app MFA enrollment.")
-        .WithDescription("Generates the authenticator secret and setup payload needed to enroll an authenticator application.");
+        .WithDocumentation(ApiResource.EnableAuthenticator);
 
-        group.MapPost("/mfa/verify-authenticator", async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.VerifyAuthenticator.Endpoint, async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (
             [FromBody] VerifyAuthenticatorCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -237,11 +224,9 @@ public static class IdentityModuleEndpoints
         .Accepts<VerifyAuthenticatorCommand>("application/json")
         .Produces<RecoveryCodesDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("VerifyAuthenticator")
-        .WithSummary("Completes authenticator-app MFA enrollment.")
-        .WithDescription("Validates the authenticator verification code and returns recovery codes when enrollment succeeds.");
+        .WithDocumentation(ApiResource.VerifyAuthenticator);
 
-        group.MapPost("/mfa/enable-otp", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.EnableOtp.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] EnableOtpCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -255,11 +240,9 @@ public static class IdentityModuleEndpoints
         .Accepts<EnableOtpCommand>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("EnableOtp")
-        .WithSummary("Enables OTP-based MFA delivery.")
-        .WithDescription("Configures one-time-password delivery for the authenticated user through the supported OTP channel.");
+        .WithDocumentation(ApiResource.EnableOtp);
 
-        group.MapPost("/mfa/verify-otp", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.VerifyOtp.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             [FromBody] VerifyOtpCommand command,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -273,11 +256,9 @@ public static class IdentityModuleEndpoints
         .Accepts<VerifyOtpCommand>("application/json")
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("VerifyOtp")
-        .WithSummary("Verifies an OTP code.")
-        .WithDescription("Validates the OTP code for the authenticated user and confirms the configured MFA method.");
+        .WithDocumentation(ApiResource.VerifyOtp);
 
-        group.MapPost("/mfa/login", async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.MfaLogin.Endpoint, async Task<Results<Ok<AuthResponseDto>, BadRequest<ProblemDetails>>> (
             [FromBody] MfaLoginRequest request,
             HttpContext httpContext,
             [FromServices] ISender sender,
@@ -299,11 +280,9 @@ public static class IdentityModuleEndpoints
         .Accepts<MfaLoginRequest>("application/json")
         .Produces<AuthResponseDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("MfaLogin")
-        .WithSummary("Completes sign-in after MFA challenge.")
-        .WithDescription("Validates the MFA token and verification code, then issues the final authenticated token set.");
+        .WithDocumentation(ApiResource.MfaLogin);
 
-        group.MapGet("/me", async Task<Results<Ok<CurrentUserDto>, BadRequest<ProblemDetails>>> (
+        group.MapGet(ApiResource.GetCurrentUser.Endpoint, async Task<Results<Ok<CurrentUserDto>, BadRequest<ProblemDetails>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -315,11 +294,9 @@ public static class IdentityModuleEndpoints
         .RequireAuthorization()
         .Produces<CurrentUserDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetCurrentUser")
-        .WithSummary("Gets the currently authenticated user.")
-        .WithDescription("Returns the current authenticated user identity, authentication type, and resolved role claims for the active bearer token or auth cookie.");
+        .WithDocumentation(ApiResource.GetCurrentUser);
 
-        group.MapGet("/mfa/recovery-codes", async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (
+        group.MapGet(ApiResource.GetRecoveryCodes.Endpoint, async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -331,11 +308,9 @@ public static class IdentityModuleEndpoints
         .RequireAuthorization()
         .Produces<RecoveryCodesDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("GetRecoveryCodes")
-        .WithSummary("Gets current MFA recovery codes.")
-        .WithDescription("Returns the currently active recovery codes for the authenticated user.");
+        .WithDocumentation(ApiResource.GetRecoveryCodes);
 
-        group.MapPost("/mfa/recovery-codes/regenerate", async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.RegenerateRecoveryCodes.Endpoint, async Task<Results<Ok<RecoveryCodesDto>, BadRequest<ProblemDetails>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -347,10 +322,11 @@ public static class IdentityModuleEndpoints
         .RequireAuthorization()
         .Produces<RecoveryCodesDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("RegenerateRecoveryCodes")
-        .WithSummary("Regenerates MFA recovery codes.")
-        .WithDescription("Generates a fresh set of recovery codes and invalidates the previous set for the authenticated user.");
+        .WithDocumentation(ApiResource.RegenerateRecoveryCodes);
     }
+    /// <summary>
+    /// Map admin.
+    /// </summary>
 
     private static void MapAdmin(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
     {
@@ -394,7 +370,7 @@ public static class IdentityModuleEndpoints
             }
             """);
 
-        group.MapGet("/users", async Task<Ok<IReadOnlyList<UserDto>>> (
+        group.MapGet(ApiResource.AdminGetUsers.Endpoint, async Task<Ok<IReadOnlyList<UserDto>>> (
             [FromServices] ISender sender,
             CancellationToken ct) =>
         {
@@ -402,11 +378,9 @@ public static class IdentityModuleEndpoints
             return TypedResults.Ok(result);
         })
         .Produces<IReadOnlyList<UserDto>>(StatusCodes.Status200OK)
-        .WithName("AdminGetUsers")
-        .WithSummary("Lists all users.")
-        .WithDescription("Returns the users that administrators can search, review, and manage.");
+        .WithDocumentation(ApiResource.AdminGetUsers);
 
-        group.MapGet("/users/{userId:guid}", async Task<Results<Ok<AdminUserDetailDto>, BadRequest<ProblemDetails>>> (
+        group.MapGet(ApiResource.AdminGetUserById.Endpoint, async Task<Results<Ok<AdminUserDetailDto>, BadRequest<ProblemDetails>>> (
             Guid userId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -418,9 +392,7 @@ public static class IdentityModuleEndpoints
         })
         .Produces<AdminUserDetailDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AdminGetUserById")
-        .WithSummary("Gets detailed information for a single user.")
-        .WithDescription("Returns account status, role assignments, lockout details, two-factor status, and audit-friendly timestamps for the selected user.");
+        .WithDocumentation(ApiResource.AdminGetUserById);
 
         group.MapPost("/users/{userId:guid}/lock", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
@@ -447,7 +419,7 @@ public static class IdentityModuleEndpoints
             }
             """);
 
-        group.MapPost("/users/{userId:guid}/unlock", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AdminUnlockUser.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -459,9 +431,7 @@ public static class IdentityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AdminUnlockUser")
-        .WithSummary("Unlocks a previously locked account.")
-        .WithDescription("Clears the user's lockout state so they can sign in again.");
+        .WithDocumentation(ApiResource.AdminUnlockUser);
 
         group.MapPost("/users/{userId:guid}/reset-password", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
@@ -488,7 +458,7 @@ public static class IdentityModuleEndpoints
             }
             """);
 
-        group.MapPost("/users/{userId:guid}/send-reset-link", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AdminSendResetLink.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -500,11 +470,9 @@ public static class IdentityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AdminSendResetLink")
-        .WithSummary("Sends a password reset link to the user.")
-        .WithDescription("Creates a password reset token and emails a reset link to the user's registered address using the configured communication provider.");
+        .WithDocumentation(ApiResource.AdminSendResetLink);
 
-        group.MapPost("/users/{userId:guid}/force-logout", async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+        group.MapPost(ApiResource.AdminForceLogout.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
             Guid userId,
             [FromServices] ISender sender,
             CancellationToken ct) =>
@@ -516,9 +484,7 @@ public static class IdentityModuleEndpoints
         })
         .Produces(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-        .WithName("AdminForceLogout")
-        .WithSummary("Forces a user to sign out everywhere.")
-        .WithDescription("Revokes refresh tokens and updates the user's security stamp so existing sessions become invalid.");
+        .WithDocumentation(ApiResource.AdminForceLogout);
 
         group.MapGet("/users/{userId:guid}/audit-logs", async Task<Ok<IReadOnlyList<AuditLogDto>>> (
             Guid userId,
@@ -543,6 +509,9 @@ public static class IdentityModuleEndpoints
             - skip: Number of records to skip before returning results. Defaults to 0.
             """);
     }
+    /// <summary>
+    /// Parse or default.
+    /// </summary>
 
     private static int ParseOrDefault(string? rawValue, int defaultValue)
     {

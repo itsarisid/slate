@@ -8,10 +8,16 @@ namespace Alphabet.Application.Features.Productivity.Todos.Commands;
 /// Soft deletes or restores a todo item.
 /// </summary>
 public sealed record DeleteTodoCommand(Guid TodoId, bool Restore) : IRequest<Result>;
+/// <summary>
+/// Delete todo command handler.
+/// </summary>
 
 public sealed class DeleteTodoCommandHandler(ITodoRepository todoRepository)
     : IRequestHandler<DeleteTodoCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
     {
         var todo = await todoRepository.GetByIdAsync(request.TodoId, cancellationToken);

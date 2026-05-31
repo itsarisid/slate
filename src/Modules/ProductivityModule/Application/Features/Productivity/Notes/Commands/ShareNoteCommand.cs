@@ -8,10 +8,16 @@ namespace Alphabet.Application.Features.Productivity.Notes.Commands;
 /// Shares a note with a collaborator.
 /// </summary>
 public sealed record ShareNoteCommand(Guid NoteId, string Email, string Permission) : IRequest<Result>;
+/// <summary>
+/// Share note command handler.
+/// </summary>
 
 public sealed class ShareNoteCommandHandler(INoteRepository noteRepository)
     : IRequestHandler<ShareNoteCommand, Result>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result> Handle(ShareNoteCommand request, CancellationToken cancellationToken)
     {
         var note = await noteRepository.GetByIdAsync(request.NoteId, cancellationToken);

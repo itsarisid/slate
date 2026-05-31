@@ -1,6 +1,4 @@
-using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using MediatR;
 
@@ -10,6 +8,9 @@ namespace Alphabet.Application.Features.Productivity.Notes.Commands;
 /// Creates a notebook.
 /// </summary>
 public sealed record CreateNotebookCommand(string Name, string? Description, string? Color, Guid? ParentNotebookId) : IRequest<Result<Guid>>;
+/// <summary>
+/// Create notebook command handler.
+/// </summary>
 
 public sealed class CreateNotebookCommandHandler(
     IRepository<Notebook> notebookRepository,
@@ -17,6 +18,9 @@ public sealed class CreateNotebookCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateNotebookCommand, Result<Guid>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<Guid>> Handle(CreateNotebookCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);

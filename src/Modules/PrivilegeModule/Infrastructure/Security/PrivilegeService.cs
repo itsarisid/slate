@@ -7,7 +7,6 @@ using Alphabet.Domain.Entities.Privilege;
 using Alphabet.Domain.Enums;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Privilege;
-using Alphabet.Domain.Models;
 using Alphabet.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +31,9 @@ public sealed class PrivilegeService(
     : IPrivilegeService, IPrivilegeEvaluationService
 {
     private readonly PrivilegeSettings _settings = privilegeSettingsOptions.Value;
+    /// <summary>
+    /// Create privilege async.
+    /// </summary>
 
     public async Task<Result<Guid>> CreatePrivilegeAsync(
         string name,
@@ -66,6 +68,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return privilege.Id;
     }
+    /// <summary>
+    /// Update privilege async.
+    /// </summary>
 
     public async Task<Result> UpdatePrivilegeAsync(
         Guid privilegeId,
@@ -99,6 +104,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Delete privilege async.
+    /// </summary>
 
     public async Task<Result> DeletePrivilegeAsync(Guid privilegeId, bool hardDelete, CancellationToken cancellationToken)
     {
@@ -129,6 +137,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Assign privileges to role async.
+    /// </summary>
 
     public async Task<Result> AssignPrivilegesToRoleAsync(Guid roleId, IReadOnlyCollection<Guid> privilegeIds, DateTimeOffset? expiresAt, CancellationToken cancellationToken)
     {
@@ -156,6 +167,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Revoke privilege from role async.
+    /// </summary>
 
     public async Task<Result> RevokePrivilegeFromRoleAsync(Guid roleId, Guid privilegeId, CancellationToken cancellationToken)
     {
@@ -170,6 +184,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Bulk assign privileges to roles async.
+    /// </summary>
 
     public async Task<Result> BulkAssignPrivilegesToRolesAsync(IReadOnlyCollection<Guid> roleIds, IReadOnlyCollection<Guid> privilegeIds, string operation, DateTimeOffset? expiresAt, CancellationToken cancellationToken)
     {
@@ -191,6 +208,9 @@ public sealed class PrivilegeService(
 
         return Result.Success();
     }
+    /// <summary>
+    /// Assign privilege to user async.
+    /// </summary>
 
     public async Task<Result> AssignPrivilegeToUserAsync(
         Guid userId,
@@ -220,6 +240,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Revoke privilege from user async.
+    /// </summary>
 
     public async Task<Result> RevokePrivilegeFromUserAsync(Guid userId, Guid privilegeId, CancellationToken cancellationToken)
     {
@@ -235,6 +258,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Create category async.
+    /// </summary>
 
     public async Task<Result<Guid>> CreateCategoryAsync(string name, string? description, Guid? parentCategoryId, int sortOrder, CancellationToken cancellationToken)
     {
@@ -249,12 +275,18 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return category.Id;
     }
+    /// <summary>
+    /// Get categories async.
+    /// </summary>
 
     public async Task<IReadOnlyList<PrivilegeCategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken)
     {
         var categories = await privilegeRepository.GetCategoriesAsync(cancellationToken);
         return BuildCategoryTree(categories, null);
     }
+    /// <summary>
+    /// Move privilege category async.
+    /// </summary>
 
     public async Task<Result> MovePrivilegeCategoryAsync(Guid privilegeId, Guid categoryId, CancellationToken cancellationToken)
     {
@@ -269,6 +301,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Create policy async.
+    /// </summary>
 
     public async Task<Result<Guid>> CreatePolicyAsync(string name, string? description, IReadOnlyCollection<string> privileges, PrivilegePolicyCondition condition, CancellationToken cancellationToken)
     {
@@ -282,6 +317,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return policy.Id;
     }
+    /// <summary>
+    /// Assign policy to role async.
+    /// </summary>
 
     public async Task<Result> AssignPolicyToRoleAsync(Guid roleId, Guid policyId, DateTimeOffset? expiresAt, CancellationToken cancellationToken)
     {
@@ -302,6 +340,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Assign policy to user async.
+    /// </summary>
 
     public async Task<Result> AssignPolicyToUserAsync(Guid userId, Guid policyId, DateTimeOffset? expiresAt, CancellationToken cancellationToken)
     {
@@ -323,6 +364,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Create privilege request async.
+    /// </summary>
 
     public async Task<Result<Guid>> CreatePrivilegeRequestAsync(Guid userId, string privilegeNameOrId, string reason, int requestedDurationDays, string? approverEmail, CancellationToken cancellationToken)
     {
@@ -343,6 +387,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return request.Id;
     }
+    /// <summary>
+    /// Approve privilege request async.
+    /// </summary>
 
     public async Task<Result> ApprovePrivilegeRequestAsync(Guid requestId, string? notes, CancellationToken cancellationToken)
     {
@@ -373,6 +420,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Deny privilege request async.
+    /// </summary>
 
     public async Task<Result> DenyPrivilegeRequestAsync(Guid requestId, string? notes, CancellationToken cancellationToken)
     {
@@ -392,6 +442,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+    /// <summary>
+    /// Get privileges async.
+    /// </summary>
 
     public async Task<PagedResponseDto<PrivilegeDto>> GetPrivilegesAsync(int pageNumber, int pageSize, string? category, string? search, bool includeDeprecated, CancellationToken cancellationToken)
     {
@@ -404,6 +457,9 @@ public sealed class PrivilegeService(
             result.PageNumber,
             result.PageSize);
     }
+    /// <summary>
+    /// Get privilege by id async.
+    /// </summary>
 
     public async Task<Result<PrivilegeDto>> GetPrivilegeByIdAsync(Guid privilegeId, CancellationToken cancellationToken)
     {
@@ -416,6 +472,9 @@ public sealed class PrivilegeService(
         var categories = await privilegeRepository.GetCategoriesAsync(cancellationToken);
         return MapPrivilege(privilege, categories.ToDictionary(x => x.Id, x => x.Name));
     }
+    /// <summary>
+    /// Get role privileges async.
+    /// </summary>
 
     public async Task<IReadOnlyList<PrivilegeAssignmentDto>> GetRolePrivilegesAsync(Guid roleId, CancellationToken cancellationToken)
     {
@@ -431,11 +490,17 @@ public sealed class PrivilegeService(
             })
             .ToArray();
     }
+    /// <summary>
+    /// Get user effective privileges async.
+    /// </summary>
 
     public async Task<IReadOnlyList<UserEffectivePrivilegeDto>> GetUserEffectivePrivilegesAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await GetEffectivePrivilegesInternalAsync(userId, cancellationToken);
     }
+    /// <summary>
+    /// Check privilege async.
+    /// </summary>
 
     public async Task<Result<PrivilegeCheckResultDto>> CheckPrivilegeAsync(Guid userId, string privilegeName, CancellationToken cancellationToken)
     {
@@ -450,6 +515,9 @@ public sealed class PrivilegeService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return result;
     }
+    /// <summary>
+    /// Batch check privileges async.
+    /// </summary>
 
     public async Task<IReadOnlyDictionary<string, bool>> BatchCheckPrivilegesAsync(Guid userId, IReadOnlyCollection<string> privilegeNames, CancellationToken cancellationToken)
     {
@@ -457,6 +525,9 @@ public sealed class PrivilegeService(
         var allowed = effective.Where(x => x.IsGranted).Select(x => x.PrivilegeName).ToHashSet(StringComparer.OrdinalIgnoreCase);
         return privilegeNames.ToDictionary(name => name, name => allowed.Contains(name), StringComparer.OrdinalIgnoreCase);
     }
+    /// <summary>
+    /// Get analytics async.
+    /// </summary>
 
     public async Task<PrivilegeAnalyticsDto> GetAnalyticsAsync(CancellationToken cancellationToken)
     {
@@ -488,6 +559,9 @@ public sealed class PrivilegeService(
 
         return new PrivilegeAnalyticsDto(mostUsedDtos, unusedPrivileges, trend);
     }
+    /// <summary>
+    /// Get audit logs async.
+    /// </summary>
 
     public async Task<IReadOnlyList<PrivilegeAuditLogDto>> GetAuditLogsAsync(
         Guid? userId,
@@ -502,6 +576,9 @@ public sealed class PrivilegeService(
         var logs = await privilegeAuditRepository.SearchAsync(userId, privilegeId, action, from, to, take, skip, cancellationToken);
         return logs.Select(MapAuditLog).ToArray();
     }
+    /// <summary>
+    /// Has privilege async.
+    /// </summary>
 
     public async Task<bool> HasPrivilegeAsync(Guid userId, IEnumerable<string> privileges, bool requireAll, CancellationToken cancellationToken)
     {
@@ -510,6 +587,9 @@ public sealed class PrivilegeService(
             ? privileges.All(name => batch.TryGetValue(name, out var allowed) && allowed)
             : privileges.Any(name => batch.TryGetValue(name, out var allowed) && allowed);
     }
+    /// <summary>
+    /// Get or create category async.
+    /// </summary>
 
     private async Task<PrivilegeCategory> GetOrCreateCategoryAsync(string category, CancellationToken cancellationToken)
     {
@@ -523,6 +603,9 @@ public sealed class PrivilegeService(
         await privilegeRepository.AddCategoryAsync(created, cancellationToken);
         return created;
     }
+    /// <summary>
+    /// Validate dependency graph async.
+    /// </summary>
 
     private async Task<Result> ValidateDependencyGraphAsync(Privilege privilege, CancellationToken cancellationToken)
     {
@@ -588,6 +671,9 @@ public sealed class PrivilegeService(
             ? Result.Failure("Privilege dependencies contain a circular reference.")
             : Result.Success();
     }
+    /// <summary>
+    /// Get effective privileges internal async.
+    /// </summary>
 
     private async Task<IReadOnlyList<UserEffectivePrivilegeDto>> GetEffectivePrivilegesInternalAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -713,6 +799,9 @@ public sealed class PrivilegeService(
         logger.LogDebug("Resolved {Count} effective privileges for user {UserId} with roles {Roles}", values.Length, userId, string.Join(", ", roleNames));
         return values;
     }
+    /// <summary>
+    /// Resolve privilege async.
+    /// </summary>
 
     private async Task<Privilege?> ResolvePrivilegeAsync(string privilegeNameOrId, CancellationToken cancellationToken)
     {
@@ -720,6 +809,9 @@ public sealed class PrivilegeService(
             ? await privilegeRepository.GetPrivilegeByIdAsync(privilegeId, cancellationToken)
             : await privilegeRepository.GetPrivilegeByNameAsync(privilegeNameOrId, cancellationToken);
     }
+    /// <summary>
+    /// Map privilege.
+    /// </summary>
 
     private static PrivilegeDto MapPrivilege(Privilege privilege, IReadOnlyDictionary<Guid, string> categoryLookup)
         => new(
@@ -738,6 +830,9 @@ public sealed class PrivilegeService(
             privilege.CreatedAt,
             privilege.CreatedBy,
             privilege.UpdatedAt);
+    /// <summary>
+    /// Map audit log.
+    /// </summary>
 
     private static PrivilegeAuditLogDto MapAuditLog(PrivilegeAuditLog auditLog)
         => new(
@@ -750,6 +845,9 @@ public sealed class PrivilegeService(
             auditLog.PerformedAt,
             auditLog.IpAddress,
             new Dictionary<string, string?>(auditLog.Metadata, StringComparer.OrdinalIgnoreCase));
+    /// <summary>
+    /// Write audit async.
+    /// </summary>
 
     private async Task WriteAuditAsync(
         Guid? userId,
@@ -776,6 +874,9 @@ public sealed class PrivilegeService(
 
         await privilegeAuditRepository.AddAsync(log, cancellationToken);
     }
+    /// <summary>
+    /// Invalidate user cache async.
+    /// </summary>
 
     private async Task InvalidateUserCacheAsync(Guid userId, CancellationToken cancellationToken)
     {
@@ -784,6 +885,9 @@ public sealed class PrivilegeService(
             await privilegeCacheRepository.RemoveAsync($"privileges:user:{userId}", cancellationToken);
         }
     }
+    /// <summary>
+    /// Build category tree.
+    /// </summary>
 
     private static IReadOnlyList<PrivilegeCategoryDto> BuildCategoryTree(IReadOnlyList<PrivilegeCategory> categories, Guid? parentId)
     {
@@ -794,6 +898,9 @@ public sealed class PrivilegeService(
             .Select(x => new PrivilegeCategoryDto(x.Id, x.Name, x.Description, x.ParentCategoryId, x.SortOrder, BuildCategoryTree(categories, x.Id)))
             .ToArray();
     }
+    /// <summary>
+    /// Get role assignments by privilege async.
+    /// </summary>
 
     private async Task<IReadOnlyList<RolePrivilege>> GetRoleAssignmentsByPrivilegeAsync(Guid privilegeId, CancellationToken cancellationToken)
     {
@@ -807,6 +914,9 @@ public sealed class PrivilegeService(
 
         return assignments;
     }
+    /// <summary>
+    /// Get user assignments by privilege async.
+    /// </summary>
 
     private async Task<IReadOnlyList<UserPrivilege>> GetUserAssignmentsByPrivilegeAsync(Guid privilegeId, CancellationToken cancellationToken)
     {

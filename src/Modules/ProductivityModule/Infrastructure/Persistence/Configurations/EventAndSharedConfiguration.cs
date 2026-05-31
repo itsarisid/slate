@@ -3,9 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Alphabet.Infrastructure.Persistence.Configurations;
+/// <summary>
+/// Calendar event configuration.
+/// </summary>
 
 public sealed class CalendarEventConfiguration : IEntityTypeConfiguration<CalendarEvent>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<CalendarEvent> builder)
     {
         builder.ToTable("ProductivityCalendarEvents");
@@ -25,9 +31,15 @@ public sealed class CalendarEventConfiguration : IEntityTypeConfiguration<Calend
         builder.Property(x => x.ResponsesJson).HasColumnType("nvarchar(max)");
     }
 }
+/// <summary>
+/// Attachment configuration.
+/// </summary>
 
 public sealed class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Attachment> builder)
     {
         builder.ToTable("ProductivityAttachments");
@@ -37,9 +49,15 @@ public sealed class AttachmentConfiguration : IEntityTypeConfiguration<Attachmen
         builder.Property(x => x.StoragePath).HasMaxLength(1000).IsRequired();
     }
 }
+/// <summary>
+/// Comment configuration.
+/// </summary>
 
 public sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Comment> builder)
     {
         builder.ToTable("ProductivityComments");
@@ -47,9 +65,15 @@ public sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
         builder.Property(x => x.Content).HasMaxLength(4000).IsRequired();
     }
 }
+/// <summary>
+/// Tag configuration.
+/// </summary>
 
 public sealed class TagConfiguration : IEntityTypeConfiguration<Tag>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Tag> builder)
     {
         builder.ToTable("ProductivityTags");

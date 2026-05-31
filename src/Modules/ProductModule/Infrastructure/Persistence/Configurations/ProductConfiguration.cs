@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Persistence.Configurations;
 /// </summary>
 public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         builder.ToTable("Products");

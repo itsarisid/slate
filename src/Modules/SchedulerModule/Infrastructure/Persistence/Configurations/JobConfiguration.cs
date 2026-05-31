@@ -9,6 +9,9 @@ namespace Alphabet.Infrastructure.Persistence.Configurations;
 /// </summary>
 public sealed class JobConfiguration : IEntityTypeConfiguration<Job>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Job> builder)
     {
         builder.ToTable("SchedulerJobs");

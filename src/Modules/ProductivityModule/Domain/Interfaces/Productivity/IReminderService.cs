@@ -7,9 +7,18 @@ namespace Alphabet.Domain.Interfaces.Productivity;
 /// </summary>
 public interface IReminderService
 {
+    /// <summary>
+    /// Schedule async.
+    /// </summary>
     Task ScheduleAsync(Reminder reminder, CancellationToken cancellationToken);
+    /// <summary>
+    /// Reschedule async.
+    /// </summary>
 
     Task RescheduleAsync(Reminder reminder, CancellationToken cancellationToken);
+    /// <summary>
+    /// Cancel async.
+    /// </summary>
 
     Task CancelAsync(Guid reminderId, CancellationToken cancellationToken);
 }

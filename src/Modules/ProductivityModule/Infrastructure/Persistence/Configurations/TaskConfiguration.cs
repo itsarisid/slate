@@ -3,9 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Alphabet.Infrastructure.Persistence.Configurations;
+/// <summary>
+/// Productivity task configuration.
+/// </summary>
 
 public sealed class ProductivityTaskConfiguration : IEntityTypeConfiguration<ProductivityTask>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<ProductivityTask> builder)
     {
         builder.ToTable("ProductivityTasks");
@@ -20,18 +26,30 @@ public sealed class ProductivityTaskConfiguration : IEntityTypeConfiguration<Pro
         builder.Property(x => x.ActualHours).HasPrecision(18, 2);
     }
 }
+/// <summary>
+/// Time entry configuration.
+/// </summary>
 
 public sealed class TimeEntryConfiguration : IEntityTypeConfiguration<TimeEntry>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<TimeEntry> builder)
     {
         builder.ToTable("ProductivityTimeEntries");
         builder.Property(x => x.Description).HasMaxLength(1000);
     }
 }
+/// <summary>
+/// Task dependency configuration.
+/// </summary>
 
 public sealed class TaskDependencyConfiguration : IEntityTypeConfiguration<TaskDependency>
 {
+    /// <summary>
+    /// Configure.
+    /// </summary>
     public void Configure(EntityTypeBuilder<TaskDependency> builder)
     {
         builder.ToTable("ProductivityTaskDependencies");

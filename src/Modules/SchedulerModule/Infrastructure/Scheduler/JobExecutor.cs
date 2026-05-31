@@ -22,11 +22,20 @@ public sealed class JobExecutor(
     FileOperationJobHandler fileOperationJobHandler,
     ILogger<JobExecutor> logger)
 {
+    /// <summary>
+    /// Execute scheduled async.
+    /// </summary>
     public Task ExecuteScheduledAsync(Guid jobId)
-        => ExecuteInternalAsync(jobId, null, null, null, CancellationToken.None);
+    => ExecuteInternalAsync(jobId, null, null, null, CancellationToken.None);
+    /// <summary>
+    /// Execute queued async.
+    /// </summary>
 
     public Task ExecuteQueuedAsync(Guid jobId, Guid executionId, Guid? triggeredBy, Guid? retryParentId)
         => ExecuteInternalAsync(jobId, executionId, triggeredBy, retryParentId, CancellationToken.None);
+    /// <summary>
+    /// Execute internal async.
+    /// </summary>
 
     private async Task ExecuteInternalAsync(Guid jobId, Guid? executionId, Guid? triggeredBy, Guid? retryParentId, CancellationToken cancellationToken)
     {
@@ -85,6 +94,9 @@ public sealed class JobExecutor(
         jobRepository.Update(job);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
+    /// <summary>
+    /// Execute by type async.
+    /// </summary>
 
     private async Task<string> ExecuteByTypeAsync(Job job, CancellationToken cancellationToken)
     {
@@ -106,6 +118,9 @@ public sealed class JobExecutor(
             _ => throw new InvalidOperationException($"Unsupported job type '{job.JobType}'.")
         };
     }
+    /// <summary>
+    /// Get delay.
+    /// </summary>
 
     private static TimeSpan GetDelay(RetryPolicyDto retryPolicy, int attempt)
     {

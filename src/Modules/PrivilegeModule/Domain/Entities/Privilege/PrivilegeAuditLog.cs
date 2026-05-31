@@ -22,6 +22,9 @@ public sealed class PrivilegeAuditLog : BaseEntity
     public string? IpAddress { get; private set; }
 
     public IDictionary<string, string?> Metadata { get; private set; } = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static PrivilegeAuditLog Create(
         Guid? userId,

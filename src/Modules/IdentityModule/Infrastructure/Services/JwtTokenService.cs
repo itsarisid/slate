@@ -14,6 +14,9 @@ namespace Alphabet.Infrastructure.Identity;
 public sealed class JwtTokenService(IOptions<JwtSettings> options) : IJwtTokenService
 {
     private readonly JwtSettings _settings = options.Value;
+    /// <summary>
+    /// Generate token async.
+    /// </summary>
 
     public Task<string> GenerateTokenAsync(Guid userId, string email, IEnumerable<string> roles, CancellationToken cancellationToken)
     {

@@ -53,6 +53,9 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
 
         return new AppDbContext(optionsBuilder.Options);
     }
+    /// <summary>
+    /// Build configuration.
+    /// </summary>
 
     private static IConfiguration BuildConfiguration(string environment)
     {
@@ -65,6 +68,9 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
             .AddEnvironmentVariables()
             .Build();
     }
+    /// <summary>
+    /// Resolve startup project path.
+    /// </summary>
 
     private static string ResolveStartupProjectPath()
     {

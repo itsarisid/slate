@@ -12,6 +12,9 @@ public sealed class ReminderTriggerJob(
     INotificationService notificationService,
     IUnitOfWork unitOfWork)
 {
+    /// <summary>
+    /// Execute async.
+    /// </summary>
     public async Task ExecuteAsync(Guid reminderId)
     {
         var reminder = await reminderRepository.GetByIdAsync(reminderId, CancellationToken.None);

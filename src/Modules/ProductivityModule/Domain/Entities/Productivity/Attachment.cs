@@ -33,6 +33,9 @@ public sealed class Attachment : BaseEntity
         SizeBytes = sizeBytes;
         UploadedByUserId = uploadedByUserId;
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Attachment Create(string entityType, Guid entityId, string fileName, string contentType, string storagePath, long sizeBytes, Guid uploadedByUserId)
         => new(entityType, entityId, fileName, contentType, storagePath, sizeBytes, uploadedByUserId);

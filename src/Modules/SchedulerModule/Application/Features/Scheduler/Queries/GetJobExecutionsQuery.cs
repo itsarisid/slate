@@ -16,10 +16,16 @@ public sealed record GetJobExecutionsQuery(
     ExecutionStatus? Status = null,
     DateTimeOffset? FromDate = null,
     DateTimeOffset? ToDate = null) : IRequest<PagedResponseDto<JobExecutionDto>>;
+/// <summary>
+/// Get job executions query handler.
+/// </summary>
 
 public sealed class GetJobExecutionsQueryHandler(IJobExecutionRepository executionRepository)
     : IRequestHandler<GetJobExecutionsQuery, PagedResponseDto<JobExecutionDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<PagedResponseDto<JobExecutionDto>> Handle(GetJobExecutionsQuery request, CancellationToken cancellationToken)
     {
         var page = await executionRepository.GetPagedByJobIdAsync(

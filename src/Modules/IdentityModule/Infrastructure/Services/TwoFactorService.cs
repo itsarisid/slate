@@ -23,6 +23,9 @@ public sealed class TwoFactorService(
     : ITwoFactorService
 {
     private readonly MfaSettings _settings = mfaOptions.Value;
+    /// <summary>
+    /// Generate authenticator setup async.
+    /// </summary>
 
     public async Task<(string SharedKey, string AuthenticatorUri, string ManualEntryKey)> GenerateAuthenticatorSetupAsync(
         ApplicationUser user,
@@ -41,6 +44,9 @@ public sealed class TwoFactorService(
         var uri = $"otpauth://totp/{issuer}:{account}?secret={key}&issuer={issuer}&digits={_settings.AuthenticatorCodeLength}";
         return (key, uri, key);
     }
+    /// <summary>
+    /// Verify authenticator code async.
+    /// </summary>
 
     public Task<bool> VerifyAuthenticatorCodeAsync(ApplicationUser user, string verificationCode, CancellationToken cancellationToken)
     {
@@ -48,6 +54,9 @@ public sealed class TwoFactorService(
         var normalized = verificationCode.Replace(" ", string.Empty, StringComparison.Ordinal).Replace("-", string.Empty, StringComparison.Ordinal);
         return userManager.VerifyTwoFactorTokenAsync(user, userManager.Options.Tokens.AuthenticatorTokenProvider, normalized);
     }
+    /// <summary>
+    /// Send otp async.
+    /// </summary>
 
     public async Task<string> SendOtpAsync(
         ApplicationUser user,
@@ -79,6 +88,9 @@ public sealed class TwoFactorService(
 
         return code;
     }
+    /// <summary>
+    /// Verify otp async.
+    /// </summary>
 
     public async Task<bool> VerifyOtpAsync(ApplicationUser user, string destination, string verificationCode, CancellationToken cancellationToken)
     {
@@ -98,6 +110,9 @@ public sealed class TwoFactorService(
 
         return valid;
     }
+    /// <summary>
+    /// Generate recovery codes.
+    /// </summary>
 
     public IReadOnlyCollection<string> GenerateRecoveryCodes(int count)
     {
@@ -109,6 +124,9 @@ public sealed class TwoFactorService(
 
         return codes;
     }
+    /// <summary>
+    /// Verify recovery code.
+    /// </summary>
 
     public bool VerifyRecoveryCode(ApplicationUser user, string verificationCode, out IReadOnlyCollection<string> remainingCodes)
     {
@@ -117,14 +135,23 @@ public sealed class TwoFactorService(
         remainingCodes = entries;
         return matched;
     }
+    /// <summary>
+    /// Serialize recovery codes.
+    /// </summary>
 
     internal static string SerializeRecoveryCodes(IReadOnlyCollection<string> codes)
         => JsonSerializer.Serialize(codes.Select(Hash));
+    /// <summary>
+    /// Parse recovery codes.
+    /// </summary>
 
     internal static List<string> ParseRecoveryCodes(string? serialized)
         => string.IsNullOrWhiteSpace(serialized)
             ? []
             : JsonSerializer.Deserialize<List<string>>(serialized) ?? [];
+    /// <summary>
+    /// Generate numeric code.
+    /// </summary>
 
     private static string GenerateNumericCode(int length)
     {
@@ -138,6 +165,9 @@ public sealed class TwoFactorService(
 
         return builder.ToString();
     }
+    /// <summary>
+    /// Hash.
+    /// </summary>
 
     private static string Hash(string value)
         => Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value)));

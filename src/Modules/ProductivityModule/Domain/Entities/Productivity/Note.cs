@@ -60,6 +60,9 @@ public sealed class Note : BaseEntity
         NotebookId = notebookId;
         CollaboratorsJson = ProductivityJson.Serialize(collaborators);
     }
+    /// <summary>
+    /// Create.
+    /// </summary>
 
     public static Note Create(
         Guid ownerUserId,
@@ -77,6 +80,9 @@ public sealed class Note : BaseEntity
     public IReadOnlyList<string> Collaborators => ProductivityJson.DeserializeList<string>(CollaboratorsJson);
 
     public IReadOnlyList<NoteVersionSnapshot> Versions => ProductivityJson.DeserializeList<NoteVersionSnapshot>(VersionHistoryJson);
+    /// <summary>
+    /// Update.
+    /// </summary>
 
     public void Update(string title, string content, NoteFormat format, string? category, string? color, bool isPinned, bool isFavorite, Guid? notebookId)
     {
@@ -95,6 +101,9 @@ public sealed class Note : BaseEntity
         VersionHistoryJson = ProductivityJson.Serialize<IReadOnlyCollection<NoteVersionSnapshot>>(versions);
         Touch();
     }
+    /// <summary>
+    /// Share with.
+    /// </summary>
 
     public void ShareWith(string email)
     {

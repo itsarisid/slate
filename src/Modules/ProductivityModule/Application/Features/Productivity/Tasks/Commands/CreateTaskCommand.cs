@@ -1,8 +1,6 @@
 using Alphabet.Application.Common.Interfaces.Productivity;
-using Alphabet.Application.Features.Productivity.Common;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.ValueObjects;
@@ -26,6 +24,9 @@ public sealed record CreateTaskCommand(
     Guid? ProjectId,
     IReadOnlyCollection<Guid>? Dependencies,
     IReadOnlyCollection<TodoChecklistItem>? Checklist) : IRequest<Result<TaskDto>>;
+/// <summary>
+/// Create task command handler.
+/// </summary>
 
 public sealed class CreateTaskCommandHandler(
     ITaskRepository taskRepository,
@@ -35,6 +36,9 @@ public sealed class CreateTaskCommandHandler(
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateTaskCommand, Result<TaskDto>>
 {
+    /// <summary>
+    /// Handle.
+    /// </summary>
     public async Task<Result<TaskDto>> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
         var userId = ProductivityUserContext.GetRequiredUserId(currentUserService);
