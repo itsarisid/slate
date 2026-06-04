@@ -40,7 +40,8 @@ public static class DefaultPrivilegesSeeder
         ("asset.admin", "Administer Asset Inventory", "Asset Management", ["asset.view", "asset.update"]),
         ("workflow.initiate", "Initiate Workflows", "Asset Workflow", ["asset.view"]),
         ("workflow.approve", "Approve Workflows", "Asset Workflow", ["workflow.initiate"]),
-        ("workflow.delegate", "Delegate Workflows", "Asset Workflow", ["workflow.approve"])
+        ("workflow.delegate", "Delegate Workflows", "Asset Workflow", ["workflow.approve"]),
+        ("report.generate", "Generate Reports", "Reporting", []),
         ("report.export", "Export Reports", "Reporting", ["report.generate"]),
         ("leave.request.create", "Create Leave Requests", "Leave Management", []),
         ("leave.request.view", "View Leave Requests", "Leave Management", []),
