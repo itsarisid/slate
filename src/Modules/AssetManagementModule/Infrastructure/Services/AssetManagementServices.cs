@@ -2,7 +2,6 @@ using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.AssetManagement;
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces.AssetManagement;
-using Alphabet.Infrastructure.Identity;
 using Alphabet.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

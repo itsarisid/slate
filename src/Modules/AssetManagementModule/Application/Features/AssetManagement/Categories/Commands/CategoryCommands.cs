@@ -1,6 +1,5 @@
 using Alphabet.Application.Features.AssetManagement.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces.AssetManagement;
 using MediatR;
 

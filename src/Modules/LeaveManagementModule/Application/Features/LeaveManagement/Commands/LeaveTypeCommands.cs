@@ -1,6 +1,5 @@
 using Alphabet.Application.Features.LeaveManagement.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.LeaveManagement;
 using Alphabet.Domain.Models;

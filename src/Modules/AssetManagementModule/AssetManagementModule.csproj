@@ -10,19 +10,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Application\Common\**\*.cs" />
-    <Compile Remove="Application\Features\**\*.cs" />
-    <Compile Remove="Domain\Entities\**\*.cs" />
-    <Compile Remove="Domain\Enums\**\*.cs" />
-    <Compile Remove="Domain\Interfaces\**\*.cs" />
-    <Compile Remove="Domain\Models\**\*.cs" />
-    <Compile Remove="Domain\ValueObjects\**\*.cs" />
-    <Compile Remove="Infrastructure\BackgroundJobs\**\*.cs" />
+    <Compile Remove="Application\Common\**" />
+    <Compile Remove="Application\Features\**" />
+    <Compile Remove="Domain\**" />
+    <Compile Remove="Infrastructure\BackgroundJobs\**" />
     <Compile Remove="Infrastructure\Data\**\*.cs" />
     <Compile Remove="Infrastructure\Options\**\*.cs" />
     <Compile Remove="Infrastructure\Persistence\**\*.cs" />
     <Compile Remove="Infrastructure\Repositories\**\*.cs" />
     <Compile Remove="Infrastructure\Services\**\*.cs" />
+    <EmbeddedResource Remove="Application\Features\**" />
+    <EmbeddedResource Remove="Domain\**" />
+    <EmbeddedResource Remove="Infrastructure\BackgroundJobs\**" />
+    <None Remove="Application\Features\**" />
+    <None Remove="Domain\**" />
+    <None Remove="Infrastructure\BackgroundJobs\**" />
   </ItemGroup>
 
   <ItemGroup>

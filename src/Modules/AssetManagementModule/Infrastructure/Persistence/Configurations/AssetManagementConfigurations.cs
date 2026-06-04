@@ -1,5 +1,4 @@
 using Alphabet.Domain.Entities;
-using Alphabet.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

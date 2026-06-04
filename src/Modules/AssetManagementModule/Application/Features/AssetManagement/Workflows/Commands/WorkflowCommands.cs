@@ -1,9 +1,7 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Common.Interfaces.AssetManagement;
 using Alphabet.Application.Features.AssetManagement.Assets.Commands;
 using Alphabet.Application.Features.AssetManagement.Dtos;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.AssetManagement;
 using Alphabet.Domain.Models;
