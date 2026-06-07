@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Alphabet API Documentation</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.25.129"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/rapidoc@9.3.8/dist/rapidoc-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.5/bundles/redoc.standalone.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar" aria-label="Documentation navigation">
+        <a class="brand" href="#overview" aria-label="Alphabet API documentation home">
+          <span class="brand-mark">A</span>
+          <span>
+            <strong>Alphabet API</strong>
+            <small>Developer Portal</small>
+          </span>
+        </a>
+
+        <label class="search">
+          <span>Search</span>
+          <input id="searchInput" type="search" placeholder="Find guides, endpoints, SDKs..." />
+        </label>
+
+        <nav class="nav">
+          <a href="#overview">Overview</a>
+          <a href="#quickstart">Quickstart</a>
+          <a href="#auth">Authentication</a>
+          <a href="#explorer">API Explorer</a>
+          <a href="#console">API Console</a>
+          <a href="#examples">Code Examples</a>
+          <a href="#sdks">SDKs</a>
+          <a href="#webhooks">Webhooks</a>
+          <a href="#errors">Errors</a>
+          <a href="#rate-limits">Rate Limits</a>
+        </nav>
+      </aside>
+
+      <main>
+        <section id="overview" class="hero searchable" data-search="overview modules openapi swagger redoc scalar rapidoc">
+          <div class="hero-copy">
+            <p class="eyebrow">Modular API Documentation</p>
+            <h1>One polished portal for every Alphabet module.</h1>
+            <p>
+              Explore Authentication, Productivity, Scheduler, Privilege, Asset Management, and Leave Management APIs
+              with live OpenAPI viewers, auth-aware request testing, SDK downloads, and production integration guides.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#explorer">Open Explorer</a>
+              <a class="button ghost" href="/openapi/v1.json" download>Download OpenAPI</a>
+            </div>
+          </div>
+          <div class="status-panel" aria-label="API status summary">
+            <div>
+              <span class="metric" id="endpointCount">...</span>
+              <small>operations indexed</small>
+            </div>
+            <div>
+              <span class="metric">4</span>
+              <small>viewer styles</small>
+            </div>
+            <div>
+              <span class="metric">10+</span>
+              <small>code examples</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-grid searchable" data-search="authentication productivity scheduler privilege asset leave modules">
+          <article><span>Authentication</span><p>JWT, refresh tokens, MFA, user profile, audit activity.</p></article>
+          <article><span>Productivity</span><p>Todos, tasks, reminders, notes, calendar, templates, reports.</p></article>
+          <article><span>Scheduler</span><p>Jobs, executions, retries, dashboards, triggers, timelines.</p></article>
+          <article><span>Privilege</span><p>Role privileges, policies, requests, evaluation, audits.</p></article>
+          <article><span>Asset Management</span><p>Assets, inventory, maintenance, assignment, workflow, reports.</p></article>
+          <article><span>Leave Management</span><p>Leave requests, balances, approvals, holidays, accruals.</p></article>
+        </section>
+
+        <section id="quickstart" class="panel searchable" data-search="quickstart getting started install base url health openapi">
+          <div class="section-heading">
+            <p class="eyebrow">Getting Started</p>
+            <h2>Make your first request in minutes.</h2>
+          </div>
+          <ol class="steps">
+            <li><strong>Run the API host</strong><code>dotnet run --project src/Gateway/Alphabet.AppWire</code></li>
+            <li><strong>Run this docs host</strong><code>dotnet run --project src/Gateway/Alphabet.ApiDocs</code></li>
+            <li><strong>Confirm health</strong><code>GET https://localhost:58441/health</code></li>
+            <li><strong>Load OpenAPI</strong><code>GET https://localhost:58441/openapi/v1.json</code></li>
+          </ol>
+        </section>
+
+        <section id="auth" class="panel two-col searchable" data-search="authentication jwt bearer api key oauth protected token">
+          <div>
+            <p class="eyebrow">Authentication</p>
+            <h2>Test protected endpoints with your own token.</h2>
+            <p>Paste a JWT or API key once. Swagger UI, Scalar, Rapidoc, and the API console will reuse it for requests.</p>
+          </div>
+          <form id="authForm" class="auth-card">
+            <label>Bearer token<input id="bearerToken" type="password" placeholder="eyJhbGciOi..." /></label>
+            <label>API key<input id="apiKey" type="password" placeholder="x-api-key value" /></label>
+            <label>OAuth client id<input id="oauthClientId" type="text" placeholder="optional client id" /></label>
+            <button class="button primary" type="submit">Save Credentials</button>
+          </form>
+        </section>
+
+        <section id="explorer" class="panel searchable" data-search="swagger redoc scalar rapidoc openapi explorer reference">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">API Explorer</p>
+              <h2>Choose your documentation style.</h2>
+            </div>
+            <div class="segmented" role="tablist" aria-label="API viewer">
+              <button class="active" data-viewer="swagger" type="button">Swagger</button>
+              <button data-viewer="redoc" type="button">ReDoc</button>
+              <button data-viewer="scalar" type="button">Scalar</button>
+              <button data-viewer="rapidoc" type="button">RapiDoc</button>
+            </div>
+          </div>
+          <div id="viewerMount" class="viewer"></div>
+        </section>
+
+        <section id="console" class="panel two-col searchable" data-search="interactive api console request testing curl http">
+          <div>
+            <p class="eyebrow">Interactive Console</p>
+            <h2>Send real requests through the docs gateway.</h2>
+            <p>Use relative API paths such as <code>/api/v1/assets</code>. The gateway proxies to the configured API host.</p>
+          </div>
+          <form id="consoleForm" class="console">
+            <div class="console-row">
+              <select id="method">
+                <option>GET</option>
+                <option>POST</option>
+                <option>PUT</option>
+                <option>PATCH</option>
+                <option>DELETE</option>
+              </select>
+              <input id="path" value="/health" />
+            </div>
+            <textarea id="requestBody" rows="7" placeholder='{"name":"Example"}'></textarea>
+            <button class="button primary" type="submit">Send Request</button>
+            <pre id="consoleOutput" class="code-block">Response will appear here.</pre>
+          </form>
+        </section>
+
+        <section id="examples" class="panel searchable" data-search="code examples curl csharp typescript python java go php ruby kotlin swift">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Code Examples</p>
+              <h2>Copy-paste examples in popular languages.</h2>
+            </div>
+            <select id="languageSelect" aria-label="Code example language"></select>
+          </div>
+          <pre id="codeExample" class="code-block"></pre>
+        </section>
+
+        <section id="sdks" class="panel searchable" data-search="sdk generation openapi generator csharp typescript python java go download">
+          <p class="eyebrow">SDK Generation</p>
+          <h2>Generate clients from the live OpenAPI document.</h2>
+          <div class="sdk-grid">
+            <a href="/openapi/v1.json" download>OpenAPI JSON</a>
+            <button data-sdk="csharp" type="button">C# SDK</button>
+            <button data-sdk="typescript-fetch" type="button">TypeScript SDK</button>
+            <button data-sdk="python" type="button">Python SDK</button>
+            <button data-sdk="java" type="button">Java SDK</button>
+            <button data-sdk="go" type="button">Go SDK</button>
+          </div>
+          <pre class="code-block">openapi-generator-cli generate -i https://localhost:58441/openapi/v1.json -g typescript-fetch -o ./sdk/alphabet</pre>
+        </section>
+
+        <section id="webhooks" class="panel searchable" data-search="webhooks events retries signatures payloads">
+          <p class="eyebrow">Webhooks</p>
+          <h2>Subscribe to module events.</h2>
+          <div class="webhook-list">
+            <article><strong>identity.user.registered</strong><span>User account was created and confirmed.</span></article>
+            <article><strong>productivity.todo.completed</strong><span>Todo moved to completed state.</span></article>
+            <article><strong>asset.assignment.created</strong><span>Asset assigned to an employee or location.</span></article>
+            <article><strong>leave.request.approved</strong><span>Leave request received final approval.</span></article>
+          </div>
+        </section>
+
+        <section id="errors" class="panel searchable" data-search="errors problem details validation forbidden not found conflict">
+          <p class="eyebrow">Errors</p>
+          <h2>Consistent problem responses.</h2>
+          <pre class="code-block">{
+  "type": "https://httpstatuses.com/400",
+  "title": "Validation failed",
+  "status": 400,
+  "traceId": "00-...",
+  "errors": { "email": ["Email is required."] }
+}</pre>
+        </section>
+
+        <section id="rate-limits" class="panel searchable" data-search="rate limits headers retry after throttling">
+          <p class="eyebrow">Rate Limits</p>
+          <h2>Design clients to handle throttling.</h2>
+          <p>Read <code>Retry-After</code>, <code>X-RateLimit-Limit</code>, and <code>X-RateLimit-Remaining</code> when enabled by the API gateway.</p>
+        </section>
+      </main>
+    </div>
+    <script src="/portal.js"></script>
+  </body>
+</html>

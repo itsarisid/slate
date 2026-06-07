@@ -8,25 +8,25 @@ public class EndpointDetails
     /// <summary>
     /// Gets or sets the route or path of the endpoint (for example, "/test").
     /// </summary>
-    public string Endpoint { get; set; }
+    public string Endpoint { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the display name of the endpoint.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a short summary of what the endpoint does.
     /// </summary>
-    public string Summary { get; set; }
+    public string Summary { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a longer description of the endpoint's purpose and behavior.
     /// </summary>
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets tags associated with the endpoint (used for grouping or documentation).
     /// </summary>
-    public string Tags { get; set; }
+    public string Tags { get; set; } = string.Empty;
 }

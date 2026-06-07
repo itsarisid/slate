@@ -28,14 +28,16 @@ public class Result
     public static Result Failure(string error) => new(false, error);
 
     public static implicit operator Result(string error) => Failure(error);
+
+    public static Result Failure(Error error) => new(false, error.Message);
 }
 
 /// <summary>
 /// Represents the outcome of an operation that returns a value.
 /// </summary>
-public sealed class Result<T> : Result
+public class Result<T> : Result
 {
-    private Result(bool isSuccess, T? value, string? error)
+    protected Result(bool isSuccess, T? value, string? error)
         : base(isSuccess, error)
     {
         Value = value;
@@ -56,4 +58,6 @@ public sealed class Result<T> : Result
     public static implicit operator Result<T>(T value) => Success(value);
 
     public static implicit operator Result<T>(string error) => Failure(error);
+
+    public new static Result<T> Failure(Error error) => new(false, default, error.Message);
 }

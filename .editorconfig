@@ -2,3 +2,8 @@ root = true
 
 [*.cs]
 dotnet_diagnostic.IDE0005.severity = warning
+
+# Module isolation: presentation projects should never be referenced by domain,
+# application, or infrastructure layers. Keep cross-module communication behind
+# Core application interfaces, domain events, or module facade abstractions.
+dotnet_diagnostic.CA1506.severity = suggestion
