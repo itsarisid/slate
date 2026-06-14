@@ -5,6 +5,7 @@
     <Project Path="src/Core/Alphabet.Contracts/Alphabet.Contracts.csproj" />
     <Project Path="src/Core/Alphabet.Domain/Alphabet.Domain.csproj" />
     <Project Path="src/Core/Alphabet.Infrastructure/Alphabet.Infrastructure.csproj" />
+    <Project Path="src/Core/Alphabet.Shared/Alphabet.Shared.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
     <Project Path="src/Modules/AssetManagementModule/AssetManagementModule.csproj" />
@@ -18,6 +19,7 @@
     <Project Path="src/Modules/SchedulerModule/SchedulerModule.csproj" />
   </Folder>
   <Folder Name="/src/Gateway/">
+    <Project Path="src/Gateway/Alphabet.ApiDocs/Alphabet.ApiDocs.csproj" />
     <Project Path="src/Gateway/Alphabet.AppWire/Alphabet.AppWire.csproj" />
   </Folder>
   <Folder Name="/src/Libraries/">

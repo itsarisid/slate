@@ -1,6 +1,5 @@
 using Alphabet.Domain.Entities;
 using Alphabet.Domain.Enums;
-using Alphabet.Domain.Interfaces.AssetManagement;
 using Alphabet.Domain.Models;
 using Alphabet.Infrastructure.Persistence.Context;
 using Alphabet.Infrastructure.Repositories.AssetManagement;

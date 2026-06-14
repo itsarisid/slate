@@ -1,4 +1,3 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.AssetManagement.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces.AssetManagement;

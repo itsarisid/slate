@@ -1,6 +1,4 @@
 using Alphabet.Application.Common.Interfaces.AssetManagement;
-using Alphabet.Domain.Entities;
-using Alphabet.Domain.Models;
 using Alphabet.Domain.ValueObjects;
 
 namespace Alphabet.Application.Features.AssetManagement.Dtos;

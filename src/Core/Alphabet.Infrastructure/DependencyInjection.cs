@@ -130,6 +130,7 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IDateTime, DateTimeService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ISmsService, SmsService>();
@@ -147,7 +148,7 @@ public static class DependencyInjection
         services.AddScoped<IJobExecutionService, JobExecutionService>();
         services.AddScoped<IReminderService, ReminderSchedulerService>();
         services.AddScoped<Alphabet.Application.Common.Interfaces.Productivity.INotificationService, Alphabet.Infrastructure.Services.NotificationService>();
-        services.AddScoped<IFileStorageService, FileStorageService>();
+        services.AddScoped<Alphabet.Application.Common.Interfaces.Productivity.IFileStorageService, FileStorageService>();
         services.AddScoped<ICalendarExportService, CalendarExportService>();
         services.AddScoped<IProductivityReadService, ProductivityReadService>();
         services.AddScoped<IAssetTagGenerator, AssetTagGenerator>();

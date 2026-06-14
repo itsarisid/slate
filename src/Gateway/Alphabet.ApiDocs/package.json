@@ -1,0 +1,26 @@
+{
+  "name": "@alphabet/api-docs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2",
+    "typescript": "^5.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@scalar/api-reference": "^1.25.129",
+    "rapidoc": "^9.3.8",
+    "redoc": "^2.1.5",
+    "swagger-ui-react": "^5.17.14"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0"
+  }
+}

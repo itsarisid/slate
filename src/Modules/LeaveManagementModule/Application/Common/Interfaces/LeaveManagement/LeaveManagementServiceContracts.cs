@@ -1,4 +1,3 @@
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Models;
 
 namespace Alphabet.Application.Common.Interfaces.LeaveManagement;
