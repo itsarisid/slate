@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alphabet — Education ERP Documentation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --void:#0a0d0a;
+  --surface:#12160f;
+  --surface-2:#171d13;
+  --elevated:#1c231a;
+  --border:#232c1e;
+  --border-soft:#1a2117;
+  --lime:#c3f53c;
+  --lime-dim:#8fb02a;
+  --lime-glow: rgba(195,245,60,0.14);
+  --text:#eef1ea;
+  --text-muted:#98a08c;
+  --text-dim:#5d6455;
+  --overlay-bg: rgba(6,8,6,0.7);
+  --shadow-box: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(195,245,60,0.06);
+  --shadow-sidebar: 20px 0 40px rgba(0,0,0,0.4);
+  --radius:10px;
+  --font-display:'Space Grotesk', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+
+html[data-theme="light"]{
+  --void:#f6f8f2;
+  --surface:#ffffff;
+  --surface-2:#eef2e7;
+  --elevated:#e5eadb;
+  --border:#dbe1d1;
+  --border-soft:#e9ede1;
+  --lime:#5b8a12;
+  --lime-dim:#4a7010;
+  --lime-glow: rgba(91,138,18,0.10);
+  --text:#171b13;
+  --text-muted:#5c6450;
+  --text-dim:#8e9581;
+  --overlay-bg: rgba(60,66,50,0.35);
+  --shadow-box: 0 20px 60px rgba(60,70,40,0.15), 0 0 0 1px rgba(91,138,18,0.08);
+  --shadow-sidebar: 20px 0 40px rgba(60,70,40,0.12);
+}
+
+body{ transition: background-color .2s ease, color .2s ease; }
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{ background:var(--lime); color:#0a0d0a; }
+
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; cursor:pointer; }
+
+/* subtle background grid texture */
+.bg-grid{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(var(--border-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+  opacity:0.5;
+}
+
+/* ---------- App shell ---------- */
+.app{
+  position:relative; z-index:1;
+  display:grid;
+  grid-template-columns: 280px 1fr;
+  min-height:100vh;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  border-right:1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface), var(--void) 85%);
+  padding:20px 14px 24px;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{ width:8px; }
+.sidebar::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
+
+.brand{
+  display:flex; align-items:center; gap:10px;
+  padding:6px 8px 18px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:14px;
+}
+.brand-mark{
+  width:30px; height:30px; border-radius:8px;
+  background:var(--lime);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-weight:700; color:#0a0d0a; font-size:15px;
+  flex-shrink:0;
+}
+.brand-name{ font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:-0.01em; }
+.brand-sub{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:0.06em; text-transform:uppercase; }
+
+.search-trigger{
+  width:100%;
+  display:flex; align-items:center; gap:8px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+  color:var(--text-dim);
+  font-size:13px;
+  margin-bottom:18px;
+  transition:border-color .15s ease, background .15s ease;
+}
+.search-trigger:hover{ border-color:var(--lime-dim); background:var(--elevated); }
+.search-trigger svg{ flex-shrink:0; opacity:0.7; }
+.search-trigger .kbd{
+  margin-left:auto;
+  font-family:var(--font-mono);
+  font-size:10px;
+  background:var(--elevated);
+  border:1px solid var(--border);
+  padding:2px 5px;
+  border-radius:4px;
+  color:var(--text-dim);
+}
+
+.nav-home{
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:8px;
+  font-size:13.5px; font-weight:500; color:var(--text-muted);
+  margin-bottom:6px;
+}
+.nav-home:hover, .nav-home.active{ background:var(--surface-2); color:var(--text); }
+.nav-home.active{ color:var(--lime); }
+
+.nav-section{ margin-bottom:2px; }
+.nav-cat-btn{
+  width:100%;
+  display:flex; align-items:center; gap:8px;
+  background:transparent; border:none; color:var(--text-muted);
+  padding:9px 10px; border-radius:8px;
+  font-size:12.5px; font-weight:600;
+  letter-spacing:0.02em;
+  transition:color .15s ease, background .15s ease;
+}
+.nav-cat-btn:hover{ background:var(--surface-2); color:var(--text); }
+.nav-cat-btn .cat-code{
+  font-family:var(--font-mono); font-size:10px; font-weight:600;
+  color:var(--lime-dim);
+  background:var(--lime-glow);
+  padding:1px 5px; border-radius:4px;
+  flex-shrink:0;
+}
+.nav-cat-btn .cat-count{
+  margin-left:auto; font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim);
+}
+.nav-cat-btn .chev{ transition:transform .18s ease; opacity:0.6; flex-shrink:0; }
+.nav-section.open .chev{ transform:rotate(90deg); }
+
+.nav-mods{
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .25s ease;
+}
+.nav-section.open .nav-mods{ max-height:900px; }
+
+.nav-mod-link{
+  display:flex; align-items:baseline; gap:8px;
+  padding:6px 10px 6px 30px;
+  font-size:13px; color:var(--text-muted);
+  border-radius:6px;
+  border-left:2px solid transparent;
+  margin-left:8px;
+}
+.nav-mod-link .mod-id{
+  font-family:var(--font-mono); font-size:10px; color:var(--text-dim); flex-shrink:0;
+}
+.nav-mod-link:hover{ color:var(--text); background:var(--surface-2); }
+.nav-mod-link.active{
+  color:var(--lime); background:var(--lime-glow);
+  border-left-color:var(--lime);
+}
+.nav-mod-link.active .mod-id{ color:var(--lime-dim); }
+
+/* ---------- Main content ---------- */
+.main{ min-width:0; position:relative; }
+.topbar{
+  position:sticky; top:0; z-index:5;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 40px;
+  background:rgba(10,13,10,0.85);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.breadcrumb{ font-size:12.5px; color:var(--text-dim); font-family:var(--font-mono); }
+.breadcrumb span.sep{ margin:0 6px; }
+.breadcrumb span.current{ color:var(--text-muted); }
+.topbar-actions{ display:flex; gap:10px; align-items:center; }
+.stat-pill{
+  font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
+  border:1px solid var(--border); padding:4px 9px; border-radius:20px;
+}
+.stat-pill b{ color:var(--lime); font-weight:600; }
+
+.theme-toggle{
+  display:flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:8px;
+  border:1px solid var(--border); background:var(--surface);
+  color:var(--text-muted);
+  transition:border-color .15s ease, color .15s ease, background .15s ease;
+}
+.theme-toggle:hover{ border-color:var(--lime-dim); color:var(--lime); }
+.theme-toggle .icon-moon{ display:none; }
+html[data-theme="light"] .theme-toggle .icon-sun{ display:none; }
+html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
+
+.content{ padding:0 40px 100px; max-width:920px; }
+
+/* ---------- Home / hero ---------- */
+.hero{ padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:48px; }
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-mono); font-size:11.5px; color:var(--lime);
+  border:1px solid var(--border); background:var(--lime-glow);
+  padding:5px 12px; border-radius:20px; margin-bottom:24px;
+}
+.hero-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--lime); box-shadow:0 0 8px var(--lime); }
+.hero h1{
+  font-family:var(--font-display); font-size:44px; line-height:1.12; letter-spacing:-0.02em;
+  font-weight:700; max-width:680px; margin-bottom:18px;
+}
+.hero h1 em{ font-style:normal; color:var(--lime); }
+.hero p.lead{ font-size:16px; color:var(--text-muted); max-width:600px; margin-bottom:36px; }
+
+.hero-stats{
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+  background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  max-width:760px;
+}
+.hero-stat{ background:var(--surface); padding:20px 22px; }
+.hero-stat .num{ font-family:var(--font-mono); font-size:26px; font-weight:600; color:var(--lime); }
+.hero-stat .lbl{ font-size:12px; color:var(--text-dim); margin-top:4px; }
+
+/* Category grid on home */
+.section-label{
+  font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--text-dim); margin-bottom:18px; display:flex; align-items:center; gap:10px;
+}
+.section-label::after{ content:''; flex:1; height:1px; background:var(--border); }
+
+.cat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:56px; }
+.cat-card{
+  border:1px solid var(--border); background:var(--surface);
+  border-radius:12px; padding:22px;
+  transition:border-color .15s ease, transform .15s ease, background .15s ease;
+  display:block;
+}
+.cat-card:hover{ border-color:var(--lime-dim); background:var(--surface-2); transform:translateY(-2px); }
+.cat-card-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.cat-card .cat-code{
+  font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--lime);
+  background:var(--lime-glow); padding:3px 8px; border-radius:5px;
+}
+.cat-card .cat-count{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+.cat-card h3{ font-family:var(--font-display); font-size:18px; font-weight:600; margin-bottom:8px; }
+.cat-card p{ font-size:13px; color:var(--text-muted); line-height:1.55; }
+
+/* ---------- Module page ---------- */
+.mod-header{ margin-bottom:36px; }
+.mod-id-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--lime);
+  background:var(--lime-glow); border:1px solid rgba(195,245,60,0.25);
+  padding:4px 10px; border-radius:6px; margin-bottom:16px;
+}
+.mod-header h1{
+  font-family:var(--font-display); font-size:34px; font-weight:700; letter-spacing:-0.01em;
+  margin-bottom:14px; line-height:1.18;
+}
+.mod-header .mod-desc{ font-size:16px; color:var(--text-muted); max-width:700px; }
+
+.feature-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+.feature-card{
+  border:1px solid var(--border); background:var(--surface);
+  border-radius:10px; padding:18px;
+  position:relative;
+}
+.feature-card::before{
+  content:''; position:absolute; left:0; top:14px; bottom:14px; width:2px;
+  background:var(--lime-dim); border-radius:2px; opacity:0.6;
+}
+.feature-card h4{ font-size:14.5px; font-weight:600; margin-bottom:6px; padding-left:12px; }
+.feature-card p{ font-size:13px; color:var(--text-muted); padding-left:12px; line-height:1.55; }
+
+.empty-note{
+  border:1px dashed var(--border); border-radius:10px; padding:20px;
+  color:var(--text-dim); font-size:13.5px; font-family:var(--font-mono);
+}
+
+.mod-nav{
+  display:flex; justify-content:space-between; gap:16px; margin-top:56px;
+  padding-top:24px; border-top:1px solid var(--border);
+}
+.mod-nav-link{
+  flex:1; border:1px solid var(--border); border-radius:10px; padding:16px 18px;
+  background:var(--surface);
+  transition:border-color .15s ease, background .15s ease;
+}
+.mod-nav-link:hover{ border-color:var(--lime-dim); background:var(--surface-2); }
+.mod-nav-link.next{ text-align:right; }
+.mod-nav-link .lbl{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+.mod-nav-link .name{ font-size:14px; font-weight:600; color:var(--text); }
+
+/* ---------- Command palette ---------- */
+.cmdk-overlay{
+  position:fixed; inset:0; z-index:100;
+  background:var(--overlay-bg);
+  backdrop-filter:blur(3px);
+  display:none;
+  align-items:flex-start; justify-content:center;
+  padding-top:14vh;
+}
+.cmdk-overlay.open{ display:flex; }
+.cmdk-box{
+  width:100%; max-width:560px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; box-shadow:var(--shadow-box);
+  overflow:hidden;
+  max-height:70vh; display:flex; flex-direction:column;
+}
+.cmdk-input-row{ display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--border); }
+.cmdk-input-row svg{ opacity:0.5; flex-shrink:0; }
+.cmdk-input{
+  flex:1; background:transparent; border:none; outline:none;
+  color:var(--text); font-size:15px; font-family:var(--font-body);
+}
+.cmdk-input::placeholder{ color:var(--text-dim); }
+.cmdk-esc{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); border:1px solid var(--border); padding:2px 6px; border-radius:4px; }
+.cmdk-results{ overflow-y:auto; padding:8px; }
+.cmdk-item{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:8px; font-size:13.5px;
+  color:var(--text-muted);
+}
+.cmdk-item .mid{ font-family:var(--font-mono); font-size:10px; color:var(--lime-dim); background:var(--lime-glow); padding:2px 6px; border-radius:4px; flex-shrink:0; }
+.cmdk-item .name{ color:var(--text); font-weight:500; }
+.cmdk-item .cat{ margin-left:auto; font-size:11px; color:var(--text-dim); font-family:var(--font-mono); }
+.cmdk-item.sel{ background:var(--lime-glow); }
+.cmdk-empty{ padding:24px 12px; text-align:center; color:var(--text-dim); font-size:13px; }
+
+/* ---------- Mobile ---------- */
+.menu-toggle{ display:none; }
+@media (max-width: 880px){
+  .app{ grid-template-columns:1fr; }
+  .sidebar{
+    position:fixed; left:0; top:0; bottom:0; width:280px; z-index:20;
+    transform:translateX(-100%); transition:transform .2s ease;
+    box-shadow:var(--shadow-sidebar);
+  }
+  .sidebar.open{ transform:translateX(0); }
+  .menu-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text);
+  }
+  .hero h1{ font-size:32px; }
+  .hero-stats{ grid-template-columns:1fr 1fr; }
+  .cat-grid{ grid-template-columns:1fr; }
+  .feature-grid{ grid-template-columns:1fr; }
+  .content{ padding:0 20px 80px; }
+  .topbar{ padding:12px 20px; }
+  .stat-pill{ display:none; }
+  .sidebar-scrim{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:19; }
+  .sidebar-scrim.open{ display:block; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="sidebar-scrim" id="scrim"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">α</div>
+      <div>
+        <div class="brand-name">Alphabet</div>
+        <div class="brand-sub">ERP Docs</div>
+      </div>
+    </div>
+
+    <button class="search-trigger" id="searchTrigger">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>Search modules…</span>
+      <span class="kbd">⌘K</span>
+    </button>
+
+    <a href="#/" class="nav-home" id="navHome">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Overview
+    </a>
+
+    <nav id="navSections"></nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="breadcrumb" id="breadcrumb">Overview</div>
+      <div class="topbar-actions">
+        <span class="stat-pill"><b>74</b> modules</span>
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme">
+          <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="menu-toggle" id="menuToggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<div class="cmdk-overlay" id="cmdk">
+  <div class="cmdk-box">
+    <div class="cmdk-input-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input class="cmdk-input" id="cmdkInput" placeholder="Search 74 modules across 8 categories…" autocomplete="off" />
+      <span class="cmdk-esc">ESC</span>
+    </div>
+    <div class="cmdk-results" id="cmdkResults"></div>
+  </div>
+</div>
+
+<script id="alphabet-data" type="application/json">{"categories":[{"name":"Student Success","code":"SS","slug":"student-success","blurb":"From the moment they apply through graduation \u2014 admissions, enrollment, records, grades, and academic tracking in one place.","modules":[{"id":"SS-01","name":"Examination System","slug":"examination-system","desc":"Schedule hundreds of exams across multiple rooms without conflicts, generate student hall tickets, and publish verified results in days providing exam controllers smooth logistics and registrars audit-ready records efficiently.","features":[{"name":"Exam Sessions","desc":"Define examination periods with name, dates, course, and batch association"},{"name":"Exam Scheduling","desc":"Schedule individual exams with subject, date, time, and room assignments"},{"name":"Exam Types","desc":"Configure exam types (Unit Test, Midterm, Final, Practical, etc.)"},{"name":"Evaluation Types","desc":"Support for normal and grade-based evaluation methods"},{"name":"Room & Seating Management","desc":"Automatic seating arrangement with roll number-based allocation"},{"name":"Supervisor Assignment","desc":"Assign and manage exam supervisors with conflict checking"},{"name":"Multi-Component Grading","desc":"Separate theory, practical, internal, and external mark components"},{"name":"Weighted Calculations","desc":"Configure mark weightage for different assessment components"}]},{"id":"SS-02","name":"Course Management","slug":"course-management","desc":"Effortlessly create, organize, and manage courses with a user-friendly platform that streamlines content delivery, tracks progress, and enhances the learning experience for students and educators.","features":[{"name":"Course Definition","desc":"Create academic programs with name, code, duration, and department association"},{"name":"Subject Management","desc":"Define subjects with credits, code, type (theory/practical), and descriptions"},{"name":"Batch Organization","desc":"Create student cohorts with start/end dates and course assignments"},{"name":"Subject-Batch Linking","desc":"Associate subjects with specific batches for scheduled offerings"},{"name":"Credit System","desc":"Full credit hour tracking with earned, required, and remaining credits"}]},{"id":"SS-03","name":"Admission Management","slug":"admission-management","desc":"Student registration software that handles online applications, automated reviews, merit lists, and enrollment conversion. Your admissions office processes more registrations with fewer staff hours and fewer errors.","features":[{"name":"Admission Registers","desc":"Define admission windows with start/end dates, course selection, and capacity limits"},{"name":"Application Management","desc":"Create, edit, and process applications with complete applicant information"},{"name":"State-Based Workflow","desc":"Track applications through Draft, Submitted, Under Review, Admitted, and Enrolled states"},{"name":"Document Attachments","desc":"Upload and manage application documents within each record"},{"name":"Online Admission Portal","desc":"Self-service web portal for applicants to submit and track applications"},{"name":"Payment Gateway Integration","desc":"Accept application fees online via Stripe, PayPal, Razorpay, and more"},{"name":"Advanced Workflows","desc":"Custom approval chains, multi-stage reviews, and conditional routing"},{"name":"Entrance Test Integration","desc":"Connect with online quiz module for admission assessments"}]},{"id":"SS-04","name":"Faculty Management","slug":"faculty-management","desc":"Manage faculty profiles, balance workloads, coordinate substitutions, track credentials, and conduct performance reviews, freeing department heads from administrative tasks to focus on supporting and empowering teaching staff effectively.","features":[{"name":"Faculty Profiles","desc":"Complete profiles with personal information, contact details, and photos"},{"name":"Employment Details","desc":"Track employee ID, department, designation, and employment type"},{"name":"Qualification Records","desc":"Document degrees, certifications, and educational background"},{"name":"Subject Assignment","desc":"Link faculty to subjects they're qualified to teach"},{"name":"Advanced Workload Tracking","desc":"Detailed workload calculations with credit hours and contact hours"},{"name":"Workload Limits","desc":"Configure maximum teaching loads with alert notifications"},{"name":"Expertise Matching","desc":"Smart suggestions for faculty-subject assignments based on qualifications"},{"name":"Substitute Management","desc":"Track and assign substitute faculty with notification workflows"}]},{"id":"SS-05","name":"Financial Management","slug":"financial-management","desc":"Set up fee structures once, auto-generate invoices at enrollment, accept payments via cash, bank, or online gateways, apply discounts automatically, and reconcile seamlessly - speeding up book closure with fewer errors and calls.","features":[{"name":"Fee Terms","desc":"Define fee structures with amounts, codes, and product associations"},{"name":"Fee Term Lines","desc":"Multiple line items per fee term with individual amounts and due dates"},{"name":"Course Fee Linking","desc":"Associate fee terms with courses for automatic application"},{"name":"Student Fee Details","desc":"Track fees owed by each student with amount and due date"},{"name":"Fee Plans","desc":"Student-specific payment plans with custom schedules"},{"name":"Duration-Based Billing","desc":"Recurring fees every N days/weeks/months"}]},{"id":"SS-06","name":"Student Management","slug":"student-management","desc":"Student information system software that keeps every record (academics, health, contacts, documents) in one place. SIS for K-12 schools and universities that gives staff accurate student data instantly and makes reporting effortless.","features":[{"name":"Student Profiles","desc":"Comprehensive profiles with personal, contact, and demographic information"},{"name":"Course Enrollment","desc":"Enroll students in courses and batches with roll number assignment"}]}]},{"name":"Daily Operations","code":"DO","slug":"daily-operations","blurb":"The tools your staff use every day \u2014 attendance, assignments, timetables, classrooms, and gradebooks that keep your institution running smoothly.","modules":[{"id":"DO-01","name":"Classroom and Facility Management","slug":"classroom-and-facility-management","desc":"Organize lessons, monitor student activity, and enhance classroom engagement with an intuitive software that empowers teachers to manage learning efficiently and keep students on track.","features":[{"name":"Core Management","desc":"Essential classroom and facility management management capabilities"}]},{"id":"DO-02","name":"Gradebook and Grading System","slug":"gradebook-and-grading-system","desc":"Easily record, calculate, and analyze student grades with a secure digital gradebook helping teachers save time, provide accurate feedback, and keep parents informed effortlessly.","features":[{"name":"Core Management","desc":"Essential gradebook and grading system management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed gradebook and grading system analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all gradebook and grading system activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"DO-03","name":"Student Application & Admission Management","slug":"student-application-admission-management","desc":"Simplifying admissions with a secure online portal allows students to apply, submit documents, and track their application status easily, while your admissions team manages everything efficiently in one place.","features":[]},{"id":"DO-04","name":"Staff Timesheet Management Software","slug":"staff-timesheet-management-software","desc":"Track staff hours, manage shift assignments, and generate attendance-linked payroll inputs, giving HR and finance a single source of truth without manual consolidation.","features":[{"name":"Core Management","desc":"Essential staff timesheet management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed staff timesheet management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all staff timesheet management activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"DO-05","name":"Timetable Management","slug":"timetable-management","desc":"Create conflict-free schedules, optimize classroom and faculty allocation, and manage timetable changes effortlessly with a smart system that saves time and ensures smooth academic operations.","features":[{"name":"Core Management","desc":"Essential timetable management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed timetable management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all timetable management activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"DO-06","name":"Fee Payment and Collection","slug":"fee-payment-and-collection","desc":"Manage tuition, program fees, hostel charges, and lab levies from a single system that automates invoice generation, handles installment plans, and gives families a self-service portal to view balances, pay online, and download receipts \u2014 without calling your office.","features":[{"name":"Core Management","desc":"Essential fee payment and collection management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed fee payment and collection analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all fee payment and collection activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"DO-07","name":"Attendance Management","slug":"attendance-management","desc":"Effortlessly track and manage student attendance with a smart, automated system that reduces manual work, ensures accuracy, and provides real-time insights for teachers and administrators.","features":[{"name":"Core Management","desc":"Essential attendance management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed attendance management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all attendance management activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"DO-08","name":"Assignment Management","slug":"assignment-management","desc":"Streamline assignment creation, submission, and grading with a centralized platform that keeps students and teachers organized, tracks progress, and enhances productivity across classrooms and campuses.","features":[{"name":"Core Management","desc":"Essential assignment management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed assignment management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all assignment management activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"DO-09","name":"Student Leave Management","slug":"student-leave-management","desc":"Simplify student leave requests and approvals with an automated system that tracks absences, notifies teachers and parents, maintains accurate records, and ensures smooth communication reducing administrative workload and improving overall attendance management.","features":[{"name":"Core Management","desc":"Essential student leave management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed student leave management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all student leave management activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]}]},{"name":"Teaching & Learning","code":"TL","slug":"teaching-learning","blurb":"Deliver engaging learning experiences \u2014 course authoring, content delivery, assessments, certificates, and learning analytics that support your faculty.","modules":[{"id":"TL-01","name":"Learning Management System","slug":"learning-management-system","desc":"Cloud-based learning management system for schools and universities. Build courses with video, quizzes, and forums. Track student progress in real time. Issue certificates. One LMS platform connected to your student records, gradebook, and enrollment. No syncing or duplicate entry.","features":[{"name":"Course Creation","desc":"Create unlimited online courses"},{"name":"Module Organization","desc":"Structure content into logical sections"},{"name":"Multi-Instructor","desc":"Assign multiple faculty to courses"},{"name":"Course Categories","desc":"Organize courses by subject or program"},{"name":"Enrollment Limits","desc":"Cap enrollments per course"},{"name":"Paid Courses","desc":"Charge fees for course access"},{"name":"Course Ratings","desc":"Student reviews and ratings"}]},{"id":"TL-02","name":"Quiz & Assessment Module","slug":"quiz-assessment-module","desc":"Auto-grade quizzes the moment students submit. Build question banks once and reuse them across semesters, departments, and programs. Get per-question analytics that show you which concepts students actually understood and which ones need reteaching, with every score synced to the gradebook automatically.","features":[]}]},{"name":"Strategic Capabilities","code":"SC","slug":"strategic-capabilities","blurb":"Capabilities that set your institution apart \u2014 advanced analytics, digital libraries, automated assessments, mobile access, and intelligent reporting.","modules":[{"id":"SC-01","name":"Digital Library Software for Educational Institutions","slug":"digital-library-software-for-educational-institutions","desc":"Students enrolled in Organic Chemistry automatically see the e-books, journals, and lab videos assigned to that course. No login to a separate system, no emailed PDF links, no guessing which edition is current. The library director sees exactly which subscriptions get used, which sit idle, and which ones to cut at renewal time.","features":[]},{"id":"SC-02","name":"KPI Analytics Dashboard for Educational Institutions","slug":"kpi-analytics-dashboard-for-educational-institutions","desc":"See enrollment yield, retention rates, budget utilization, graduation trends, and staffing metrics on real-time dashboards built for institutional leadership. Role-based views give presidents, provosts, CFOs, and deans exactly the numbers they need without waiting for IT to run reports or build custom queries.","features":[]},{"id":"SC-03","name":"Dashboard & Analytics Software for Educational Institutions","slug":"dashboard-analytics-software-for-educational-institutions","desc":"Provide registrars, deans, and department chairs with a real-time view of daily operations, including attendance, class capacity, fee collection, and cross-module alerts so every role sees only the data that matters, updated instantly across the institution.","features":[]},{"id":"SC-04","name":"Advanced Reporting Software for Educational Institutions","slug":"advanced-reporting-software-for-educational-institutions","desc":"Pull enrollment, financial, compliance, and academic data into formatted reports \u2014 on demand or on schedule \u2014 without touching a spreadsheet. IR directors, registrars, and CFOs get the exact outputs regulators and boards require, built from a single live data source.","features":[]},{"id":"SC-05","name":"OMR Scanning Software for Educational Institutions","slug":"omr-scanning-software-for-educational-institutions","desc":"Scan and grade 3,000 bubble-sheet answer sheets in under an hour using optical mark recognition, with automatic gradebook sync, per-question item analysis, support for negative marking, weighted scoring, multiple exam versions, and mobile phone capture. Exam controllers get results the same day. Faculty get question-level difficulty data to improve future papers.","features":[]},{"id":"SC-06","name":"Quiz Anti-Cheating Software for Educational Institutions","slug":"quiz-anti-cheating-software-for-educational-institutions","desc":"Prevent online exam cheating with browser lockdown, AI-powered proctoring, and real-time violation detection. When assessment results are trustworthy, credentials carry weight with employers, accreditors, and transfer institutions. Alphabet layers prevention, detection, and analysis so your faculty can focus on teaching instead of policing.","features":[]},{"id":"SC-07","name":"No Code Studio for Educational Institutions","slug":"no-code-studio-for-educational-institutions","desc":"Build custom applications, forms, workflows, and reports using drag-and-drop tools. No programming or IT tickets required. Department staff solve their own process gaps in hours instead of waiting months for developer time.","features":[{"name":"Core Management","desc":"Essential no code studio for educational institutions management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed no code studio for educational institutions analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all no code studio for educational institutions activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"SC-08","name":"E-Signature Software for Educational Institutions","slug":"e-signature-software-for-educational-institutions","desc":"Collect legally binding digital signatures on admission offers, enrollment agreements, faculty contracts, permission slips, and compliance forms in minutes instead of days. Built-in audit trails, multi-signer routing with sequential and parallel options, automatic reminders, configurable signer authentication, and ESIGN Act compliance replace the print-sign-scan-file cycle entirely.","features":[]},{"id":"SC-09","name":"Document Management System for Educational Institutions","slug":"document-management-system-for-educational-institutions","desc":"Store every institutional file in one searchable repository with version history, role-based access permissions, approval workflows, and full audit trails. Staff find the right document in seconds instead of searching four different systems. Accreditation evidence, student records, policies, and contracts stay organized, current, and protected.","features":[]},{"id":"SC-10","name":"Events Management Software for Educational Institutions","slug":"events-management-software-for-educational-institutions","desc":"Plan, register, promote, track, and report on campus events from one system connected to your student records, facilities calendar, financial ledger, and CRM. Your events team stops juggling five disconnected tools and starts running events with accurate headcounts, verified attendee data, and same-day post-event reports.","features":[]},{"id":"SC-11","name":"Thesis Management Software for Educational Institutions","slug":"thesis-management-software-for-educational-institutions","desc":"Track every dissertation and thesis from topic registration through final defense, with advisor assignments, committee coordination, milestone monitoring, and defense scheduling in one system. Graduate school staff stop chasing status updates and start seeing completion data in real time.","features":[]},{"id":"SC-12","name":"Mobile Application for Educational Institutions","slug":"mobile-application-for-educational-institutions","desc":"Deliver native iOS and Android apps that give students, parents, faculty, and staff real-time access to grades, attendance, timetables, assignments, fee payments, library resources, and push notifications, all synced to your Alphabet ERP with offline support and role-based permissions tied to your existing user directory.","features":[{"name":"Core Management","desc":"Essential mobile application for educational institutions management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"}]},{"id":"SC-13","name":"Advanced Accounting Software for Schools","slug":"advanced-accounting-software-for-schools","desc":"Manage multi-campus finances with ease: fund-level tracking, automated reconciliations, grant compliance reporting, fee-to-ledger integration, and real-time dashboards that let you close months in days and audit with confidence.","features":[{"name":"Core Management","desc":"Essential advanced accounting software for educational institutions management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"}]},{"id":"SC-14","name":"Biometric Attendance System for Educational Institutions","slug":"biometric-attendance-system-for-educational-institutions","desc":"Verify student identity at the point of attendance using fingerprint scanners, facial recognition, or RFID cards. Every scan syncs in real time with your timetable, gradebook, parent portal, and compliance reports. Proxy attendance drops to near zero. Roll call time drops to zero. IT manages one system, not four.","features":[]},{"id":"SC-15","name":"Library Management System for Educational Institutions","slug":"library-management-system-for-educational-institutions","desc":"Run your entire physical library from the same system that manages student records, fee accounts, and course data. Catalog items with barcode scanning, track circulation in real time, calculate fines that post directly to student financial records, and generate collection usage reports that tell you which shelves justify their square footage and which ones do not.","features":[]},{"id":"SC-16","name":"Multi-Approval Workflow Software","slug":"multi-approval-workflow-software","desc":"Configurable approval workflows for purchase orders, budgets, grade changes, scholarships, and facility bookings, with auto-escalation, delegation, and a full audit trail in your ERP.","features":[{"name":"Core Management","desc":"Essential multi-approval workflow software for educational institutions management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed multi-approval workflow software for educational institutions analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all multi-approval workflow software for educational institutions activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"SC-17","name":"Convocation Management Software","slug":"convocation-management-software","desc":"Manage graduation end-to-end from eligibility verification to degree conferral in one system connected to student records, seating, guest registration, regalia, and certificates. Eliminate spreadsheets, siloed coordination, and weeks of back-and-forth emails.","features":[{"name":"Ticket Allocation","desc":"Configurable tickets per graduate"},{"name":"Registration","desc":"Online guest registration with details"},{"name":"Special Requests","desc":"Wheelchair, interpreter, VIP seating"},{"name":"Distribution","desc":"E-tickets or physical ticket pickup"},{"name":"Advanced Analytics","desc":"Detailed convocation management software for educational institutions analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all convocation management software for educational institutions activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"SC-18","name":"Assignment Annotation Software for Educational Institutions","slug":"assignment-annotation-software-for-educational-institutions","desc":"Review, comment, and provide feedback on assignments efficiently with intuitive tools streamlining grading, enhancing collaboration, and helping students improve faster.","features":[]},{"id":"SC-19","name":"Face Recognition Attendance for Educational Institutions","slug":"face-recognition-attendance-for-educational-institutions","desc":"Automate attendance tracking with secure face recognition technology, reduce manual errors, save time, and ensure accurate records for students and staff, all while improving campus safety and operational efficiency.","features":[]},{"id":"SC-20","name":"Live Classroom Software for Educational Institutions","slug":"live-classroom-software-for-educational-institutions","desc":"Run live classes from your timetable with Zoom, Google Meet, Microsoft Teams, or built-in video. Attendance records itself when students join. Quiz scores flow straight to the gradebook. Session recordings land in the course library. One virtual classroom that knows every student by name, tracks every minute, and writes every record back to your SIS. No copy-pasting between tabs.","features":[]},{"id":"SC-21","name":"Enrollment Marketing Automation for Schools","slug":"enrollment-marketing-automation-for-schools","desc":"Automate campaigns, track leads, personalize customer journeys, and measure results in real time, so your team can focus on strategy while growing engagement and revenue effortlessly.","features":[{"name":"Core Management","desc":"Essential automated marketing software for educational institutions management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed automated marketing software for educational institutions analytics with custom report builder and data visualization"}]}]},{"name":"Finance & Administration","code":"FA","slug":"finance-administration","blurb":"Financial clarity and operational control \u2014 accounting, payroll, HR, procurement, enrollment pipeline, and fee collection integrated with your academic data.","modules":[{"id":"FA-01","name":"E-Commerce Module","slug":"e-commerce-module","desc":"Sell courses, certifications, merchandise, tickets, and services through a unified store connected to enrollment, inventory, and accounting automate checkout, recover abandoned carts, and post every transaction to the ledger instantly.","features":[{"name":"Product Types","desc":"Courses, physical goods, digital downloads, subscriptions, events"},{"name":"Rich Content","desc":"Product descriptions with images, videos, and curriculum details"},{"name":"Variants","desc":"Size, format, schedule options for flexible product offerings"},{"name":"Bundles","desc":"Create packages of courses, materials, and services"},{"name":"Advanced Analytics","desc":"Detailed e-commerce module analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all e-commerce module activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-02","name":"Accounting Module","slug":"accounting-module","desc":"Built-in double-entry accounting for your education platform manage chart of accounts, journals, reconciliation, AP/AR, and cost centers seamlessly. Automate postings from fees, payroll, and purchases to close books faster with zero manual re-entry.","features":[{"name":"Hierarchical Structure","desc":"Organize accounts into logical groups with unlimited nesting levels"},{"name":"Account Types","desc":"Full support for assets, liabilities, equity, revenue, and expenses"},{"name":"Cost Centers","desc":"Track expenses by department, program, campus, or grant"},{"name":"Account Templates","desc":"Pre-built templates for K-12, universities, and vocational institutions"},{"name":"Advanced Analytics","desc":"Detailed accounting module analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all accounting module activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-03","name":"Purchase Management","slug":"purchase-management","desc":"Streamline procurement with budget-validated requisitions, multi-level approvals, automated PO matching, vendor performance tracking, and built-in grant compliance reducing maverick spending and resolving audit risks before they arise.","features":[{"name":"Online Requisitions","desc":"Web-based submission with required fields and attachments"},{"name":"Catalog Ordering","desc":"Select from approved item catalogs with preset pricing"},{"name":"Budget Validation","desc":"Real-time check against available budget"},{"name":"Justification Templates","desc":"Structured business case for non-standard purchases"},{"name":"Advanced Analytics","desc":"Detailed purchase management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all purchase management activities for compliance and accountability"}]},{"id":"FA-04","name":"Expense Management","slug":"expense-management","desc":"Let staff submit expenses with receipt photos while the system enforces policies, routes approvals by amount and funding source, and posts reimbursements to payroll giving finance real-time visibility into spending.","features":[{"name":"Mobile App","desc":"iOS and Android apps for receipt capture and submission"},{"name":"OCR Processing","desc":"Automatic extraction of vendor, amount, date from receipts"},{"name":"Email Forwarding","desc":"Forward receipts from email for automatic processing"},{"name":"Credit Card Import","desc":"Import transactions from corporate cards"},{"name":"Advanced Analytics","desc":"Detailed expense management analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all expense management activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-05","name":"CRM Module","slug":"crm-module","desc":"Alphabet's Enrollment CRM captures prospective student inquiries from every channel into a single pipeline, then routes follow-up tasks and drip sequences automatically based on program interest and engagement score. Enrollment teams replace disconnected spreadsheets and email inboxes with a single pipeline that tracks every prospect from first inquiry through enrollment.","features":[{"name":"Lead Capture","desc":"Web forms, landing pages, email parsing, manual entry, and integrations"},{"name":"De-Duplication","desc":"Automatic identification and merging of duplicate leads"},{"name":"Lead Scoring","desc":"Configurable scoring based on demographics and engagement"},{"name":"Stage Tracking","desc":"Visual pipeline with customizable stages for enrollment journey"},{"name":"Advanced Analytics","desc":"Detailed crm module analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all crm module activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-06","name":"Recruitment Module","slug":"recruitment-module","desc":"Manage faculty searches, staff hiring, and search committee coordination in one system \u2014 from job posting through offer acceptance, with EEO documentation built in at every stage.","features":[{"name":"Position Requests","desc":"Initiate hiring with budget and justification"},{"name":"Approval Workflows","desc":"Route through department, HR, and budget approval"},{"name":"Position Templates","desc":"Reusable templates for common positions"},{"name":"Job Descriptions","desc":"Library of descriptions with customization"},{"name":"Advanced Analytics","desc":"Detailed recruitment module analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all recruitment module activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-07","name":"Email Integration","slug":"email-integration","desc":"Connect Microsoft 365, Google Workspace, or any mail server to automatically log emails against student, admissions, HR, and support records with tracking, templates, routing, and seamless communication management.","features":[{"name":"Microsoft 365","desc":"Native integration with Outlook and Exchange Online via OAuth"},{"name":"Google Workspace","desc":"Gmail integration with OAuth authentication"},{"name":"Standard IMAP/SMTP","desc":"Connect any standards-compliant email server"},{"name":"Multiple Accounts","desc":"Connect departmental mailboxes (admissions@, finance@, etc.)"},{"name":"Advanced Analytics","desc":"Detailed email integration analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all email integration activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-08","name":"Inventory Management","slug":"inventory-management","desc":"Track lab chemicals, IT equipment, classroom supplies, and campus assets across every building and stockroom. Automated reorder points generate purchase requisitions before shortages happen, while barcode scanning, lot tracking, expiration alerts, and real-time valuation give operations teams full control over institutional inventory.","features":[{"name":"Product Catalog","desc":"Comprehensive item database with descriptions and specs"}]},{"id":"FA-09","name":"Asset Request Management","slug":"asset-request-management","desc":"Streamline equipment requests with budget-linked approvals, track assets from acquisition to disposal with barcodes, automate warranties and maintenance, and unify procurement, accounting, and facilities, reducing losses and eliminating emergency purchases.","features":[{"name":"Request Forms","desc":"Customizable forms by asset category with required information"},{"name":"Justification Templates","desc":"Structured business case templates for different request types"}]},{"id":"FA-10","name":"Staff Appraisals","slug":"staff-appraisals","desc":"Replace annual paper reviews with structured performance cycles backed by competency frameworks, goal cascading, and documented evidence. Deans, HR directors, and provosts get consistent evaluation data that holds up during tenure disputes, promotion decisions, and board inquiries.","features":[{"name":"Flexible Cycles","desc":"Configure annual, semi-annual, or continuous review cycles"},{"name":"Automated Scheduling","desc":"System triggers appraisals based on hire date, position, or calendar"},{"name":"Status Tracking","desc":"Dashboard shows completion status across all departments"},{"name":"Deadline Management","desc":"Automated reminders escalate as deadlines approach"},{"name":"Advanced Analytics","desc":"Detailed staff appraisals analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all staff appraisals activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"FA-11","name":"Email Marketing","slug":"email-marketing","desc":"Run targeted campaigns for prospects, families, alumni, and donors using real-time data from admissions and records then measure success by enrollments and donations, not just opens and clicks.","features":[{"name":"Dynamic Segments","desc":"Build audiences with real-time filters on any data"},{"name":"Static Lists","desc":"Upload or create fixed contact lists"},{"name":"Suppression Lists","desc":"Global and campaign-specific exclusions"},{"name":"Preference Centers","desc":"Let recipients manage their subscription preferences"},{"name":"Advanced Analytics","desc":"Detailed email marketing analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"}]},{"id":"FA-12","name":"Payroll Management","slug":"payroll-management","desc":"Automate school payroll with accurate salary calculations, tax compliance, benefits, and payslips integrated with attendance and contracts to ensure timely payments, reduce errors, and simplify staff compensation management.","features":[]},{"id":"FA-13","name":"Sales Management","slug":"sales-management","desc":"Track non-tuition revenue from corporate training contracts, facility rentals, consulting engagements, event tickets, and auxiliary services through a single pipeline. Build professional quotations, enforce discount approval limits, convert accepted quotes to invoices, generate contracts, and forecast revenue by stage, category, customer, and period.","features":[{"name":"Lead Capture","desc":"Create opportunities from inquiries and referrals"}]}]},{"name":"Campus Operations","code":"CO","slug":"campus-operations","blurb":"A well-run campus experience \u2014 dining services, transportation, parent engagement, career placement, and multi-campus administration.","modules":[{"id":"CO-01","name":"Transportation Management System","slug":"transportation-management-system","desc":"Plan bus routes, track vehicles in real time, assign students to stops, monitor driver certifications, and automate fee billing all in one system linked to student records, attendance, and parent portals.","features":[{"name":"Core Management","desc":"Essential transportation management system management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed transportation management system analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all transportation management system activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"CO-02","name":"Parent Portal and Login System","slug":"parent-portal-and-login-system","desc":"Give parents a self-service portal to check grades, attendance, fee balances, and teacher messages in real time. Front-office call volume drops, fee collection speeds up, and families actually stay informed instead of waiting for report card day.","features":[{"name":"Alerts","desc":"Receive immediate notification when child is marked absent"},{"name":"Daily Attendance","desc":"View each day's attendance status as recorded by teachers"},{"name":"Absence History","desc":"Complete record of absences with reasons and documentation"},{"name":"Trends","desc":"Visualize attendance patterns over time"},{"name":"Leave Requests","desc":"Submit absence notifications or leave requests digitally"},{"name":"Campus & Hostel Management System","desc":"Manage hostel allocations, facility bookings, inventories, maintenance, and multi-campus operations from a single system linked to student records, fees, and timetables giving housing directors real-time occupancy and cost insights."},{"name":"Hostel and Residence Hall Allocation Without","desc":"Spreadsheet Conflicts Assign 3,200 beds in days instead of weeks, with every allocation validated against enrollment status, accommodation requirements, hall eligibility rules, and actual room availability."}]},{"id":"CO-03","name":"Campus & Hostel Management System","slug":"campus-hostel-management-system","desc":"Manage hostel allocations, facility bookings, inventories, maintenance, and multi-campus operations from a single system linked to student records, fees, and timetables giving housing directors real-time occupancy and cost insights.","features":[{"name":"Core Management","desc":"Essential campus management system management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed campus management system analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all campus management system activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"CO-04","name":"Placement Management Software","slug":"placement-management-software","desc":"Manage campus recruitment, match students to employer openings using academic and skill profiles, schedule interviews, track offers, and report placements giving officers real-time insights from a single dashboard without chasing spreadsheets.","features":[{"name":"Core Management","desc":"Essential placement cell and career services management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed placement cell and career services analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all placement cell and career services activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"CO-05","name":"Canteen Management System for Schools","slug":"canteen-management-system-for-schools","desc":"Manage campus dining from menu planning to POS checkout, inventory, meal billing, and dietary compliance all integrated with student records, parent accounts, and accounting for real-time sales insights across every location.","features":[]}]},{"name":"Engagement & Outreach","code":"EO","slug":"engagement-outreach","blurb":"Keep every stakeholder informed and engaged \u2014 news, forums, surveys, grievance resolution, helpdesk, and appointment scheduling.","modules":[{"id":"EO-01","name":"Polls & Quick Surveys","slug":"polls-quick-surveys","desc":"Get constituent feedback in hours, not weeks. Publish targeted polls to students, faculty, or staff directly through the portal and mobile app, watch responses accumulate in real time, and bring quantified majority sentiment into committee meetings before decisions are finalized \u2014 not three weeks after the damage is done.","features":[{"name":"Core Management","desc":"Essential polls & quick surveys management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed polls & quick surveys analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all polls & quick surveys activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"EO-02","name":"Helpdesk & Support Tickets","slug":"helpdesk-support-tickets","desc":"Manage IT requests, student affairs inquiries, and facilities tickets from a single system with automated routing, SLA timers, and real-time queue visibility. Support staff and administrators can monitor response times and workload across all departments without toggling between separate tools.","features":[{"name":"Core Management","desc":"Essential helpdesk & support tickets management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"}]},{"id":"EO-03","name":"Community Forums","slug":"community-forums","desc":"A persistent, searchable forum platform where faculty answer course questions once and all students benefit, peer study networks form across sections and cohorts, and alumni retain forum access after graduation to mentor current students. Campus community engagement moves from individual email threads to a shared institutional knowledge base that grows with each cohort.","features":[{"name":"Core Management","desc":"Essential community forums management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"}]},{"id":"EO-04","name":"Secure Transcript","slug":"secure-transcript","desc":"Generate tamper-proof academic transcripts with digital signatures, QR code verification, institutional watermarks, and batch processing for graduation cycles. Students order transcripts through a self-service portal, pay online, and track delivery status. Hold enforcement blocks release when financial obligations are unresolved. FERPA-compliant access controls govern every step from request to recipient.","features":[{"name":"Core Management","desc":"Essential secure transcript management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed secure transcript analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all secure transcript activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"EO-05","name":"Grievance Management System","slug":"grievance-management-system","desc":"A centralized complaint intake, routing, and resolution system that keeps every grievance on the record from first submission through final disposition. Institutions use it to meet Title IX documentation requirements, pass HLC and regional accreditor reviews, and identify systemic issues before they become formal complaints or legal exposure.","features":[{"name":"Core Management","desc":"Essential grievance management system management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed grievance management system analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all grievance management system activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"EO-06","name":"Discussion Forums","slug":"discussion-forums","desc":"Give every course its own persistent discussion board, auto-created at enrollment and archived for future cohorts. Faculty answer a question once and all 180 students see it. Participation data is logged and exportable for accreditation documentation.","features":[{"name":"Core Management","desc":"Essential discussion forums management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed discussion forums analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all discussion forums activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"EO-07","name":"News Portal","slug":"news-portal","desc":"Replace a tangle of departmental email newsletters and disconnected publishing tools with one institutional news portal that curates every story through a single editorial workflow, delivers content personalized by role and program, and shows you exactly which announcements students, faculty, and staff actually read. Your communications team publishes once; the portal handles the rest.","features":[{"name":"Core Management","desc":"Essential news portal management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed news portal analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all news portal activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"EO-08","name":"Blog & News Management","slug":"blog-news-management","desc":"Create, manage, and publish faculty research, student stories, and institutional updates from one platform with streamlined workflows, automated author credentials, and built-in analytics to track engagement and inquiry-driven outcomes.","features":[{"name":"Core Management","desc":"Essential blog & news management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"}]},{"id":"EO-09","name":"Notice Board & Announcements","slug":"notice-board-announcements","desc":"Publish targeted announcements to specific courses, departments, batches, faculty groups, and parent audiences with scheduled publication dates, automatic expiration, priority levels, per-student read-receipt tracking, circular management with formal numbering, and a searchable archive that proves who saw what and when.","features":[{"name":"Core Management","desc":"Essential notice board & announcements management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"}]},{"id":"EO-10","name":"Online Appointments","slug":"online-appointments","desc":"Let students and parents book advising sessions, counseling visits, financial aid meetings, registrar appointments, and faculty office hours through a self-service calendar. Staff define availability windows, set appointment types with configurable durations, attach pre-booking intake questions, and receive automated reminders. No-show tracking, rescheduling controls, cancellation policies, walk-in queue management, and follow-up notes keep every interaction documented.","features":[{"name":"Core Management","desc":"Essential online appointments management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed online appointments analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all online appointments activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"EO-11","name":"Survey Management","slug":"survey-management","desc":"Distribute course evaluations to every enrolled student automatically at semester end using SIS enrollment data, track response rates in real time, and deliver results to department chairs within 48 hours of the collection window closing. IR teams use the same platform to run program reviews, exit surveys, first-year experience assessments, and accreditation evidence collection without separate survey tools or manual data entry.","features":[{"name":"Core Management","desc":"Essential survey management management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed survey management analytics with custom report builder and data visualization"}]}]},{"name":"Connected Campus","code":"CC","slug":"connected-campus","blurb":"Connect your campus \u2014 video conferencing, messaging, social media, and third-party tools all working together smoothly.","modules":[{"id":"CC-01","name":"Moodle Integration","slug":"moodle-integration","desc":"Keep Moodle as your LMS and connect it to Alphabet's ERP layer. Sync student enrollments, fee records, and academic data automatically.","features":[]},{"id":"CC-02","name":"BigBlueButton Integration","slug":"bigbluebutton-integration","desc":"Run a self-hosted, open-source virtual classroom on your own servers so student data never leaves campus. BigBlueButton brings education-native features \u2014 multi-user whiteboard, breakout rooms, shared notes, attendance sync \u2014 directly into your timetable and student information system.","features":[]},{"id":"CC-03","name":"Zoom Integration","slug":"zoom-integration","desc":"Alphabet's Zoom integration automatically creates meetings from your academic timetable and syncs attendance from Zoom participation data directly into the SIS, so faculty never manually create meeting links and coordinators never chase spreadsheets to verify who attended a virtual session.","features":[]},{"id":"CC-04","name":"WhatsApp Integration","slug":"whatsapp-integration","desc":"Send fee reminders, attendance alerts, and exam notifications to parents and students via WhatsApp Business API. Automated templates with read-receipt tracking achieve 95%+ open rates \u2014 compared to under 20% for institutional email.","features":[{"name":"Core Management","desc":"Essential whatsapp integration management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed whatsapp integration analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all whatsapp integration activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"CC-05","name":"Social Media Marketing Tool","slug":"social-media-marketing-tool","desc":"Schedule and publish across Facebook, Instagram, LinkedIn, and Twitter from one calendar, auto-capture social form leads into the enrollment CRM, track every prospect from ad click through application to enrolled student, and calculate cost-per-enrolled-student for each campaign \u2014 all within your institution's existing platform.","features":[{"name":"Core Management","desc":"Essential social media marketing tool management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed social media marketing tool analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all social media marketing tool activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"CC-06","name":"Google Meet Integration","slug":"google-meet-integration","desc":"Automatically generate Google Meet links from your timetable, sync sessions to Google Calendar, deliver links directly to each student's portal, and record attendance from join and leave data \u2014 eliminating manual link creation and the email-chain chaos that follows.","features":[{"name":"Core Management","desc":"Essential google meet integration management capabilities"},{"name":"Student Portal","desc":"Self-service portal for students to access information"},{"name":"Basic Reporting","desc":"Standard reports and data export functionality"},{"name":"Role-Based Access","desc":"Configure user permissions and access levels"},{"name":"Advanced Analytics","desc":"Detailed google meet integration analytics with custom report builder and data visualization"},{"name":"Workflow Automation","desc":"Configure automated rules for approvals, notifications, and status transitions"},{"name":"Audit Trail","desc":"Complete audit logging of all google meet integration activities for compliance and accountability"},{"name":"Priority Support","desc":"Dedicated support team with SLA-backed response times"}]},{"id":"CC-07","name":"Microsoft Teams Integration","slug":"microsoft-teams-integration","desc":"Many institutions are paying for Microsoft 365 Education E3 or A3 licenses but faculty still schedule academic sessions in Zoom or Google Meet while Teams sits unused for anything pedagogical. This integration connects your academic timetable directly to Teams \u2014 creating channels per course, scheduling meetings from the academic calendar, syncing student rosters from enrollment, and pulling attendance from meeting participation data \u2014 so the Microsoft licenses your institution is already paying for actually cover academic delivery.","features":[]}]}]}
+</script>
+<script>(function(){
+  const DATA = JSON.parse(document.getElementById('alphabet-data').textContent);
+  const CATS = DATA.categories;
+
+  // Flatten module index for search / prev-next
+  const ALL_MODULES = [];
+  CATS.forEach(cat => {
+    cat.modules.forEach(m => {
+      ALL_MODULES.push({ ...m, catName: cat.name, catSlug: cat.slug, catCode: cat.code });
+    });
+  });
+
+  const bySlug = {};
+  ALL_MODULES.forEach(m => bySlug[m.slug] = m);
+
+  const navSections = document.getElementById('navSections');
+  const content = document.getElementById('content');
+  const breadcrumb = document.getElementById('breadcrumb');
+  const navHome = document.getElementById('navHome');
+
+  // ---------- Build sidebar ----------
+  function buildSidebar(){
+    navSections.innerHTML = '';
+    CATS.forEach(cat => {
+      const section = document.createElement('div');
+      section.className = 'nav-section';
+      section.dataset.cat = cat.slug;
+
+      const btn = document.createElement('button');
+      btn.className = 'nav-cat-btn';
+      btn.innerHTML = `
+        <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="cat-code">${cat.code}</span>
+        <span>${cat.name}</span>
+        <span class="cat-count">${cat.modules.length}</span>
+      `;
+      btn.addEventListener('click', () => {
+        section.classList.toggle('open');
+      });
+
+      const modsWrap = document.createElement('div');
+      modsWrap.className = 'nav-mods';
+      cat.modules.forEach(mod => {
+        const a = document.createElement('a');
+        a.className = 'nav-mod-link';
+        a.href = `#/module/${mod.slug}`;
+        a.dataset.slug = mod.slug;
+        a.innerHTML = `<span class="mod-id">${mod.id}</span><span>${mod.name}</span>`;
+        modsWrap.appendChild(a);
+      });
+
+      section.appendChild(btn);
+      section.appendChild(modsWrap);
+      navSections.appendChild(section);
+    });
+  }
+
+  function setActiveNav(slug){
+    document.querySelectorAll('.nav-mod-link').forEach(a => {
+      a.classList.toggle('active', a.dataset.slug === slug);
+    });
+    navHome.classList.toggle('active', !slug);
+    if (slug){
+      const mod = bySlug[slug];
+      if (mod){
+        const section = navSections.querySelector(`.nav-section[data-cat="${mod.catSlug}"]`);
+        if (section) section.classList.add('open');
+      }
+    }
+  }
+
+  // ---------- Render: Home ----------
+  function renderHome(){
+    breadcrumb.textContent = 'Overview';
+    const totalModules = ALL_MODULES.length;
+    content.innerHTML = `
+      <section class="hero">
+        <div class="hero-eyebrow"><span class="dot"></span> Product documentation</div>
+        <h1>One platform to run your entire <em>institution.</em></h1>
+        <p class="lead">Alphabet replaces disconnected systems with a single education ERP — admissions, learning, finance, and campus operations sharing one database. This is the reference for every module.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="num">${totalModules}</div><div class="lbl">Modules</div></div>
+          <div class="hero-stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+          <div class="hero-stat"><div class="num">3M+</div><div class="lbl">Users worldwide</div></div>
+          <div class="hero-stat"><div class="num">90+</div><div class="lbl">Countries</div></div>
+        </div>
+      </section>
+
+      <div class="section-label">Browse by category</div>
+      <div class="cat-grid">
+        ${CATS.map(cat => `
+          <a class="cat-card" href="#/category/${cat.slug}">
+            <div class="cat-card-top">
+              <span class="cat-code">${cat.code}</span>
+              <span class="cat-count">${cat.modules.length} modules</span>
+            </div>
+            <h3>${cat.name}</h3>
+            <p>${cat.blurb}</p>
+          </a>
+        `).join('')}
+      </div>
+    `;
+    setActiveNav(null);
+    window.scrollTo(0,0);
+  }
+
+  // ---------- Render: Category ----------
+  function renderCategory(slug){
+    const cat = CATS.find(c => c.slug === slug);
+    if (!cat) return renderNotFound();
+    breadcrumb.innerHTML = `<a href="#/">Overview</a><span class="sep">/</span><span class="current">${cat.name}</span>`;
+    content.innerHTML = `
+      <section class="mod-header">
+        <span class="mod-id-badge">${cat.code} · ${cat.modules.length} modules</span>
+        <h1>${cat.name}</h1>
+        <p class="mod-desc">${cat.blurb}</p>
+      </section>
+      <div class="cat-grid">
+        ${cat.modules.map(m => `
+          <a class="cat-card" href="#/module/${m.slug}">
+            <div class="cat-card-top">
+              <span class="cat-code">${m.id}</span>
+            </div>
+            <h3>${m.name}</h3>
+            <p>${m.desc}</p>
+          </a>
+        `).join('')}
+      </div>
+    `;
+    setActiveNav(null);
+    window.scrollTo(0,0);
+  }
+
+  // ---------- Render: Module ----------
+  function renderModule(slug){
+    const mod = bySlug[slug];
+    if (!mod) return renderNotFound();
+    const idx = ALL_MODULES.indexOf(mod);
+    const prev = ALL_MODULES[idx - 1];
+    const next = ALL_MODULES[idx + 1];
+
+    breadcrumb.innerHTML = `<a href="#/">Overview</a><span class="sep">/</span><a href="#/category/${mod.catSlug}">${mod.catName}</a><span class="sep">/</span><span class="current">${mod.name}</span>`;
+
+    const featuresHtml = mod.features && mod.features.length
+      ? `<div class="section-label">Key capabilities</div>
+         <div class="feature-grid">
+           ${mod.features.map(f => `
+             <div class="feature-card">
+               <h4>${f.name}</h4>
+               <p>${f.desc}</p>
+             </div>
+           `).join('')}
+         </div>`
+      : `<div class="section-label">Key capabilities</div>
+         <div class="empty-note">// Detailed capability list not yet published for this module.</div>`;
+
+    content.innerHTML = `
+      <section class="mod-header">
+        <span class="mod-id-badge">${mod.id} · ${mod.catName}</span>
+        <h1>${mod.name}</h1>
+        <p class="mod-desc">${mod.desc}</p>
+      </section>
+      ${featuresHtml}
+      <div class="mod-nav">
+        ${prev ? `<a class="mod-nav-link prev" href="#/module/${prev.slug}"><div class="lbl">← Previous</div><div class="name">${prev.name}</div></a>` : '<div style="flex:1"></div>'}
+        ${next ? `<a class="mod-nav-link next" href="#/module/${next.slug}"><div class="lbl">Next →</div><div class="name">${next.name}</div></a>` : '<div style="flex:1"></div>'}
+      </div>
+    `;
+    setActiveNav(slug);
+    window.scrollTo(0,0);
+  }
+
+  function renderNotFound(){
+    breadcrumb.textContent = 'Not found';
+    content.innerHTML = `
+      <section class="mod-header">
+        <span class="mod-id-badge">404</span>
+        <h1>Page not found</h1>
+        <p class="mod-desc">That module doesn't exist. <a href="#/" style="color:var(--lime)">Back to overview →</a></p>
+      </section>
+    `;
+    setActiveNav(null);
+  }
+
+  // ---------- Router ----------
+  function route(){
+    const hash = location.hash.replace(/^#/, '') || '/';
+    const parts = hash.split('/').filter(Boolean);
+    if (parts.length === 0){
+      renderHome();
+    } else if (parts[0] === 'category' && parts[1]){
+      renderCategory(parts[1]);
+    } else if (parts[0] === 'module' && parts[1]){
+      renderModule(parts[1]);
+    } else {
+      renderNotFound();
+    }
+    closeMobileSidebar();
+  }
+
+  function navigate(hash){
+    if (location.hash === hash){
+      route(); // same hash, force re-render
+    } else {
+      location.hash = hash;
+    }
+  }
+
+  window.addEventListener('hashchange', route);
+
+  // Delegate clicks on any in-app link (href starting with #/), so navigation
+  // works reliably even in sandboxed/preview contexts where native hash
+  // navigation via <a href> can be unreliable.
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href^="#/"]');
+    if (!link) return;
+    e.preventDefault();
+    navigate(link.getAttribute('href'));
+  });
+
+  // ---------- Command palette ----------
+  const cmdk = document.getElementById('cmdk');
+  const cmdkInput = document.getElementById('cmdkInput');
+  const cmdkResults = document.getElementById('cmdkResults');
+  let selIndex = 0;
+  let currentResults = [];
+
+  function openCmdk(){
+    cmdk.classList.add('open');
+    cmdkInput.value = '';
+    cmdkInput.focus();
+    renderResults('');
+  }
+  function closeCmdk(){
+    cmdk.classList.remove('open');
+  }
+
+  function renderResults(query){
+    const q = query.trim().toLowerCase();
+    let results;
+    if (!q){
+      results = ALL_MODULES.slice(0, 8);
+    } else {
+      results = ALL_MODULES.filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        m.desc.toLowerCase().includes(q) ||
+        m.catName.toLowerCase().includes(q) ||
+        m.id.toLowerCase().includes(q)
+      ).slice(0, 20);
+    }
+    currentResults = results;
+    selIndex = 0;
+    if (!results.length){
+      cmdkResults.innerHTML = `<div class="cmdk-empty">No modules match “${query}”</div>`;
+      return;
+    }
+    cmdkResults.innerHTML = results.map((m, i) => `
+      <div class="cmdk-item ${i===0?'sel':''}" data-slug="${m.slug}" data-i="${i}">
+        <span class="mid">${m.id}</span>
+        <span class="name">${m.name}</span>
+        <span class="cat">${m.catName}</span>
+      </div>
+    `).join('');
+  }
+
+  function updateSelHighlight(){
+    cmdkResults.querySelectorAll('.cmdk-item').forEach(el => {
+      el.classList.toggle('sel', Number(el.dataset.i) === selIndex);
+    });
+    const sel = cmdkResults.querySelector('.cmdk-item.sel');
+    if (sel) sel.scrollIntoView({ block: 'nearest' });
+  }
+
+  function goToSelected(){
+    const m = currentResults[selIndex];
+    if (m){
+      navigate(`#/module/${m.slug}`);
+      closeCmdk();
+    }
+  }
+
+  cmdkInput.addEventListener('input', (e) => renderResults(e.target.value));
+  cmdkResults.addEventListener('click', (e) => {
+    const item = e.target.closest('.cmdk-item');
+    if (item){
+      navigate(`#/module/${item.dataset.slug}`);
+      closeCmdk();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      cmdk.classList.contains('open') ? closeCmdk() : openCmdk();
+      return;
+    }
+    if (!cmdk.classList.contains('open')) return;
+    if (e.key === 'Escape'){ closeCmdk(); }
+    else if (e.key === 'ArrowDown'){ e.preventDefault(); selIndex = Math.min(selIndex+1, currentResults.length-1); updateSelHighlight(); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); selIndex = Math.max(selIndex-1, 0); updateSelHighlight(); }
+    else if (e.key === 'Enter'){ e.preventDefault(); goToSelected(); }
+  });
+
+  document.getElementById('searchTrigger').addEventListener('click', openCmdk);
+  cmdk.addEventListener('click', (e) => { if (e.target === cmdk) closeCmdk(); });
+
+  // ---------- Mobile sidebar ----------
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.add('open');
+    scrim.classList.add('open');
+  });
+  scrim.addEventListener('click', closeMobileSidebar);
+  function closeMobileSidebar(){
+    sidebar.classList.remove('open');
+    scrim.classList.remove('open');
+  }
+
+  // ---------- Theme ----------
+  const THEME_KEY = 'alphabet-docs-theme';
+  const root = document.documentElement;
+
+  function applyTheme(theme){
+    root.setAttribute('data-theme', theme);
+  }
+
+  function initTheme(){
+    let saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+    if (saved === 'light' || saved === 'dark'){
+      applyTheme(saved);
+    } else {
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      applyTheme(prefersLight ? 'light' : 'dark');
+    }
+  }
+
+  function toggleTheme(){
+    const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  initTheme();
+
+  // ---------- Init ----------
+  buildSidebar();
+  route();
+})();
+</script>
+</body>
+</html>
