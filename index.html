@@ -228,10 +228,10 @@ button{ font-family:inherit; cursor:pointer; }
 html[data-theme="light"] .theme-toggle .icon-sun{ display:none; }
 html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 
-.content{ padding:0 48px 100px; max-width:1120px; margin:0 auto; }
+.content{ padding:36px 48px 100px; max-width:1120px; margin:0 auto; }
 
 /* ---------- Home / hero ---------- */
-.hero{ padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:48px; }
+.hero{ padding:24px 0 40px; border-bottom:1px solid var(--border); margin-bottom:48px; }
 .hero-eyebrow{
   display:inline-flex; align-items:center; gap:8px;
   font-family:var(--font-mono); font-size:11.5px; color:var(--lime);
@@ -424,6 +424,16 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   padding:8px 12px; border-bottom:1px solid var(--border);
   font-family:var(--font-mono); font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em;
 }
+.code-tabs{ display:flex; gap:4px; }
+.code-tab{
+  font-family:var(--font-mono); font-size:11px; text-transform:none; letter-spacing:0;
+  color:var(--text-dim); background:transparent; border:1px solid transparent;
+  padding:4px 10px; border-radius:6px; transition:color .15s ease, background .15s ease, border-color .15s ease;
+}
+.code-tab:hover{ color:var(--text); }
+.code-tab.active{ color:var(--lime); background:var(--lime-glow); border-color:rgba(195,245,60,0.2); }
+.code-pane{ display:none; }
+.code-pane.active{ display:block; }
 .copy-btn{
   display:flex; align-items:center; gap:5px;
   font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
@@ -547,7 +557,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .api-endpoint-path{ font-size:12.5px; flex-wrap:wrap; }
   .cat-grid{ grid-template-columns:1fr; }
   .feature-grid{ grid-template-columns:1fr; }
-  .content{ padding:0 20px 80px; }
+  .content{ padding:24px 20px 80px; }
   .topbar{ padding:12px 20px; }
   .stat-pill{ display:none; }
   .sidebar-scrim{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:19; }
@@ -957,16 +967,65 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
     );
   }
 
-  function curlFor(ep){
-    let cmd = `curl -X ${ep.method} "https://api.iiwi.app${ep.path}"`;
-    if (ep.requiresAuth){
-      cmd += ` \\\n  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"`;
+  function snippetsFor(ep){
+    const base = 'https://api.iiwi.app';
+    const url = `${base}${ep.path}`;
+    const hasBody = !!ep.requestBody;
+    const bodyObj = hasBody ? ep.requestBody.example : null;
+    const bodyJson = hasBody ? JSON.stringify(bodyObj, null, 2) : '';
+    const bodyJsonIndented = hasBody ? JSON.stringify(bodyObj, null, 2).split('\n').join('\n  ') : '';
+
+    // ---- cURL ----
+    let curl = `curl -X ${ep.method} "${url}"`;
+    if (ep.requiresAuth) curl += ` \\\n  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"`;
+    if (hasBody){
+      curl += ` \\\n  -H "Content-Type: application/json"`;
+      curl += ` \\\n  -d '${bodyJson.replace(/'/g, "\\'")}'`;
     }
-    if (ep.requestBody){
-      cmd += ` \\\n  -H "Content-Type: application/json"`;
-      cmd += ` \\\n  -d '${JSON.stringify(ep.requestBody.example, null, 2).replace(/'/g, "\\'")}'`;
+
+    // ---- JavaScript (fetch) ----
+    let js = `const response = await fetch("${url}", {\n  method: "${ep.method}",\n  headers: {`;
+    const jsHeaders = [];
+    if (hasBody) jsHeaders.push(`    "Content-Type": "application/json"`);
+    if (ep.requiresAuth) jsHeaders.push(`    "Authorization": "Bearer YOUR_ACCESS_TOKEN"`);
+    js += `\n${jsHeaders.join(',\n')}\n  }`;
+    if (hasBody){
+      js += `,\n  body: JSON.stringify(${bodyJsonIndented})`;
     }
-    return cmd;
+    js += `\n});\n\nconst data = await response.json();`;
+
+    // ---- Python (requests) ----
+    let py = `import requests\n\nurl = "${url}"\n`;
+    const pyHeaders = [];
+    if (hasBody) pyHeaders.push(`    "Content-Type": "application/json"`);
+    if (ep.requiresAuth) pyHeaders.push(`    "Authorization": "Bearer YOUR_ACCESS_TOKEN"`);
+    if (pyHeaders.length){
+      py += `headers = {\n${pyHeaders.join(',\n')}\n}\n`;
+    }
+    if (hasBody){
+      py += `payload = ${bodyJson.replace(/null/g, 'None').replace(/true/g, 'True').replace(/false/g, 'False')}\n`;
+    }
+    const pyArgs = [];
+    if (pyHeaders.length) pyArgs.push('headers=headers');
+    if (hasBody) pyArgs.push('json=payload');
+    py += `\nresponse = requests.${ep.method.toLowerCase()}(url${pyArgs.length ? ', ' + pyArgs.join(', ') : ''})\nprint(response.json())`;
+
+    // ---- Node.js (axios) ----
+    let node = `const axios = require("axios");\n\n`;
+    const nodeHeaders = [];
+    if (hasBody) nodeHeaders.push(`    "Content-Type": "application/json"`);
+    if (ep.requiresAuth) nodeHeaders.push(`    "Authorization": "Bearer YOUR_ACCESS_TOKEN"`);
+    node += `axios({\n  method: "${ep.method.toLowerCase()}",\n  url: "${url}"`;
+    if (nodeHeaders.length) node += `,\n  headers: {\n${nodeHeaders.join(',\n')}\n  }`;
+    if (hasBody) node += `,\n  data: ${bodyJsonIndented}`;
+    node += `\n})\n  .then(res => console.log(res.data))\n  .catch(err => console.error(err));`;
+
+    return [
+      { lang: 'curl', label: 'cURL', code: curl },
+      { lang: 'javascript', label: 'JavaScript', code: js },
+      { lang: 'python', label: 'Python', code: py },
+      { lang: 'node', label: 'Node.js', code: node },
+    ];
   }
 
   function codeBlock(label, codeHtml, rawText){
@@ -981,6 +1040,26 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
           </button>
         </div>
         <pre id="${id}" data-raw="${escapeHtml(rawText)}"><code>${codeHtml}</code></pre>
+      </div>
+    `;
+  }
+
+  function codeBlockMulti(snippets){
+    const blockId = 'mcode-' + Math.random().toString(36).slice(2, 9);
+    return `
+      <div class="code-block" data-multi-id="${blockId}">
+        <div class="code-block-head">
+          <div class="code-tabs">
+            ${snippets.map((s, i) => `<button class="code-tab ${i===0?'active':''}" data-lang="${s.lang}">${s.label}</button>`).join('')}
+          </div>
+          <button class="copy-btn" data-copy-multi="${blockId}">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        ${snippets.map((s, i) => `
+          <pre class="code-pane ${i===0?'active':''}" data-lang="${s.lang}" data-raw="${escapeHtml(s.code)}"><code>${escapeHtml(s.code)}</code></pre>
+        `).join('')}
       </div>
     `;
   }
@@ -1097,7 +1176,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
          `).join('')}`
       : '';
 
-    const curl = curlFor(ep);
+    const snippets = snippetsFor(ep);
 
     content.innerHTML = `
       <section class="mod-header">
@@ -1120,8 +1199,8 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
       ${requestBodyHtml}
       ${responsesHtml}
 
-      <div class="section-label">Example request (cURL)</div>
-      ${codeBlock('cURL', escapeHtml(curl).replace(/\n/g, '<br>'), curl)}
+      <div class="section-label">Example request</div>
+      ${codeBlockMulti(snippets)}
 
       <div class="mod-nav">
         ${prev ? `<a class="mod-nav-link prev" href="#/api/endpoint/${prev.slug}"><div class="lbl">← Previous</div><div class="name">${prev.method} ${prev.path}</div></a>` : '<div style="flex:1"></div>'}
@@ -1184,11 +1263,24 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
       navigate(link.getAttribute('href'));
       return;
     }
+    const tab = e.target.closest('.code-tab');
+    if (tab){
+      const block = tab.closest('.code-block');
+      block.querySelectorAll('.code-tab').forEach(t => t.classList.toggle('active', t === tab));
+      block.querySelectorAll('.code-pane').forEach(p => p.classList.toggle('active', p.dataset.lang === tab.dataset.lang));
+      return;
+    }
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn){
-      const targetId = copyBtn.dataset.copyTarget;
-      const el = document.getElementById(targetId);
-      const text = el ? el.dataset.raw : '';
+      let text = '';
+      if (copyBtn.dataset.copyTarget){
+        const el = document.getElementById(copyBtn.dataset.copyTarget);
+        text = el ? el.dataset.raw : '';
+      } else if (copyBtn.dataset.copyMulti){
+        const block = copyBtn.closest('.code-block');
+        const active = block.querySelector('.code-pane.active');
+        text = active ? active.dataset.raw : '';
+      }
       const finish = () => {
         const original = copyBtn.innerHTML;
         copyBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Copied';
