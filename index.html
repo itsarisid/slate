@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Alphabet — Education ERP Documentation</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CjxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjgiIGZpbGw9IiNjM2Y1M2MiLz4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMGEwZDBhIiBzdHJva2Utd2lkdGg9IjMuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KPHBhdGggZD0iTTcgMjUuNSAxMyAxMCIvPgo8cGF0aCBkPSJNMjUgMjUuNSAxOSAxMCIvPgo8cGF0aCBkPSJNMTEgMTguNWgxMCIvPgo8Y2lyY2xlIGN4PSIxNiIgY3k9IjcuNCIgcj0iMi4xIiBmaWxsPSIjMGEwZDBhIiBzdHJva2U9Im5vbmUiLz4KPC9nPgo8L3N2Zz4=" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c3f53c'/%3E%3Cg fill='none' stroke='%230a0d0a' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 25.5 13 10'/%3E%3Cpath d='M25 25.5 19 10'/%3E%3Cpath d='M11 18.5h10'/%3E%3C/g%3E%3Ccircle cx='16' cy='7.4' r='2.1' fill='%230a0d0a'/%3E%3C/svg%3E" />
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
@@ -105,9 +107,10 @@ button{ font-family:inherit; cursor:pointer; }
   width:30px; height:30px; border-radius:8px;
   background:var(--lime);
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--font-mono); font-weight:700; color:#0a0d0a; font-size:15px;
+  color:#0a0d0a;
   flex-shrink:0;
 }
+.brand-mark svg{ width:17px; height:17px; }
 .brand-name{ font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:-0.01em; }
 .brand-sub{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:0.06em; text-transform:uppercase; }
 
@@ -228,7 +231,7 @@ button{ font-family:inherit; cursor:pointer; }
 html[data-theme="light"] .theme-toggle .icon-sun{ display:none; }
 html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 
-.content{ padding:36px 48px 100px; max-width:1120px; margin:0 auto; }
+.content{ padding:44px 48px 100px; max-width:1120px; margin:0 auto; }
 
 /* ---------- Home / hero ---------- */
 .hero{ padding:24px 0 40px; border-bottom:1px solid var(--border); margin-bottom:48px; }
@@ -424,6 +427,21 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   padding:8px 12px; border-bottom:1px solid var(--border);
   font-family:var(--font-mono); font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em;
 }
+
+.code-tabs{
+  display:flex; align-items:center; gap:2px;
+  padding:6px 8px; border-bottom:1px solid var(--border);
+}
+.code-tab{
+  font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim);
+  background:transparent; border:1px solid transparent; padding:5px 11px; border-radius:6px;
+  transition:color .15s ease, background .15s ease, border-color .15s ease;
+}
+.code-tab:hover{ color:var(--text-muted); }
+.code-tab.active{ color:var(--lime); background:var(--lime-glow); border-color:rgba(195,245,60,0.25); }
+.code-tabs .copy-btn{ margin-left:auto; }
+.code-pane{ display:none; }
+.code-pane.active{ display:block; }
 .code-tabs{ display:flex; gap:4px; }
 .code-tab{
   font-family:var(--font-mono); font-size:11px; text-transform:none; letter-spacing:0;
@@ -557,7 +575,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .api-endpoint-path{ font-size:12.5px; flex-wrap:wrap; }
   .cat-grid{ grid-template-columns:1fr; }
   .feature-grid{ grid-template-columns:1fr; }
-  .content{ padding:24px 20px 80px; }
+  .content{ padding:28px 20px 80px; }
   .topbar{ padding:12px 20px; }
   .stat-pill{ display:none; }
   .sidebar-scrim{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:19; }
@@ -572,7 +590,14 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <div class="brand-mark">α</div>
+      <div class="brand-mark">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 25.5 13 10"/>
+          <path d="M25 25.5 19 10"/>
+          <path d="M11 18.5h10"/>
+          <circle cx="16" cy="7.4" r="2.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
       <div>
         <div class="brand-name">Alphabet</div>
         <div class="brand-sub">ERP Docs</div>
@@ -803,7 +828,12 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
         <circle class="hub-core-ring" cx="200" cy="200" r="46"/>
         ${hubPoints.map(([x,y]) => `<line class="hub-line" x1="200" y1="200" x2="${x}" y2="${y}"/>`).join('')}
         <circle class="hub-core" cx="200" cy="200" r="30"/>
-        <text x="200" y="205" text-anchor="middle" style="font-family:var(--font-display); font-weight:700; font-size:15px; fill:#0a0d0a;">α</text>
+        <g transform="translate(200,200) scale(1.9) translate(-16,-16.2)" fill="none" stroke="#0a0d0a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 25.5 13 10"/>
+          <path d="M25 25.5 19 10"/>
+          <path d="M11 18.5h10"/>
+          <circle cx="16" cy="7.4" r="2.1" fill="#0a0d0a" stroke="none"/>
+        </g>
         ${hubPoints.map(([x,y], i) => `
           <circle class="hub-node" cx="${x}" cy="${y}" r="20"/>
           <circle class="hub-node-dot" cx="${x}" cy="${y}" r="3"/>
@@ -967,9 +997,22 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
     );
   }
 
+  function placeholderForParam(name){
+    const n = name.toLowerCase();
+    if (n.includes('email')) return 'jane.doe@example.com';
+    if (n.includes('code')) return 'ABC123';
+    if (n.includes('userid') || n === 'id') return '3fa85f64-5717-4562-b3fc-2c963f66afa6';
+    if (n.includes('token')) return 'YOUR_TOKEN';
+    return `YOUR_${name.toUpperCase()}`;
+  }
+
   function snippetsFor(ep){
     const base = 'https://api.iiwi.app';
-    const url = `${base}${ep.path}`;
+    let url = `${base}${ep.path}`;
+    if (ep.parameters && ep.parameters.length){
+      const qs = ep.parameters.map(p => `${p.name}=${encodeURIComponent(placeholderForParam(p.name))}`).join('&');
+      url += `?${qs}`;
+    }
     const hasBody = !!ep.requestBody;
     const bodyObj = hasBody ? ep.requestBody.example : null;
     const bodyJson = hasBody ? JSON.stringify(bodyObj, null, 2) : '';
