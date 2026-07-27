@@ -1,3 +1,6 @@
+<img width="669" height="373" alt="screen-removebg-preview" src="https://github.com/user-attachments/assets/f235de79-f02b-4ac7-9639-f6970f1315ac" />
+
+
 # Alphabet
 
 Alphabet is a production-oriented .NET 10 Web API solution template built with Clean Architecture, vertical slicing, CQRS, MediatR, FluentValidation, EF Core, JWT authentication, Swagger, health checks, and cache abstractions that can switch between memory and Redis.
