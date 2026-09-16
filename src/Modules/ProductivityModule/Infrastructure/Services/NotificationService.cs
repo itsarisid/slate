@@ -1,7 +1,7 @@
 using Alphabet.Application.Common.Interfaces;
-using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using ProductivityNotificationService = Alphabet.Application.Common.Interfaces.Productivity.INotificationService;
 
 namespace Alphabet.Infrastructure.Services;
 
@@ -10,7 +10,7 @@ namespace Alphabet.Infrastructure.Services;
 /// </summary>
 public sealed class NotificationService(
     ICommunicationService communicationService,
-    AppDbContext dbContext) : INotificationService
+    AppDbContext dbContext) : ProductivityNotificationService
 {
     /// <summary>
     /// Send reminder async.

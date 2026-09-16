@@ -1,8 +1,6 @@
-using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.LeaveManagement.Dtos;
 using Alphabet.Application.Features.LeaveManagement.Shared;
 using Alphabet.Application.Results;
-using Alphabet.Domain.Entities;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.LeaveManagement;
 using MediatR;

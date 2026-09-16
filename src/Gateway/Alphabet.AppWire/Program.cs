@@ -115,7 +115,7 @@ if (schedulerSettings.Provider.Equals("Hangfire", StringComparison.OrdinalIgnore
         });
 }
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
 

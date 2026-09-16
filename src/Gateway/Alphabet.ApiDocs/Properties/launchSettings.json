@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Alphabet.ApiDocs": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58441;http://localhost:58442"
+    }
+  }
+}

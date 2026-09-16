@@ -1,7 +1,7 @@
-using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces;
 using MediatR;
+using ProductivityNotificationService = Alphabet.Application.Common.Interfaces.Productivity.INotificationService;
 
 namespace Alphabet.Application.Features.Productivity.Reminders.Commands;
 
@@ -15,7 +15,7 @@ public sealed record DismissReminderCommand(Guid ReminderId, bool TriggerTest) :
 
 public sealed class DismissReminderCommandHandler(
     IRepository<Reminder> reminderRepository,
-    INotificationService notificationService,
+    ProductivityNotificationService notificationService,
     ICurrentUserService currentUserService,
     IUnitOfWork unitOfWork)
     : IRequestHandler<DismissReminderCommand, Result>

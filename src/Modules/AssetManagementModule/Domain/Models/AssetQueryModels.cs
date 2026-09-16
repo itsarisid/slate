@@ -1,5 +1,3 @@
-using Alphabet.Domain.Enums;
-
 namespace Alphabet.Domain.Models;
 
 /// <summary>

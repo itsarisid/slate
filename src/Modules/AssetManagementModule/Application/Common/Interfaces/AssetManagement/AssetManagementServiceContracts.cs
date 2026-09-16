@@ -1,5 +1,3 @@
-using Alphabet.Domain.Entities;
-
 namespace Alphabet.Application.Common.Interfaces.AssetManagement;
 
 /// <summary>

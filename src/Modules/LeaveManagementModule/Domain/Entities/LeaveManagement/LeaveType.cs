@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Alphabet.Domain.Enums;
 using Alphabet.Domain.Exceptions;
 using Alphabet.Domain.Models;
 

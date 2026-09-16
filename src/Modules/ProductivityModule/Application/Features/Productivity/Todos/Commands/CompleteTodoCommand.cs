@@ -1,8 +1,8 @@
-using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using MediatR;
+using ProductivityNotificationService = Alphabet.Application.Common.Interfaces.Productivity.INotificationService;
 
 namespace Alphabet.Application.Features.Productivity.Todos.Commands;
 
@@ -17,7 +17,7 @@ public sealed record CompleteTodoCommand(Guid TodoId, bool IsComplete) : IReques
 public sealed class CompleteTodoCommandHandler(
     ITodoRepository todoRepository,
     IRepository<Reminder> reminderRepository,
-    INotificationService notificationService,
+    ProductivityNotificationService notificationService,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUserService)
     : IRequestHandler<CompleteTodoCommand, Result>

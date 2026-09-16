@@ -1,10 +1,10 @@
-using Alphabet.Application.Common.Interfaces.Productivity;
 using Alphabet.Application.Features.Productivity.Dtos;
 using Alphabet.Application.Results;
 using Alphabet.Domain.Interfaces;
 using Alphabet.Domain.Interfaces.Productivity;
 using Alphabet.Domain.ValueObjects;
 using MediatR;
+using ProductivityNotificationService = Alphabet.Application.Common.Interfaces.Productivity.INotificationService;
 
 namespace Alphabet.Application.Features.Productivity.Tasks.Commands;
 
@@ -32,7 +32,7 @@ public sealed class CreateTaskCommandHandler(
     ITaskRepository taskRepository,
     IRepository<TaskDependency> dependencyRepository,
     IUnitOfWork unitOfWork,
-    INotificationService notificationService,
+    ProductivityNotificationService notificationService,
     ICurrentUserService currentUserService)
     : IRequestHandler<CreateTaskCommand, Result<TaskDto>>
 {

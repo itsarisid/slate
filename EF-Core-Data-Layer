@@ -1,0 +1,115 @@
+# EF Core Data Layer — generated from `DB_Script.sql`
+
+This is a complete `DbContext` + entity model generated from your SQL Server
+script (74 `CREATE TABLE` statements across `dbo` and `HangFire`). It targets
+**.NET 8 / EF Core 8**, uses `Guid` v7-friendly primary keys, and nullable
+reference types.
+
+## What "optimize" means here
+
+The script itself defines **zero indexes beyond the clustered primary key,
+and zero `FOREIGN KEY` constraints** on any of the 60+ business tables — every
+relationship (`AssetId`, `UserId`, `CategoryId`, …) was an unconstrained
+`uniqueidentifier` column. That's the main problem worth fixing, so the
+generated model does three things the raw script doesn't:
+
+1. **Adds an index on every foreign-key-shaped column.** Without these,
+   every join (e.g. `Assets` → `AssetCategories`, `LeaveRequests` → `Users`)
+   forces a table scan on the referencing table. This is the single biggest
+   win for a schema this size.
+2. **Adds real `FOREIGN KEY` constraints** via `HasOne().WithMany().HasForeignKey()`
+   with `DeleteBehavior.Restrict` (safer default than cascade for an ERP
+   system — you don't want deleting a category to silently cascade-delete
+   every asset in it). Swap to `Cascade`/`SetNull` per-relationship if that's
+   not what you want.
+3. **Uses ASP.NET Core Identity properly instead of 7 hand-rolled tables.**
+   `AspNetRoles`, `AspNetUserClaims`, `AspNetUserLogins`, `AspNetUserRoles`,
+   `AspNetUserTokens`, `AspNetRoleClaims`, and `Users` are exactly the
+   Identity schema (`Users` = `AspNetUsers` renamed, with extra profile
+   columns bolted on). `AppDbContext` now extends
+   `IdentityDbContext<ApplicationUser, ApplicationRole, Guid>`, so those 7
+   tables — and all their token/claim plumbing — are handled by the
+   framework instead of by hand.
+4. **`HasMaxLength` / `HasPrecision` on every bounded column**, and
+   `.IsUnique()` on the columns that are clearly natural keys
+   (`Assets.AssetTag`, `AssetLocations.Code`, `LeaveApprovalChains.Code`,
+   `LegacyUsers.Email`) but weren't declared unique in the script.
+5. **`HangFire.*` tables are intentionally excluded** from the `DbContext` —
+   Hangfire.SqlServer manages and migrates its own schema; mapping those
+   tables in EF Core would fight the Hangfire storage provider.
+6. **`__EFMigrationsHistory` is excluded** — EF Core owns that table itself.
+
+## Structure
+
+```
+Data/
+  AppDbContext.cs                 # DbSets + all Fluent API config
+  Entities/
+    Identity/    ApplicationUser.cs, ApplicationRole.cs
+    Assets/      Asset, AssetCategory, AssetLocation, AssetAssignment, ...
+    Leave/       LeaveRequest, LeaveType, LeaveBalance, ...
+    Privileges/  Privilege, PrivilegeRequest, RolePrivilege, UserPrivilege, ...
+    Productivity/ProductivityTask, ProductivityNote, ProductivityCalendarEvent, ...
+    Scheduling/  SchedulerJob, SchedulerJobExecution, SchedulerJobHistory
+    Common/      AuditLog, AuthRecord, LegacyUser, Product, RefreshToken
+```
+55 entity classes, one file each, grouped by domain (matches the naming
+clusters already in the script: `Asset*`, `Leave*`, `Privilege*`,
+`Productivity*`, `Scheduler*`).
+
+## Wiring it up
+
+```csharp
+// Program.cs
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services
+    .AddIdentityCore<ApplicationUser>(o => o.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<ApplicationRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+// Hangfire keeps managing its own schema/migrations — don't put it through EF:
+builder.Services.AddHangfire(cfg => cfg.UseSqlServerStorage(
+    builder.Configuration.GetConnectionString("Default")));
+```
+
+Since the tables already exist (this is a reverse-engineered script), your
+first migration should be scaffolded against the *existing* database so EF
+doesn't try to re-create anything:
+
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+If instead you want EF to own schema creation going forward (fresh
+environments), just run `dotnet ef database update` against an empty
+database — the new indexes and FK constraints will be created as part of
+that migration.
+
+## Things worth double-checking against your actual domain rules
+
+I inferred foreign-key targets from column-naming convention
+(`AssetId` → `Assets`, `LeaveTypeId` → `LeaveTypes`, etc.) plus a handful of
+manual overrides for ambiguous names (`CategoryId` → `AssetCategories`,
+`ApprovalChainId` → `LeaveApprovalChains`, `WorkflowId` on
+`LeaveWorkflowSteps` → `LeaveApprovalWorkflows`). A few columns had no safe
+target and were left as indexed-but-unconstrained scalars — worth a quick
+read of the fluent config, they're only these:
+- `Assets.SupplierId` — no `Suppliers` table exists in the script.
+- `AssetCategories/PrivilegeCategories.ParentCategoryId` — self-referencing,
+  wired up.
+- `AssetWorkflowInstances.CurrentStepId` — no dedicated steps table for
+  asset workflows (unlike `LeaveWorkflowSteps`), so left unconstrained.
+- `ProductivityAttachments/Comments/Tags/Reminders.EntityId` and
+  `SmartLists`'s polymorphic references — these are polymorphic
+  (`EntityType` + `EntityId`) so they can't get a normal FK; that's by
+  design in a "generic attachment/comment" pattern, not something to fix.
+
+Navigation properties were deliberately **not** added (no `public Asset
+Category { get; set; }` collections) to keep the 55 entities lean and avoid
+guessing at collection names you haven't specified — relationships are
+still fully enforced at the FK/index level via `HasForeignKey`. Add
+navigation properties where your query patterns actually need
+`.Include()`.
