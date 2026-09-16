@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(
         "DefaultCors",
         policy => policy
-            .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? ["https://localhost:3000"])
+            .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? ["http://localhost:5173"])
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());
@@ -77,6 +77,7 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
 app.Use(async (context, next) =>
@@ -87,7 +88,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCors("DefaultCors");
 app.UseAuthentication();
