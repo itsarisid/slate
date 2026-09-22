@@ -17,6 +17,7 @@
     <Project Path="src/Modules/ProductivityModule/ProductivityModule.csproj" />
     <Project Path="src/Modules/ProductModule/ProductModule.csproj" />
     <Project Path="src/Modules/SchedulerModule/SchedulerModule.csproj" />
+    <Project Path="src/Modules/SystemLogModule/SystemLogModule.csproj" />
   </Folder>
   <Folder Name="/src/Gateway/">
     <Project Path="src/Gateway/Alphabet.ApiDocs/Alphabet.ApiDocs.csproj" />

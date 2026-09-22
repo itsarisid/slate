@@ -141,4 +141,16 @@ public interface IIdentityService
     /// Returns audit log entries for a given user.
     /// </summary>
     Task<IReadOnlyList<AuditLogDto>> GetUserAuditLogsAsync(Guid userId, int take, int skip, CancellationToken cancellationToken);
+
+    Task<Result<UserProfileDto>> UpdateProfileAsync(Guid userId, UpdateUserProfileRequest request, CancellationToken cancellationToken);
+
+    Task<Result<UserProfileDto>> UpdateAvatarAsync(Guid userId, string? avatarUrl, CancellationToken cancellationToken);
+
+    Task<Result<UserPreferencesDto>> UpdatePreferencesAsync(Guid userId, UpdateUserPreferencesRequest request, CancellationToken cancellationToken);
+
+    Task<Result<IReadOnlyList<UserSessionDto>>> GetSessionsAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<Result> RevokeSessionAsync(Guid userId, Guid sessionId, CancellationToken cancellationToken);
+
+    Task<Result> RevokeAllSessionsAsync(Guid userId, CancellationToken cancellationToken);
 }

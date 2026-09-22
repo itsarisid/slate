@@ -1,5 +1,6 @@
 using Alphabet.Modules.IdentityModule.Api.Resource;
 using Alphabet.Common.Extensions;
+using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Commands;
 using Alphabet.Application.Features.Identity.Commands.Mfa;
 using Alphabet.Application.Features.Identity.Dtos;
@@ -11,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -32,6 +34,7 @@ public static class IdentityModuleEndpoints
             .Build();
 
         MapAuth(endpoints, versionSet);
+        MapSelfServiceUsers(endpoints, versionSet);
         MapAdmin(endpoints, versionSet);
         return endpoints;
     }
@@ -323,6 +326,240 @@ public static class IdentityModuleEndpoints
         .Produces<RecoveryCodesDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
         .WithDocumentation(ApiResource.RegenerateRecoveryCodes);
+
+        group.MapGet(ApiResource.GetSessions.Endpoint, async Task<Results<Ok<IReadOnlyList<UserSessionDto>>, BadRequest<ProblemDetails>>> (
+            ICurrentUserService currentUserService,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var result = await sender.Send(new GetUserSessionsQuery(userId), ct);
+            return result.IsFailure || result.Value is null
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Get sessions failed", Detail = result.Error })
+                : TypedResults.Ok(result.Value);
+        })
+        .RequireAuthorization()
+        .Produces<IReadOnlyList<UserSessionDto>>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.GetSessions);
+
+        group.MapDelete(ApiResource.RevokeSession.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+            Guid sessionId,
+            ICurrentUserService currentUserService,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var result = await sender.Send(new RevokeUserSessionCommand(userId, sessionId), ct);
+            return result.IsFailure
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Revoke session failed", Detail = result.Error })
+                : TypedResults.Ok();
+        })
+        .RequireAuthorization()
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.RevokeSession);
+
+        group.MapDelete(ApiResource.RevokeAllSessions.Endpoint, async Task<Results<Ok, BadRequest<ProblemDetails>>> (
+            HttpContext httpContext,
+            ICurrentUserService currentUserService,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var result = await sender.Send(new RevokeAllUserSessionsCommand(userId), ct);
+            if (result.IsFailure)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Sign out everywhere failed", Detail = result.Error });
+            }
+
+            IdentityCookieWriter.ClearAuthCookies(httpContext);
+            return TypedResults.Ok();
+        })
+        .RequireAuthorization()
+        .Produces(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.RevokeAllSessions);
+    }
+
+    private static void MapSelfServiceUsers(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
+    {
+        var group = endpoints.MapGroup("api/v{version:apiVersion}/users/me")
+            .WithApiVersionSet(versionSet)
+            .HasApiVersion(new ApiVersion(1, 0))
+            .WithTags("Identity Module")
+            .RequireAuthorization();
+
+        group.MapPut(ApiResource.UpdateMyProfile.Endpoint, async Task<Results<Ok<UserProfileDto>, BadRequest<ProblemDetails>>> (
+            [FromBody] UpdateUserProfileRequest request,
+            ICurrentUserService currentUserService,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var result = await sender.Send(new UpdateUserProfileCommand(userId, request), ct);
+            return result.IsFailure || result.Value is null
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Update profile failed", Detail = result.Error })
+                : TypedResults.Ok(result.Value);
+        })
+        .Accepts<UpdateUserProfileRequest>("application/json")
+        .Produces<UserProfileDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.UpdateMyProfile);
+
+        group.MapPost(ApiResource.UploadMyAvatar.Endpoint, async Task<Results<Ok<UserProfileDto>, BadRequest<ProblemDetails>>> (
+            [FromForm] IFormFile avatar,
+            ICurrentUserService currentUserService,
+            IWebHostEnvironment environment,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var extensions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["image/jpeg"] = ".jpg", ["image/png"] = ".png", ["image/gif"] = ".gif", ["image/webp"] = ".webp"
+            };
+            if (avatar.Length == 0 || avatar.Length > 5 * 1024 * 1024 || !extensions.TryGetValue(avatar.ContentType, out var extension))
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Invalid avatar", Detail = "Upload a JPEG, PNG, GIF, or WebP image no larger than 5 MB." });
+            }
+
+            var directory = Path.Combine(environment.WebRootPath ?? Path.Combine(environment.ContentRootPath, "wwwroot"), "uploads", "avatars");
+            Directory.CreateDirectory(directory);
+            var fileName = $"{userId:N}{extension}";
+            var filePath = Path.Combine(directory, fileName);
+            await using (var stream = File.Create(filePath))
+            {
+                await avatar.CopyToAsync(stream, ct);
+            }
+
+            var avatarUrl = $"/uploads/avatars/{fileName}";
+            var result = await sender.Send(new UpdateUserAvatarCommand(userId, avatarUrl), ct);
+            if (result.IsFailure || result.Value is null)
+            {
+                File.Delete(filePath);
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Upload avatar failed", Detail = result.Error });
+            }
+
+            foreach (var oldFile in Directory.EnumerateFiles(directory, $"{userId:N}.*"))
+            {
+                if (!string.Equals(oldFile, filePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    File.Delete(oldFile);
+                }
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+        .Accepts<IFormFile>("multipart/form-data")
+        .Produces<UserProfileDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.UploadMyAvatar);
+
+        group.MapDelete(ApiResource.DeleteMyAvatar.Endpoint, async Task<Results<Ok<UserProfileDto>, BadRequest<ProblemDetails>>> (
+            ICurrentUserService currentUserService,
+            IWebHostEnvironment environment,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var result = await sender.Send(new UpdateUserAvatarCommand(userId, null), ct);
+            if (result.IsFailure || result.Value is null)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Delete avatar failed", Detail = result.Error });
+            }
+
+            var directory = Path.Combine(environment.WebRootPath ?? Path.Combine(environment.ContentRootPath, "wwwroot"), "uploads", "avatars");
+            if (Directory.Exists(directory))
+            {
+                foreach (var file in Directory.EnumerateFiles(directory, $"{userId:N}.*"))
+                {
+                    File.Delete(file);
+                }
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+        .Produces<UserProfileDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.DeleteMyAvatar);
+
+        group.MapGet(ApiResource.GetMyActivity.Endpoint, async Task<Results<Ok<UserActivityDto>, BadRequest<ProblemDetails>>> (
+            int? take,
+            int? skip,
+            ICurrentUserService currentUserService,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var activity = await sender.Send(new GetUserAuditLogsQuery(userId, Math.Clamp(take ?? 50, 1, 100), Math.Max(skip ?? 0, 0)), ct);
+            var sessions = await sender.Send(new GetUserSessionsQuery(userId), ct);
+            if (sessions.IsFailure || sessions.Value is null)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Get activity failed", Detail = sessions.Error });
+            }
+
+            return TypedResults.Ok(new UserActivityDto(
+                activity,
+                sessions.Value
+                    .Select(x => x.IpAddress)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Cast<string>()
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray()));
+        })
+        .Produces<UserActivityDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.GetMyActivity);
+
+        group.MapPut(ApiResource.UpdateMyPreferences.Endpoint, async Task<Results<Ok<UserPreferencesDto>, BadRequest<ProblemDetails>>> (
+            [FromBody] UpdateUserPreferencesRequest request,
+            ICurrentUserService currentUserService,
+            [FromServices] ISender sender,
+            CancellationToken ct) =>
+        {
+            if (currentUserService.UserId is not Guid userId)
+            {
+                return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
+            }
+
+            var result = await sender.Send(new UpdateUserPreferencesCommand(userId, request), ct);
+            return result.IsFailure || result.Value is null
+                ? TypedResults.BadRequest(new ProblemDetails { Title = "Update preferences failed", Detail = result.Error })
+                : TypedResults.Ok(result.Value);
+        })
+        .Accepts<UpdateUserPreferencesRequest>("application/json")
+        .Produces<UserPreferencesDto>(StatusCodes.Status200OK)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+        .WithDocumentation(ApiResource.UpdateMyPreferences);
     }
     /// <summary>
     /// Map admin.

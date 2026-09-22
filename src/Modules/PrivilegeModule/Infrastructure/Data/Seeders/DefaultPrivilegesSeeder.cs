@@ -41,8 +41,6 @@ public static class DefaultPrivilegesSeeder
         ("workflow.initiate", "Initiate Workflows", "Asset Workflow", ["asset.view"]),
         ("workflow.approve", "Approve Workflows", "Asset Workflow", ["workflow.initiate"]),
         ("workflow.delegate", "Delegate Workflows", "Asset Workflow", ["workflow.approve"]),
-        ("report.generate", "Generate Reports", "Reporting", []),
-        ("report.export", "Export Reports", "Reporting", ["report.generate"]),
         ("leave.request.create", "Create Leave Requests", "Leave Management", []),
         ("leave.request.view", "View Leave Requests", "Leave Management", []),
         ("leave.request.cancel", "Cancel Leave Requests", "Leave Management", ["leave.request.view"]),
@@ -84,8 +82,15 @@ public static class DefaultPrivilegesSeeder
             }
         }
 
+        var pendingNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         foreach (var configuredSystemPrivilege in settings.SystemPrivileges)
         {
+            if (!pendingNames.Add(configuredSystemPrivilege.Name))
+            {
+                continue;
+            }
+
             if (await repository.GetPrivilegeByNameAsync(configuredSystemPrivilege.Name, CancellationToken.None) is not null)
             {
                 continue;
@@ -115,6 +120,11 @@ public static class DefaultPrivilegesSeeder
 
         foreach (var item in DefaultPrivileges)
         {
+            if (!pendingNames.Add(item.Name))
+            {
+                continue;
+            }
+
             var category = await repository.GetCategoryByNameAsync(item.Category, CancellationToken.None)
                 ?? PrivilegeCategory.Create(item.Category, null, null, 0);
 
@@ -136,16 +146,35 @@ public static class DefaultPrivilegesSeeder
 
         await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
-        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Admin", ["user.view", "user.create", "user.edit", "user.delete", "role.view", "role.create", "role.assign", "privilege.view", "privilege.assign", "audit.view", "report.generate", "report.export", "asset.view", "asset.create", "asset.update", "asset.delete", "asset.assign", "asset.unassign", "asset.transfer", "asset.maintenance", "asset.audit", "asset.admin", "workflow.initiate", "workflow.approve", "workflow.delegate"], logger);
-        await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Admin", ["user.view", "user.create", "user.edit", "user.delete", "role.view", "role.create", "role.assign", "privilege.view", "privilege.assign", "audit.view", "report.generate", "report.export", "leave.request.create", "leave.request.view", "leave.request.cancel", "leave.request.modify", "leave.approve.level1", "leave.approve.level2", "leave.approve.levelN", "leave.approve.batch", "leave.delegate.create", "leave.delegate.revoke", "leave.balance.view", "leave.balance.view.any", "leave.balance.adjust", "leave.type.manage", "leave.chain.manage", "leave.report.view", "leave.audit.view", "leave.admin"], logger);
+        await AssignRolePrivilegesAsync(
+            repository,
+            unitOfWork,
+            roleManager,
+            "Admin",
+            [
+                "user.view", "user.create", "user.edit", "user.delete",
+                "role.view", "role.create", "role.assign",
+                "privilege.view", "privilege.assign",
+                "audit.view",
+                "report.generate", "report.export",
+                "asset.view", "asset.create", "asset.update", "asset.delete", "asset.assign", "asset.unassign", "asset.transfer", "asset.maintenance", "asset.audit", "asset.admin",
+                "workflow.initiate", "workflow.approve", "workflow.delegate",
+                "leave.request.create", "leave.request.view", "leave.request.cancel", "leave.request.modify",
+                "leave.approve.level1", "leave.approve.level2", "leave.approve.levelN", "leave.approve.batch",
+                "leave.delegate.create", "leave.delegate.revoke",
+                "leave.balance.view", "leave.balance.view.any", "leave.balance.adjust",
+                "leave.type.manage", "leave.chain.manage", "leave.report.view", "leave.audit.view", "leave.admin"
+            ],
+            logger);
+
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "UserManager", ["user.view", "user.create", "user.edit", "user.delete", "role.view"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Auditor", ["audit.view", "user.view", "asset.audit", "asset.view"], logger);
         await AssignRolePrivilegesAsync(repository, unitOfWork, roleManager, "Reporter", ["report.generate", "report.export", "asset.view"], logger);
     }
+
     /// <summary>
     /// Assign role privileges async.
     /// </summary>
-
     private static async Task AssignRolePrivilegesAsync(
         IPrivilegeRepository repository,
         IUnitOfWork unitOfWork,

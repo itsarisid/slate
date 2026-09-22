@@ -17,6 +17,7 @@ using Alphabet.Modules.PrivilegeModule.Api;
 using Alphabet.Modules.ProductivityModule.Api;
 using Alphabet.Modules.ProductModule.Api;
 using Alphabet.Modules.SchedulerModule.Api;
+using Alphabet.Modules.SystemLogModule.Api;
 using Asp.Versioning;
 using Hangfire;
 using Serilog;
@@ -74,6 +75,7 @@ AssetManagementBackgroundJobSetup.Configure(app.Services);
 app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
@@ -94,6 +96,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHealthChecks("/health");
+app.MapSystemLogModule();
 app.MapCommunicationModule();
 app.MapProductModule();
 app.MapIdentityModule();

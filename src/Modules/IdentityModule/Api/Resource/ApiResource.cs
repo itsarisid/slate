@@ -134,6 +134,72 @@ public static class ApiResource
         Description = "Generates a fresh set of recovery codes and invalidates the previous set for the authenticated user."
     };
 
+    // ── Self-service user endpoints ───────────────────────────────────
+
+    public static EndpointDetails UpdateMyProfile => new()
+    {
+        Endpoint = "",
+        Name = "UpdateMyProfile",
+        Summary = "Updates the authenticated user's profile.",
+        Description = "Updates the authenticated user's name, phone number, biography, department, and location without requiring administrator access."
+    };
+
+    public static EndpointDetails UploadMyAvatar => new()
+    {
+        Endpoint = "/avatar",
+        Name = "UploadMyAvatar",
+        Summary = "Uploads or replaces the authenticated user's avatar.",
+        Description = "Accepts a JPEG, PNG, GIF, or WebP image as multipart/form-data and returns the persisted hosted image URL."
+    };
+
+    public static EndpointDetails DeleteMyAvatar => new()
+    {
+        Endpoint = "/avatar",
+        Name = "DeleteMyAvatar",
+        Summary = "Removes the authenticated user's custom avatar.",
+        Description = "Deletes the hosted custom avatar and clears its URL from the user profile."
+    };
+
+    public static EndpointDetails GetMyActivity => new()
+    {
+        Endpoint = "/activity",
+        Name = "GetMyActivity",
+        Summary = "Gets the authenticated user's security activity.",
+        Description = "Returns the user's sign-in, session, and security audit history, including recorded IP addresses."
+    };
+
+    public static EndpointDetails UpdateMyPreferences => new()
+    {
+        Endpoint = "/preferences",
+        Name = "UpdateMyPreferences",
+        Summary = "Updates the authenticated user's interface preferences.",
+        Description = "Saves theme, notification channel toggles, and preferred timezone for the authenticated user."
+    };
+
+    public static EndpointDetails GetSessions => new()
+    {
+        Endpoint = "/sessions",
+        Name = "GetSessions",
+        Summary = "Lists active authenticated sessions.",
+        Description = "Returns active refresh-token sessions and their originating IP addresses for the authenticated user."
+    };
+
+    public static EndpointDetails RevokeSession => new()
+    {
+        Endpoint = "/sessions/{sessionId:guid}",
+        Name = "RevokeSession",
+        Summary = "Revokes an authenticated session.",
+        Description = "Revokes one session owned by the authenticated user."
+    };
+
+    public static EndpointDetails RevokeAllSessions => new()
+    {
+        Endpoint = "/sessions",
+        Name = "RevokeAllSessions",
+        Summary = "Signs the authenticated user out everywhere.",
+        Description = "Revokes all active refresh-token sessions and invalidates the user's security stamp."
+    };
+
     // ── Admin endpoints ─────────────────────────────────────────────────
 
     public static EndpointDetails AdminCreateUser => new()

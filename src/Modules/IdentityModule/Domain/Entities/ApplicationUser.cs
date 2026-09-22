@@ -12,6 +12,16 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public string LastName { get; set; } = string.Empty;
 
+    public string? Bio { get; set; }
+
+    public string? Department { get; set; }
+
+    public string? Location { get; set; }
+
+    public string? AvatarUrl { get; set; }
+
+    public string? Preferences { get; set; }
+
     public DateTimeOffset? LastLoginAt { get; set; }
 
     public bool IsTwoFactorEnabled { get; set; }

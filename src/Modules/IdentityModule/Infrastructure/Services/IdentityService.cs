@@ -1,4 +1,5 @@
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using Alphabet.Application.Common.Interfaces;
 using Alphabet.Application.Features.Identity.Dtos;
 using Alphabet.Application.Results;
@@ -600,6 +601,153 @@ public sealed class IdentityService(
             x.IpAddress,
             x.UserAgent,
             x.Timestamp)).ToArray();
+    }
+
+    /// <summary>
+    /// Updates the self-service profile fields for a user.
+    /// </summary>
+    public async Task<Result<UserProfileDto>> UpdateProfileAsync(Guid userId, UpdateUserProfileRequest request, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result<UserProfileDto>.Failure("User was not found.");
+        }
+
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.PhoneNumber = request.PhoneNumber;
+        user.Bio = request.Bio;
+        user.Department = request.Department;
+        user.Location = request.Location;
+        user.UpdatedAt = DateTimeOffset.UtcNow;
+
+        var updated = await userManager.UpdateAsync(user);
+        if (!updated.Succeeded)
+        {
+            return Result<UserProfileDto>.Failure(string.Join("; ", updated.Errors.Select(x => x.Description)));
+        }
+
+        await WriteAuditAsync(user.Id, "UpdateProfile", true, "User profile updated.", cancellationToken);
+        return ToProfileDto(user);
+    }
+
+    /// <summary>
+    /// Updates or removes the avatar URL for a user.
+    /// </summary>
+    public async Task<Result<UserProfileDto>> UpdateAvatarAsync(Guid userId, string? avatarUrl, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result<UserProfileDto>.Failure("User was not found.");
+        }
+
+        user.AvatarUrl = avatarUrl;
+        user.UpdatedAt = DateTimeOffset.UtcNow;
+        var updated = await userManager.UpdateAsync(user);
+        if (!updated.Succeeded)
+        {
+            return Result<UserProfileDto>.Failure(string.Join("; ", updated.Errors.Select(x => x.Description)));
+        }
+
+        await WriteAuditAsync(user.Id, string.IsNullOrWhiteSpace(avatarUrl) ? "DeleteAvatar" : "UpdateAvatar", true,
+            string.IsNullOrWhiteSpace(avatarUrl) ? "Avatar removed." : "Avatar updated.", cancellationToken);
+        return ToProfileDto(user);
+    }
+
+    /// <summary>
+    /// Stores the user's interface preferences.
+    /// </summary>
+    public async Task<Result<UserPreferencesDto>> UpdatePreferencesAsync(Guid userId, UpdateUserPreferencesRequest request, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result<UserPreferencesDto>.Failure("User was not found.");
+        }
+
+        user.Preferences = JsonSerializer.Serialize(new UserPreferencesDto(
+            request.Theme,
+            request.EmailNotifications,
+            request.PushNotifications,
+            request.Timezone));
+        user.UpdatedAt = DateTimeOffset.UtcNow;
+        var updated = await userManager.UpdateAsync(user);
+        if (!updated.Succeeded)
+        {
+            return Result<UserPreferencesDto>.Failure(string.Join("; ", updated.Errors.Select(x => x.Description)));
+        }
+
+        await WriteAuditAsync(user.Id, "UpdatePreferences", true, "User preferences updated.", cancellationToken);
+        return ToPreferencesDto(user.Preferences);
+    }
+
+    /// <summary>
+    /// Returns currently active refresh-token sessions for a user.
+    /// </summary>
+    public async Task<Result<IReadOnlyList<UserSessionDto>>> GetSessionsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var sessions = await dbContext.RefreshTokens
+            .Where(x => x.UserId == userId && !x.IsRevoked && x.ExpiresAt > DateTimeOffset.UtcNow)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => new UserSessionDto(x.Id, x.CreatedAt, x.ExpiresAt, x.CreatedByIp, false))
+            .ToArrayAsync(cancellationToken);
+
+        return Result<IReadOnlyList<UserSessionDto>>.Success(sessions);
+    }
+
+    /// <summary>
+    /// Revokes one of the authenticated user's sessions.
+    /// </summary>
+    public async Task<Result> RevokeSessionAsync(Guid userId, Guid sessionId, CancellationToken cancellationToken)
+    {
+        var session = await dbContext.RefreshTokens.FirstOrDefaultAsync(x => x.Id == sessionId && x.UserId == userId, cancellationToken);
+        if (session is null || session.IsRevoked)
+        {
+            return Result.Failure("Session was not found.");
+        }
+
+        await tokenService.RevokeRefreshTokenAsync(session, currentUserService.IpAddress, cancellationToken);
+        await WriteAuditAsync(userId, "RevokeSession", true, "Session revoked.", cancellationToken);
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Revokes every active session for the authenticated user.
+    /// </summary>
+    public async Task<Result> RevokeAllSessionsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return Result.Failure("User was not found.");
+        }
+
+        await tokenService.RevokeAllRefreshTokensAsync(userId, currentUserService.IpAddress, cancellationToken);
+        await userManager.UpdateSecurityStampAsync(user);
+        await WriteAuditAsync(userId, "RevokeAllSessions", true, "All sessions revoked.", cancellationToken);
+        return Result.Success();
+    }
+
+    private static UserProfileDto ToProfileDto(ApplicationUser user)
+        => new(user.Id, user.Email ?? string.Empty, user.FirstName, user.LastName, user.PhoneNumber, user.Bio, user.Department, user.Location, user.AvatarUrl);
+
+    private static Result<UserPreferencesDto> ToPreferencesDto(string? preferences)
+    {
+        if (string.IsNullOrWhiteSpace(preferences))
+        {
+            return new UserPreferencesDto(null, true, true, null);
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<UserPreferencesDto>(preferences) ?? new UserPreferencesDto(null, true, true, null);
+        }
+        catch (JsonException)
+        {
+            return Result<UserPreferencesDto>.Failure("Stored user preferences are invalid.");
+        }
     }
     /// <summary>
     /// Write audit async.
