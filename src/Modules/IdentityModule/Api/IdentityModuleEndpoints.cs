@@ -424,20 +424,25 @@ public static class IdentityModuleEndpoints
         .WithDocumentation(ApiResource.UpdateMyProfile);
 
         group.MapPost(ApiResource.UploadMyAvatar.Endpoint, async Task<Results<Ok<UserProfileDto>, BadRequest<ProblemDetails>>> (
-            [FromForm] IFormFile avatar,
-            ICurrentUserService currentUserService,
-            IWebHostEnvironment environment,
-            [FromServices] ISender sender,
-            CancellationToken ct) =>
+        [FromForm] UploadAvatarRequest request,
+        ICurrentUserService currentUserService,
+        IWebHostEnvironment environment,
+        [FromServices] ISender sender,
+        CancellationToken ct) =>
         {
             if (currentUserService.UserId is not Guid userId)
             {
                 return TypedResults.BadRequest(new ProblemDetails { Title = "Current user could not be resolved" });
             }
 
+            var avatar = request.Avatar;
+
             var extensions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                ["image/jpeg"] = ".jpg", ["image/png"] = ".png", ["image/gif"] = ".gif", ["image/webp"] = ".webp"
+                ["image/jpeg"] = ".jpg",
+                ["image/png"] = ".png",
+                ["image/gif"] = ".gif",
+                ["image/webp"] = ".webp"
             };
             if (avatar.Length == 0 || avatar.Length > 5 * 1024 * 1024 || !extensions.TryGetValue(avatar.ContentType, out var extension))
             {
@@ -471,7 +476,7 @@ public static class IdentityModuleEndpoints
 
             return TypedResults.Ok(result.Value);
         })
-        .Accepts<IFormFile>("multipart/form-data")
+        .Accepts<UploadAvatarRequest>("multipart/form-data")
         .Produces<UserProfileDto>(StatusCodes.Status200OK)
         .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
         .WithDocumentation(ApiResource.UploadMyAvatar);

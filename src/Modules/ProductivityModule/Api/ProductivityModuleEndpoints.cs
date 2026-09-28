@@ -52,8 +52,32 @@ public static class ProductivityModuleEndpoints
         MapCrossEntity(endpoints, versionSet);
         MapReports(endpoints, versionSet);
         MapTemplates(endpoints, versionSet);
+        MapDemoDataSeeder(endpoints, versionSet);
         endpoints.MapHub<ProductivityHub>("/hubs/productivity").RequireAuthorization();
         return endpoints;
+    }
+
+    private static void MapDemoDataSeeder(IEndpointRouteBuilder endpoints, ApiVersionSet versionSet)
+    {
+        var group = endpoints.MapGroup("api/v{version:apiVersion}/admin/demo-data")
+            .WithApiVersionSet(versionSet)
+            .HasApiVersion(1.0)
+            .WithTags("Productivity Module - Admin")
+            .RequireAuthorization("PrivilegeManagers");
+
+        group.MapPost("/", async Task<IResult> (
+            [FromServices] Alphabet.Application.Common.Interfaces.ICurrentUserService currentUser,
+            [FromServices] Alphabet.Application.Common.Interfaces.Productivity.IDemoDataSeeder seeder,
+            CancellationToken cancellationToken) =>
+        {
+            if (currentUser.UserId is not Guid userId)
+                return TypedResults.Unauthorized();
+
+            var result = await seeder.SeedAsync(userId, cancellationToken);
+            return TypedResults.Ok(result);
+        })
+        .WithSummary("Seeds sample productivity data for the current user.")
+        .WithDescription("Idempotently creates sample todos, tasks, notes, and calendar events. Requires the PrivilegeManagers policy.");
     }
     /// <summary>
     /// Map todos.

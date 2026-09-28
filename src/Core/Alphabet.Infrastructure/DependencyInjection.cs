@@ -122,6 +122,7 @@ public static class DependencyInjection
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IJobExecutionRepository, JobExecutionRepository>();
         services.AddScoped<ITodoRepository, TodoRepository>();
+        services.AddScoped<Alphabet.Application.Common.Interfaces.Productivity.IDemoDataSeeder, Alphabet.Infrastructure.Data.Seeders.ProductivityDemoDataSeeder>();
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<ITaskRepository, TaskRepository>();
         services.AddScoped<IEventRepository, EventRepository>();

@@ -63,6 +63,9 @@
     <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\BackgroundJobs\*.cs">
       <Link>Modules\ProductivityModule\Infrastructure\BackgroundJobs\%(Filename)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Data\Seeders\*.cs">
+      <Link>Modules\ProductivityModule\Infrastructure\Data\Seeders\%(Filename)%(Extension)</Link>
+    </Compile>
     <Compile Include="..\..\Modules\ProductivityModule\Infrastructure\Options\*.cs">
       <Link>Modules\ProductivityModule\Infrastructure\Options\%(Filename)%(Extension)</Link>
     </Compile>
